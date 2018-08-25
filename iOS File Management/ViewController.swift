@@ -15,7 +15,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var maxHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var totalTimeLabel: UILabel!
-
+    @IBOutlet weak var waveform: WaveformView!
+    
     
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
@@ -41,7 +42,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         removeTempDict()
         
         maxHeightConstraint.constant = CGFloat(max)
-        createDictInTemp()        
+        createDictInTemp()
     }
 
     func listFiles() {
@@ -201,6 +202,7 @@ extension ViewController {
         //        print("Peak: \(peak) | value: \(value)")
         if(value > 1) {
             peakConstraint.constant = CGFloat(value)
+            waveform.averagePower = value
         }
     }
     
