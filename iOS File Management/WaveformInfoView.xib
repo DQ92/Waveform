@@ -19,21 +19,7 @@
         <view alpha="0.84999999999999998" contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IrU-pO-XYV">
-                    <rect key="frame" x="-0.5" y="343" width="375" height="1"/>
-                    <color key="backgroundColor" red="0.0" green="0.97680455450000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="1" id="6j6-UH-xtp"/>
-                    </constraints>
-                </view>
-            </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-            <constraints>
-                <constraint firstItem="IrU-pO-XYV" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="3bK-T2-JgE"/>
-                <constraint firstItem="IrU-pO-XYV" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Jk6-eS-xZQ"/>
-                <constraint firstItem="IrU-pO-XYV" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="NRv-al-pGJ"/>
-            </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
         </view>
     </objects>

@@ -16,13 +16,26 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveform: WaveformView!
-    
-    
+    @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
+    let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
     var meterTimer:Timer!
     var isAudioRecordingGranted: Bool = true
-    var isRecording = false
+    var idx = 0
+    var isRecording = false {
+        didSet {
+            if(isRecording) {
+                waveformRightConstraint.constant = self.view.frame.width / 2
+                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+                waveform.isUserInteractionEnabled = false
+            } else {
+                waveformRightConstraint.constant = waveform.padding
+                waveform.isUserInteractionEnabled = true
+                waveform.onPause()
+            }
+        }
+    }
     var suffix: Int = 0
     private let tempDictName = "temp_audio"
     let fileManager = FileManager.default
@@ -40,7 +53,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         super.viewDidLoad()
         
         removeTempDict()
-        
+        addVerticalLayer()
         maxHeightConstraint.constant = CGFloat(max)
         createDictInTemp()
     }
@@ -194,16 +207,30 @@ extension ViewController {
         }
     }
     
-    func updatePeak(_ peak: Float) {
+    func updatePeak(_ peak: Float, _ timeInterval: Int) {
         // -160 minimum -> 0
         // 0 -> max
         let _peak: Float = (-1) * peak
-        let value: Float = max - _peak
-        //        print("Peak: \(peak) | value: \(value)")
-        if(value > 1) {
-            peakConstraint.constant = CGFloat(value)
-            waveform.averagePower = value
+        var value: Float = max - _peak
+        value = value > 1 ? value : 4
+        
+        if(Int(timeInterval) % 5 == 0) {
+            value = 0
         }
+        
+        peakConstraint.constant = CGFloat(value)
+        waveform.averagePower = value
+        
+        if(waveform.x < Int(self.view.bounds.width / 2)) {
+            vLayer.frame = CGRect(x: waveform.x + 1, y: Int(self.waveform.frame.origin.y), width: 1, height: Int(self.waveform.bounds.height))
+        }
+    }
+    
+    func addVerticalLayer() {
+        vLayer.frame = CGRect(x: 0, y: Int(self.waveform.frame.origin.y), width: 1, height: Int(self.waveform.bounds.height))
+        vLayer.backgroundColor = UIColor.blue.cgColor
+        vLayer.lineWidth = 1
+        view.layer.addSublayer(vLayer)
     }
     
     @IBAction func finishButtonTapped(_ sender: Any) {
@@ -231,7 +258,10 @@ extension ViewController {
             totalTimeLabel.text = "\(t) sec."
             audioRecorder.updateMeters()
             
-            updatePeak(audioRecorder.averagePower(forChannel: 0))
+            let val = audioRecorder.averagePower(forChannel: 0) - 60
+            
+            updatePeak(val, idx)
+            idx = idx + 1
         }
     }
     

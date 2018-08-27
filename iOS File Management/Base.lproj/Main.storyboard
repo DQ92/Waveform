@@ -67,7 +67,7 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:-" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K5L-b9-aJW">
-                                <rect key="frame" x="319" y="204" width="48" height="20.5"/>
+                                <rect key="frame" x="319" y="204" width="48" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="chm-py-tNI"/>
                                 </constraints>
@@ -75,21 +75,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="szb-Tz-d5R">
+                                <rect key="frame" x="0.0" y="237" width="375" height="195"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="0.94871040239726023" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GrT-pG-ar6" customClass="WaveformView" customModule="iOS_File_Management" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="237" width="375" height="195"/>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="0.20652290239726026" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="195" id="B51-6u-GVZ"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gBw-xI-6Nq" userLabel="Vertically View">
-                                <rect key="frame" x="187" y="229" width="1" height="211"/>
-                                <color key="backgroundColor" red="0.016804177310000001" green="0.19835099580000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="1" id="r2r-X7-zaU"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0nj-i6-bMt" customClass="WaveformInfoView" customModule="iOS_File_Management" customModuleProvider="target">
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0nj-i6-bMt" customClass="WaveformInfoView" customModule="iOS_File_Management" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="237" width="375" height="195"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -101,7 +98,6 @@
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="46v-QG-VsH"/>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="6VJ-d8-7gu"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="GrT-pG-ar6" secondAttribute="trailing" id="7m2-NZ-QVq"/>
-                            <constraint firstItem="gBw-xI-6Nq" firstAttribute="centerY" secondItem="GrT-pG-ar6" secondAttribute="centerY" id="7uk-pw-0M2"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="AFY-QK-CKt"/>
                             <constraint firstItem="wwK-ZC-6Xh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="CKE-TD-Cza"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="FGx-uD-ajZ"/>
@@ -112,23 +108,25 @@
                             <constraint firstItem="WeN-QE-gGS" firstAttribute="bottom" secondItem="wwK-ZC-6Xh" secondAttribute="bottom" id="LNG-bC-vva"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="8" id="Lw1-Cc-Jr2"/>
                             <constraint firstItem="WeN-QE-gGS" firstAttribute="trailing" secondItem="wwK-ZC-6Xh" secondAttribute="trailing" id="QgB-RL-cTX"/>
-                            <constraint firstItem="gBw-xI-6Nq" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="TRx-VI-A02"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="DG8-iI-565" secondAttribute="bottom" constant="12" id="X2Q-i3-ufn"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="XTz-Bu-OGh"/>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="8" id="ZFp-QP-M8D"/>
                             <constraint firstItem="K5L-b9-aJW" firstAttribute="centerY" secondItem="uoO-gH-8Kj" secondAttribute="centerY" id="aMR-yI-Kt2"/>
-                            <constraint firstItem="gBw-xI-6Nq" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" constant="16" id="cjw-3j-qfC"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="ctW-Yr-Vve"/>
+                            <constraint firstItem="szb-Tz-d5R" firstAttribute="top" secondItem="GrT-pG-ar6" secondAttribute="top" id="dFC-bc-BTJ"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="duH-ZW-aL6"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="gib-Nv-xh2"/>
+                            <constraint firstItem="szb-Tz-d5R" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="iqF-kv-waN"/>
                             <constraint firstItem="GrT-pG-ar6" firstAttribute="top" secondItem="uoO-gH-8Kj" secondAttribute="bottom" constant="8" id="jIc-e2-yth"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="leading" secondItem="GrT-pG-ar6" secondAttribute="leading" id="kVT-QB-q8i"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
                             <constraint firstItem="WeN-QE-gGS" firstAttribute="leading" secondItem="wwK-ZC-6Xh" secondAttribute="leading" id="ltK-SH-Yf6"/>
+                            <constraint firstItem="szb-Tz-d5R" firstAttribute="leading" secondItem="GrT-pG-ar6" secondAttribute="leading" id="mSW-l4-3Tx"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="K5L-b9-aJW" secondAttribute="trailing" constant="8" id="o2Y-Ex-Lat"/>
                             <constraint firstItem="GrT-pG-ar6" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="obd-4J-wGl"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="top" secondItem="GrT-pG-ar6" secondAttribute="top" id="oce-go-pbi"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wwK-ZC-6Xh" secondAttribute="bottom" id="pIc-RR-VD9"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="szb-Tz-d5R" secondAttribute="trailing" id="sec-MI-z66"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="100" id="vte-nu-s3B"/>
                             <constraint firstItem="K5L-b9-aJW" firstAttribute="leading" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="32" id="zP4-Ur-Adl"/>
                         </constraints>
@@ -148,6 +146,7 @@
                         <outlet property="slider" destination="uoO-gH-8Kj" id="enP-p1-Sit"/>
                         <outlet property="totalTimeLabel" destination="K5L-b9-aJW" id="n2m-AI-afh"/>
                         <outlet property="waveform" destination="GrT-pG-ar6" id="6tC-cu-dBa"/>
+                        <outlet property="waveformRightConstraint" destination="7m2-NZ-QVq" id="dcg-Sx-Sl4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

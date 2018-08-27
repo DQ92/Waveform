@@ -4,7 +4,7 @@ import UIKit
 
 class WaveformView : UIScrollView {
     
-    private let space = 5
+    private let space = 1
     var x: Int = 0
     var averagePower: Float = 0 {
         didSet {
@@ -13,25 +13,27 @@ class WaveformView : UIScrollView {
     }
     private var layerY: Int = 0
     private let layerLineWidth: CGFloat = 1
+    let padding: CGFloat = 32
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        delegate = self
         layerY = Int(self.bounds.size.height / 2)
     }
     
     func update() {
-        let val = Int(averagePower / 2)
+        let val = Int(averagePower / 1)
         
         let upLayer = CAShapeLayer()
-        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -val)
+        upLayer.frame = CGRect(x: x, y: layerY, width: Int(layerLineWidth), height: -val)
         upLayer.backgroundColor = UIColor.red.cgColor
         upLayer.lineWidth = layerLineWidth
         layer.addSublayer(upLayer)
         
         let downLayer = CAShapeLayer()
-        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: val)
+        downLayer.frame = CGRect(x: x, y: layerY, width: Int(layerLineWidth), height: val)
         downLayer.backgroundColor = UIColor.orange.cgColor
         downLayer.lineWidth = layerLineWidth
         layer.addSublayer(downLayer)
@@ -40,15 +42,27 @@ class WaveformView : UIScrollView {
         resize()
     }
     
+    func onPause() {
+        isUserInteractionEnabled = true
+        let x = (UIScreen.main.bounds.width - padding) / 2
+        
+        UIView.animate(withDuration: 2) {
+            self.contentInset = UIEdgeInsetsMake(0, x + (self.padding / 2), 0, x - (self.padding / 2))
+        }
+    }
+    
     func resize() {
-        if(!self.isDragging && (Int(self.contentSize.width) >= Int(self.bounds.width / 4))) {
-            let _x = self.contentSize.width - (self.bounds.size.width - (self.bounds.size.width / 2))
-            contentInset = UIEdgeInsetsMake(0, 0, 0, _x)
-            self.scrollTo(direction: .Center, animated: false)
+        if(!self.isDragging) {
+            self.scrollTo(direction: .Right, animated: false)
         }
-        if(x >= Int(self.bounds.width / 2)) {
-            self.contentSize = CGSize(width: x, height: Int(self.contentSize.height))
-        }
+        self.contentSize = CGSize(width: x, height: Int(self.contentSize.height))
+    }
+}
+
+extension WaveformView: UIScrollViewDelegate {
+    
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        
     }
 }
 
