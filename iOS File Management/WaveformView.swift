@@ -4,42 +4,42 @@ import UIKit
 
 class WaveformView : UIScrollView {
     
-    private let space = 1
-    var x: Int = 0
+    var x: CGFloat = 0
     var averagePower: Float = 0 {
         didSet {
             update()
         }
     }
-    private var layerY: Int = 0
+    private var layerY: CGFloat = 0
     private let layerLineWidth: CGFloat = 1
-    let padding: CGFloat = 32
-    
+    let padding: CGFloat = 0
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
         delegate = self
-        layerY = Int(self.bounds.size.height / 2)
+        layerY = CGFloat(self.bounds.size.height / 2)
+        
     }
     
     func update() {
-        let val = Int(averagePower / 1)
+        let val: CGFloat = CGFloat(averagePower)
         
         let upLayer = CAShapeLayer()
-        upLayer.frame = CGRect(x: x, y: layerY, width: Int(layerLineWidth), height: -val)
+        upLayer.frame = CGRect(x: x, y: layerY, width: CGFloat(layerLineWidth), height: -val)
         upLayer.backgroundColor = UIColor.red.cgColor
         upLayer.lineWidth = layerLineWidth
         layer.addSublayer(upLayer)
         
         let downLayer = CAShapeLayer()
-        downLayer.frame = CGRect(x: x, y: layerY, width: Int(layerLineWidth), height: val)
+        
+        downLayer.frame = CGRect(x: x, y: layerY, width: CGFloat(layerLineWidth), height: val)
         downLayer.backgroundColor = UIColor.orange.cgColor
         downLayer.lineWidth = layerLineWidth
         layer.addSublayer(downLayer)
-        
-        x = x + space
+    
         resize()
+        x = x + 1
     }
     
     func onPause() {
@@ -55,7 +55,7 @@ class WaveformView : UIScrollView {
         if(!self.isDragging) {
             self.scrollTo(direction: .Right, animated: false)
         }
-        self.contentSize = CGSize(width: x, height: Int(self.contentSize.height))
+        self.contentSize = CGSize(width: x, height: CGFloat(self.contentSize.height))
     }
 }
 

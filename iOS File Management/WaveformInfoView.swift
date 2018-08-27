@@ -55,7 +55,7 @@ class WaveformInfoView: UIView {
             if(i + 1 == middleLineY) {
                 line.backgroundColor = UIColor.white.cgColor
             } else {
-                line.backgroundColor = UIColor.lightGray.cgColor
+                line.backgroundColor = UIColor.clear.cgColor
             }
             layer.addSublayer(line)
             
@@ -90,7 +90,7 @@ class WaveformInfoView: UIView {
         label.textColor = .white
         label.textAlignment = .center
         label.numberOfLines = 0
-        self.addSubview(label)
+//        self.addSubview(label)
     }
     
 }

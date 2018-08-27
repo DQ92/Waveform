@@ -2,6 +2,10 @@
 import AVFoundation
 import UIKit
 
+let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.width)))
+var viewWidth: CGFloat = 0
+var partOfView: CGFloat = 0 // 1/6
+
 
 class ViewController: UIViewController, AVAudioRecorderDelegate {
 
@@ -17,6 +21,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveform: WaveformView!
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
+
     let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
@@ -25,15 +30,15 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var idx = 0
     var isRecording = false {
         didSet {
-            if(isRecording) {
-                waveformRightConstraint.constant = self.view.frame.width / 2
-                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-                waveform.isUserInteractionEnabled = false
-            } else {
+//            if(isRecording) {
+//                waveformRightConstraint.constant = self.view.frame.width / 2
+//                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+//                waveform.isUserInteractionEnabled = false
+//            } else {
                 waveformRightConstraint.constant = waveform.padding
                 waveform.isUserInteractionEnabled = true
-                waveform.onPause()
-            }
+//                waveform.onPause()
+//            }
         }
     }
     var suffix: Int = 0
@@ -56,6 +61,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         addVerticalLayer()
         maxHeightConstraint.constant = CGFloat(max)
         createDictInTemp()
+        
+        viewWidth = UIScreen.main.bounds.width
+        partOfView = viewWidth / 6
+        
     }
 
     func listFiles() {
@@ -195,7 +204,7 @@ extension ViewController {
                 audioRecorder.isMeteringEnabled = true
                 audioRecorder.prepareToRecord()
                 audioRecorder.record()
-                meterTimer = Timer.scheduledTimer(timeInterval: 0.1, target:self, selector:#selector(self.updateAudioMeter(timer:)), userInfo:nil, repeats:true) //zatrzymywać timer na pauzie
+                meterTimer = Timer.scheduledTimer(timeInterval: timeInterval, target:self, selector:#selector(self.updateAudioMeter(timer:)), userInfo:nil, repeats:true) //zatrzymywać timer na pauzie
                 
                 record_btn_ref.setTitle("Pause", for: .normal)
                 isRecording = true
@@ -221,8 +230,8 @@ extension ViewController {
         peakConstraint.constant = CGFloat(value)
         waveform.averagePower = value
         
-        if(waveform.x < Int(self.view.bounds.width / 2)) {
-            vLayer.frame = CGRect(x: waveform.x + 1, y: Int(self.waveform.frame.origin.y), width: 1, height: Int(self.waveform.bounds.height))
+        if(waveform.x < CGFloat(self.view.bounds.width / 2)) {
+            vLayer.frame = CGRect(x: CGFloat(waveform.x + 1), y: CGFloat(self.waveform.frame.origin.y), width: 1, height: CGFloat(self.waveform.bounds.height))
         }
     }
     
