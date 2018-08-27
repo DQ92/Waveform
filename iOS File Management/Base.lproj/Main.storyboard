@@ -90,6 +90,13 @@
                                 <rect key="frame" x="0.0" y="237" width="375" height="195"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wUn-YI-p87" customClass="CollectionViewWaveform" customModule="iOS_File_Management" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="567" width="375" height="100"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="DXW-hy-JqN"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -101,13 +108,16 @@
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="AFY-QK-CKt"/>
                             <constraint firstItem="wwK-ZC-6Xh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="CKE-TD-Cza"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="FGx-uD-ajZ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="JH6-L2-B52"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="JYt-sh-Kg0"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="Jn8-4B-X5q"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="top" secondItem="FsX-67-dIh" secondAttribute="bottom" constant="32" id="KxZ-e5-0eU"/>
                             <constraint firstItem="WeN-QE-gGS" firstAttribute="bottom" secondItem="wwK-ZC-6Xh" secondAttribute="bottom" id="LNG-bC-vva"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="8" id="Lw1-Cc-Jr2"/>
+                            <constraint firstItem="wUn-YI-p87" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="OeI-Vp-fhh"/>
                             <constraint firstItem="WeN-QE-gGS" firstAttribute="trailing" secondItem="wwK-ZC-6Xh" secondAttribute="trailing" id="QgB-RL-cTX"/>
+                            <constraint firstItem="wUn-YI-p87" firstAttribute="leading" secondItem="WeN-QE-gGS" secondAttribute="trailing" id="V7b-ki-Chq"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="DG8-iI-565" secondAttribute="bottom" constant="12" id="X2Q-i3-ufn"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="XTz-Bu-OGh"/>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="8" id="ZFp-QP-M8D"/>
@@ -116,6 +126,7 @@
                             <constraint firstItem="szb-Tz-d5R" firstAttribute="top" secondItem="GrT-pG-ar6" secondAttribute="top" id="dFC-bc-BTJ"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="duH-ZW-aL6"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="gib-Nv-xh2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wUn-YI-p87" secondAttribute="bottom" id="hhd-2K-RG2"/>
                             <constraint firstItem="szb-Tz-d5R" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="iqF-kv-waN"/>
                             <constraint firstItem="GrT-pG-ar6" firstAttribute="top" secondItem="uoO-gH-8Kj" secondAttribute="bottom" constant="8" id="jIc-e2-yth"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="leading" secondItem="GrT-pG-ar6" secondAttribute="leading" id="kVT-QB-q8i"/>
@@ -135,10 +146,12 @@
                             <mask key="constraints">
                                 <exclude reference="Lw1-Cc-Jr2"/>
                                 <exclude reference="3AW-mb-Is4"/>
+                                <exclude reference="V7b-ki-Chq"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="collectionViewWaveform" destination="wUn-YI-p87" id="7tK-ar-t2p"/>
                         <outlet property="maxHeightConstraint" destination="mxI-JL-sFc" id="xcm-ij-xRI"/>
                         <outlet property="peakConstraint" destination="Kqi-xo-Gp9" id="xW6-xe-chG"/>
                         <outlet property="record_btn_ref" destination="ufi-fB-fAa" id="sRi-nW-EQB"/>

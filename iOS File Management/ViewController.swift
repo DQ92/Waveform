@@ -2,7 +2,7 @@
 import AVFoundation
 import UIKit
 
-let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.width)))
+let timeInterval: TimeInterval = 0.1 //(TimeInterval(6 / Float(UIScreen.main.bounds.width)))
 var viewWidth: CGFloat = 0
 var partOfView: CGFloat = 0 // 1/6
 
@@ -21,7 +21,9 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveform: WaveformView!
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
-
+    @IBOutlet weak var collectionViewWaveform: CollectionViewWaveform!
+    
+    var values = [CGFloat]()
     let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
@@ -64,6 +66,18 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
+        
+        collectionViewWaveform.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewCell")
+        collectionViewWaveform.dataSource = self
+        collectionViewWaveform.delegate = self
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: partOfView, height: 100)
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
+        layout.sectionInset = UIEdgeInsets.zero
+        layout.scrollDirection = .horizontal
+        collectionViewWaveform.collectionViewLayout = layout
+        collectionViewWaveform.reloadData()
         
     }
 
@@ -223,9 +237,9 @@ extension ViewController {
         var value: Float = max - _peak
         value = value > 1 ? value : 4
         
-        if(Int(timeInterval) % 5 == 0) {
-            value = 0
-        }
+//        if(Int(value) % 10 == 0) {
+            update(CGFloat(value))
+//        }
         
         peakConstraint.constant = CGFloat(value)
         waveform.averagePower = value
@@ -408,8 +422,86 @@ extension ViewController {
             print("Brak plików w \(at.path)")
         }
     }
+
 }
 
 
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    func update(_ value: CGFloat) {
+        values.append(CGFloat(idx))
+//        values.append(value)
+        
+        if(Int(idx) % 10 == 0) {
+            self.collectionViewWaveform.reloadData()
+            debugPrint("idx: \(idx)")
+        }
+        let ip = IndexPath(row: collectionViewWaveform.numberOfItems(inSection: 0) - 1, section: 0)
+        updateCell(ip, CGFloat(idx), nil, idx)
+    }
+    
+    func updateCell(_ ip: IndexPath, _ value: CGFloat, _ cell: WaveformCollectionViewCell?, _ xLayer: Int) {
+        var lastCell: UICollectionViewCell! = nil
+        if cell == nil {
+            lastCell = collectionViewWaveform.cellForItem(at: ip) // as! WaveformCollectionViewCell
+            if lastCell == nil {
+                return
+            }
+        } else {
+            lastCell = cell
+        }
+        
+
+        let x = CGFloat(Int(xLayer) % 10) - 1
+        let layerY = lastCell.bounds.size.height / 2
+        let upLayer = CAShapeLayer()
+        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -value)
+        upLayer.backgroundColor = UIColor.red.cgColor
+        upLayer.lineWidth = 1
+        lastCell.contentView.layer.addSublayer(upLayer)
+        let downLayer = CAShapeLayer()
+        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: value)
+        downLayer.backgroundColor = UIColor.orange.cgColor
+        downLayer.lineWidth = 1
+        lastCell.contentView.layer.addSublayer(downLayer)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        debugPrint("numberOfItemsInSection \(values.count / 10)")
+        return values.count / 10
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 10, height: 100)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! WaveformCollectionViewCell
+        let row = indexPath.row
+        let rowItem = (row % 10)
+        let index = row // rowItem + (row - rowItem)
+        let x = rowItem
+        debugPrint("row: \(row) | rowItem: \(rowItem)| index: \(index) | x: \(x)")
+//        cell.contentView.layer.sublayers = []
+        
+        let value: CGFloat = 1 // values[index]
+        updateCell(indexPath, value, cell, x)
+        
+        return cell
+    }
+}
+
+
+class WaveformCollectionViewCell: UICollectionViewCell {
+    
+    var baseLayer = CAShapeLayer()
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        contentView.layer.sublayers = []
+    }
+    
+}
 
 
