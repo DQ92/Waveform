@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		655BAC872130961C00AB828A /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC862130961C00AB828A /* WaveformView.swift */; };
+		655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC862130961C00AB828A /* WaveformViewScroll.swift */; };
 		655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC882131EFC900AB828A /* WaveformInfoView.swift */; };
 		655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 655BAC8A2131F02500AB828A /* WaveformInfoView.xib */; };
 		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
+		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
+		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
+		65FD73C12135E7630003029F /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65FD73C02135E7630003029F /* WaveformView.xib */; };
 		BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE02088EFEF00E52984 /* AppDelegate.swift */; };
 		BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE22088EFEF00E52984 /* ViewController.swift */; };
 		BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE42088EFEF00E52984 /* Main.storyboard */; };
@@ -19,10 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		655BAC862130961C00AB828A /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		655BAC862130961C00AB828A /* WaveformViewScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformViewScroll.swift; sourceTree = "<group>"; };
 		655BAC882131EFC900AB828A /* WaveformInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
 		655BAC8A2131F02500AB828A /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
 		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
+		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
+		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		65FD73C02135E7630003029F /* WaveformView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* iOS File Management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS File Management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC925FE02088EFEF00E52984 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC925FE22088EFEF00E52984 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -43,6 +49,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		65FD73BD2135E6E60003029F /* Waveform */ = {
+			isa = PBXGroup;
+			children = (
+				65FD73BE2135E6F50003029F /* WaveformView.swift */,
+				65FD73C02135E7630003029F /* WaveformView.xib */,
+			);
+			path = Waveform;
+			sourceTree = "<group>";
+		};
 		BC925FD42088EFEF00E52984 = {
 			isa = PBXGroup;
 			children = (
@@ -62,16 +77,18 @@
 		BC925FDF2088EFEF00E52984 /* iOS File Management */ = {
 			isa = PBXGroup;
 			children = (
+				65FD73BD2135E6E60003029F /* Waveform */,
 				BC925FE02088EFEF00E52984 /* AppDelegate.swift */,
 				BC925FE22088EFEF00E52984 /* ViewController.swift */,
 				BC925FE42088EFEF00E52984 /* Main.storyboard */,
 				BC925FE72088EFEF00E52984 /* Assets.xcassets */,
 				BC925FE92088EFEF00E52984 /* LaunchScreen.storyboard */,
 				BC925FEC2088EFEF00E52984 /* Info.plist */,
-				655BAC862130961C00AB828A /* WaveformView.swift */,
+				655BAC862130961C00AB828A /* WaveformViewScroll.swift */,
 				655BAC882131EFC900AB828A /* WaveformInfoView.swift */,
 				655BAC8A2131F02500AB828A /* WaveformInfoView.xib */,
 				65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */,
+				65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */,
 			);
 			path = "iOS File Management";
 			sourceTree = "<group>";
@@ -143,6 +160,7 @@
 				BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */,
 				BC925FE82088EFEF00E52984 /* Assets.xcassets in Resources */,
 				BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */,
+				65FD73C12135E7630003029F /* WaveformView.xib in Resources */,
 				655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,7 +174,9 @@
 			files = (
 				BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */,
 				BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */,
-				655BAC872130961C00AB828A /* WaveformView.swift in Sources */,
+				65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */,
+				65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */,
+				655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */,
 				65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */,
 				655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */,
 			);

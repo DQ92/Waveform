@@ -15,22 +15,28 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var record_btn_ref: UIButton!
-    @IBOutlet weak var peakConstraint: NSLayoutConstraint!
-    @IBOutlet weak var maxHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var totalTimeLabel: UILabel!
-    @IBOutlet weak var waveform: WaveformView!
+    @IBOutlet weak var waveform: WaveformViewScroll!
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var collectionViewWaveform: CollectionViewWaveform!
+    @IBOutlet weak var collectionViewWaveform: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     
-    var values = [[CGFloat]]()
+    var values = [[CGFloat]]() {
+        didSet {
+            collectionViewWaveform.values = values
+        }
+    }
     let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
     var meterTimer:Timer!
     var isAudioRecordingGranted: Bool = true
-    var idx = 0
+    var sampleIndex = 0 {
+        didSet {
+            collectionViewWaveform.sampleIndex = sampleIndex
+        }
+    }
     var sec: Int = 0 {
         didSet {
             if(sec != oldValue) {
@@ -44,8 +50,11 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         return Int((UIScreen.main.bounds.width) / 6)
     }
     
+    
     var isRecording = false {
         didSet {
+            collectionViewWaveform.isRecording = isRecording
+            
             if(isRecording) {
 //                collectionViewRightConstraint.constant = self.view.frame.width / 2
 //                waveformRightConstraint.constant = self.view.frame.width / 2
@@ -59,15 +68,16 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 //                waveform.onPause()
                 collectionViewWaveform.isUserInteractionEnabled = true
                 
-                let halfOfCollectionViewWidth = collectionViewWaveform.bounds.width / 2
-                let currentX = CGFloat(idx)
+                collectionViewWaveform.onPause(sampleIndex: CGFloat(sampleIndex))
                 
-                if currentX < halfOfCollectionViewWidth {
-                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
-                    collectionViewWaveform.contentSize = CGSize(width: collectionViewWaveform.bounds.width + currentX, height: collectionViewWaveform.bounds.height)
-                } else {
-                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
-                }
+//                let halfOfCollectionViewWidth = collectionViewWaveform.bounds.width / 2
+//                let currentX = CGFloat(idx)
+//                if currentX < halfOfCollectionViewWidth {
+//                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
+//                    collectionViewWaveform.contentSize = CGSize(width: collectionViewWaveform.bounds.width + currentX, height: collectionViewWaveform.bounds.height)
+//                } else {
+//                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
+//                }
             }
         }
     }
@@ -89,24 +99,26 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         
         removeTempDict()
         addVerticalLayer()
-        maxHeightConstraint.constant = CGFloat(max)
         createDictInTemp()
         
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
         
-        collectionViewWaveform.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewCell")
-        collectionViewWaveform.dataSource = self
-        collectionViewWaveform.delegate = self
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: partOfView, height: 100)
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-        layout.sectionInset = UIEdgeInsets.zero
-        layout.scrollDirection = .horizontal
-        collectionViewWaveform.collectionViewLayout = layout
-        collectionViewWaveform.reloadData()
-        collectionViewWaveform.scrollTo(direction: .Left)
+//        collectionViewWaveform.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewCell")
+//        collectionViewWaveform.dataSource = self
+//        collectionViewWaveform.delegate = self
+//        let layout = UICollectionViewFlowLayout()
+//        layout.itemSize = CGSize(width: partOfView, height: 100)
+//        layout.minimumInteritemSpacing = 0
+//        layout.minimumLineSpacing = 0
+//        layout.sectionInset = UIEdgeInsets.zero
+//        layout.scrollDirection = .horizontal
+//        collectionViewWaveform.collectionViewLayout = layout
+//        collectionViewWaveform.reloadData()
+//        collectionViewWaveform.scrollTo(direction: .Left)
+        
+//        leadingLine.frame = CGRect(x: 0, y: -10, width: 1, height: 110)
+//        self.collectionViewWaveform.layer.addSublayer(leadingLine)
     }
 
     func listFiles() {
@@ -265,11 +277,12 @@ extension ViewController {
         var value: Float = max - _peak
         value = value > 1 ? value : 4
         
+//        updateLeadingLine()
+        
 //        if(Int(value) % 10 == 0) {
             update(CGFloat(value))
 //        }
         
-        peakConstraint.constant = CGFloat(value)
 //        waveform.averagePower = value
 //        if(waveform.x < CGFloat(self.view.bounds.width / 2)) {
 //            vLayer.frame = CGRect(x: CGFloat(waveform.x + 1), y: CGFloat(self.waveform.frame.origin.y), width: 1, height: CGFloat(self.waveform.bounds.height))
@@ -292,7 +305,6 @@ extension ViewController {
 
 
 
-
 //MARK - buttons - start/pause/resume
 extension ViewController {
     
@@ -308,8 +320,8 @@ extension ViewController {
             totalTimeLabel.text = "\(t) sec."
             audioRecorder.updateMeters()
             let val = audioRecorder.averagePower(forChannel: 0) - 60
-            updatePeak(val, idx)
-            idx = idx + 1
+            updatePeak(val, sampleIndex)
+            sampleIndex = sampleIndex + 1
         }
     }
     
@@ -318,7 +330,6 @@ extension ViewController {
         
         let time: TimeInterval = TimeInterval(slider.value);
         sender.setTitle("Crop at... \(time) sec", for: .normal)
-        
         crop(sourceURL: getFileUrl(), startTime: 0, endTime: time) { (url) in
             self.suffix = self.suffix + 1
         }
@@ -446,77 +457,83 @@ extension ViewController {
 }
 
 
-extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension ViewController {
     
     func newSecond() {
         values.append([])
-        UIView.performWithoutAnimation {
-            collectionViewWaveform.performBatchUpdates({
-                self.collectionViewWaveform.insertSections(IndexSet([values.count-1]))
-            }) { (done) in
-                self.setOffset()
-            }
-        }
+        collectionViewWaveform.values = values
+        collectionViewWaveform.newSecond(values.count - 1, CGFloat(sampleIndex))
+//        UIView.performWithoutAnimation {
+//            collectionViewWaveform.performBatchUpdates({
+//                self.collectionViewWaveform.insertSections(IndexSet([values.count-1]))
+//            }) { (done) in
+//                self.setOffset()
+//            }
+//        }
     }
     
-    private func updateCell(_ cell: UICollectionViewCell, _ x: CGFloat, _ value: CGFloat) {
-        let layerY = CGFloat(cell.bounds.size.height / 2)
-        let upLayer = CAShapeLayer()
-        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -value)
-        upLayer.backgroundColor = UIColor.red.cgColor
-        upLayer.lineWidth = 1
-        cell.contentView.layer.addSublayer(upLayer)
-        let downLayer = CAShapeLayer()
-        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: value)
-        downLayer.backgroundColor = UIColor.orange.cgColor
-        downLayer.lineWidth = 1
-        cell.contentView.layer.addSublayer(downLayer)
-        setOffset()
-    }
+//    private func updateCell(_ cell: UICollectionViewCell, _ x: CGFloat, _ value: CGFloat) {
+//        let layerY = CGFloat(cell.bounds.size.height / 2)
+//        let upLayer = CAShapeLayer()
+//        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -value)
+//        upLayer.backgroundColor = UIColor.red.cgColor
+//        upLayer.lineWidth = 1
+//        cell.contentView.layer.addSublayer(upLayer)
+//        let downLayer = CAShapeLayer()
+//        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: value)
+//        downLayer.backgroundColor = UIColor.orange.cgColor
+//        downLayer.lineWidth = 1
+//        cell.contentView.layer.addSublayer(downLayer)
+//        setOffset()
+//    }
     
     func setOffset() {
-        let x = CGFloat(idx)
-        if(x > CGFloat(self.view.bounds.width / 2) && isRecording) {
-            collectionViewWaveform.setContentOffset(CGPoint(x: x - CGFloat(self.view.bounds.width / 2), y: 0), animated: false)
-        }
+        collectionViewWaveform.setOffset()
+//        let x = CGFloat(idx)
+//        if(x > CGFloat(self.view.bounds.width / 2) && isRecording) {
+//            collectionViewWaveform.setContentOffset(CGPoint(x: x - CGFloat(self.view.bounds.width / 2), y: 0), animated: false)
+//        }
     }
     
     func update(_ value: CGFloat) {
-        self.sec = Int(idx / elementsPerSecond) + 1
+        self.sec = Int(sampleIndex / elementsPerSecond) + 1
         values[sec - 1].append(value)
-//        print("SEKUNDA: \(sec)| value: \(value) | collectionViewWaveform.numberOfSections: \(collectionViewWaveform.numberOfSections)")
-        let lastCellIdx = IndexPath(row: 0, section: collectionViewWaveform.numberOfSections - 1)
-        if let lastCell = collectionViewWaveform.cellForItem(at: lastCellIdx) {
-            let x = CGFloat(idx%elementsPerSecond)
-            updateCell(lastCell, x, value)
-        }
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return values.count
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: elementsPerSecond, height: 100)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! WaveformCollectionViewCell
         
-        let second = indexPath.section
-        let valuesInSecond: [CGFloat] = values[second]
-    
-        if(valuesInSecond.count >= elementsPerSecond) {
-            for x in 0..<valuesInSecond.count {
-                updateCell(cell, CGFloat(x), valuesInSecond[x])
-            }
-        }
-        return cell
+//        print("SEKUNDA: \(sec)| value: \(value) | collectionViewWaveform.numberOfSections: \(collectionViewWaveform.numberOfSections)")
+//        let lastCellIdx = IndexPath(row: 0, section: collectionViewWaveform.numberOfSections - 1)
+//        if let lastCell = collectionViewWaveform.cellForItem(at: lastCellIdx) {
+//            let x = CGFloat(idx%elementsPerSecond)
+//            updateCell(lastCell, x, value)
+//        }
+        collectionViewWaveform.values = values
+        collectionViewWaveform.update(value: value, sampleIndex: sampleIndex)
     }
+    
+//    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return 1
+//    }
+//
+//    func numberOfSections(in collectionView: UICollectionView) -> Int {
+//        return values.count
+//    }
+//
+//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        return CGSize(width: elementsPerSecond, height: 100)
+//    }
+//
+//    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! WaveformCollectionViewCell
+//
+//        let second = indexPath.section
+//        let valuesInSecond: [CGFloat] = values[second]
+//
+//        if(valuesInSecond.count >= elementsPerSecond) {
+//            for x in 0..<valuesInSecond.count {
+//                updateCell(cell, CGFloat(x), valuesInSecond[x])
+//            }
+//        }
+//        return cell
+//    }
 }
 
 

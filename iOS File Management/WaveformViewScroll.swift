@@ -2,7 +2,7 @@
 import UIKit
 
 
-class WaveformView : UIScrollView {
+class WaveformViewScroll : UIScrollView {
     
     var x: CGFloat = 0
     var averagePower: Float = 0 {
@@ -59,7 +59,7 @@ class WaveformView : UIScrollView {
     }
 }
 
-extension WaveformView: UIScrollViewDelegate {
+extension WaveformViewScroll: UIScrollViewDelegate {
     
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         

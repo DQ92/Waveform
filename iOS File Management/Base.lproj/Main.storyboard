@@ -31,21 +31,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view alpha="0.75" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WeN-QE-gGS" userLabel="bottomView">
-                                <rect key="frame" x="40" y="507" width="4" height="160"/>
-                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="160" id="mxI-JL-sFc"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wwK-ZC-6Xh">
-                                <rect key="frame" x="40" y="666" width="4" height="1"/>
-                                <color key="backgroundColor" red="0.31372549020000001" green="0.45882352939999999" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="Kqi-xo-Gp9"/>
-                                    <constraint firstAttribute="width" constant="4" id="b0j-KO-cuG"/>
-                                </constraints>
-                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DG8-iI-565">
                                 <rect key="frame" x="100" y="119" width="175" height="30"/>
                                 <state key="normal" title="Record At"/>
@@ -76,48 +61,43 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="szb-Tz-d5R">
-                                <rect key="frame" x="0.0" y="237" width="375" height="195"/>
+                                <rect key="frame" x="0.0" y="237" width="375" height="124"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="0.94871040239726023" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GrT-pG-ar6" customClass="WaveformView" customModule="iOS_File_Management" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="237" width="375" height="195"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GrT-pG-ar6" customClass="WaveformViewScroll" customModule="iOS_File_Management" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="237" width="375" height="124"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="0.20652290239726026" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="195" id="B51-6u-GVZ"/>
+                                    <constraint firstAttribute="height" constant="124" id="B51-6u-GVZ"/>
                                 </constraints>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0nj-i6-bMt" customClass="WaveformInfoView" customModule="iOS_File_Management" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="237" width="375" height="195"/>
+                                <rect key="frame" x="0.0" y="237" width="375" height="124"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wUn-YI-p87" customClass="CollectionViewWaveform" customModule="iOS_File_Management" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="567" width="375" height="100"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wUn-YI-p87" customClass="WaveformView" customModule="iOS_File_Management" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="495" width="375" height="124"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="DXW-hy-JqN"/>
+                                    <constraint firstAttribute="height" constant="124" id="DXW-hy-JqN"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="WeN-QE-gGS" firstAttribute="width" secondItem="wwK-ZC-6Xh" secondAttribute="width" id="1b6-4e-uLY"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="width" secondItem="GrT-pG-ar6" secondAttribute="width" id="3AW-mb-Is4"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="46v-QG-VsH"/>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="6VJ-d8-7gu"/>
                             <constraint firstAttribute="trailing" secondItem="GrT-pG-ar6" secondAttribute="trailing" id="7m2-NZ-QVq"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="AFY-QK-CKt"/>
-                            <constraint firstItem="wwK-ZC-6Xh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="CKE-TD-Cza"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="FGx-uD-ajZ"/>
                             <constraint firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="JH6-L2-B52"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="JYt-sh-Kg0"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="Jn8-4B-X5q"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="top" secondItem="FsX-67-dIh" secondAttribute="bottom" constant="32" id="KxZ-e5-0eU"/>
-                            <constraint firstItem="WeN-QE-gGS" firstAttribute="bottom" secondItem="wwK-ZC-6Xh" secondAttribute="bottom" id="LNG-bC-vva"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="8" id="Lw1-Cc-Jr2"/>
                             <constraint firstItem="wUn-YI-p87" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="OeI-Vp-fhh"/>
-                            <constraint firstItem="WeN-QE-gGS" firstAttribute="trailing" secondItem="wwK-ZC-6Xh" secondAttribute="trailing" id="QgB-RL-cTX"/>
-                            <constraint firstItem="wUn-YI-p87" firstAttribute="leading" secondItem="WeN-QE-gGS" secondAttribute="trailing" id="V7b-ki-Chq"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="DG8-iI-565" secondAttribute="bottom" constant="12" id="X2Q-i3-ufn"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="XTz-Bu-OGh"/>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="8" id="ZFp-QP-M8D"/>
@@ -126,17 +106,15 @@
                             <constraint firstItem="szb-Tz-d5R" firstAttribute="top" secondItem="GrT-pG-ar6" secondAttribute="top" id="dFC-bc-BTJ"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="duH-ZW-aL6"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="gib-Nv-xh2"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wUn-YI-p87" secondAttribute="bottom" id="hhd-2K-RG2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wUn-YI-p87" secondAttribute="bottom" constant="48" id="hhd-2K-RG2"/>
                             <constraint firstItem="szb-Tz-d5R" firstAttribute="height" secondItem="GrT-pG-ar6" secondAttribute="height" id="iqF-kv-waN"/>
                             <constraint firstItem="GrT-pG-ar6" firstAttribute="top" secondItem="uoO-gH-8Kj" secondAttribute="bottom" constant="8" id="jIc-e2-yth"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="leading" secondItem="GrT-pG-ar6" secondAttribute="leading" id="kVT-QB-q8i"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
-                            <constraint firstItem="WeN-QE-gGS" firstAttribute="leading" secondItem="wwK-ZC-6Xh" secondAttribute="leading" id="ltK-SH-Yf6"/>
                             <constraint firstItem="szb-Tz-d5R" firstAttribute="leading" secondItem="GrT-pG-ar6" secondAttribute="leading" id="mSW-l4-3Tx"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="K5L-b9-aJW" secondAttribute="trailing" constant="8" id="o2Y-Ex-Lat"/>
                             <constraint firstItem="GrT-pG-ar6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="obd-4J-wGl"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="top" secondItem="GrT-pG-ar6" secondAttribute="top" id="oce-go-pbi"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wwK-ZC-6Xh" secondAttribute="bottom" id="pIc-RR-VD9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="szb-Tz-d5R" secondAttribute="trailing" id="sec-MI-z66"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="100" id="vte-nu-s3B"/>
                             <constraint firstItem="K5L-b9-aJW" firstAttribute="leading" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="32" id="zP4-Ur-Adl"/>
@@ -146,15 +124,12 @@
                             <mask key="constraints">
                                 <exclude reference="Lw1-Cc-Jr2"/>
                                 <exclude reference="3AW-mb-Is4"/>
-                                <exclude reference="V7b-ki-Chq"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="collectionViewRightConstraint" destination="GkH-I4-ZdY" id="Qkd-TH-HLJ"/>
                         <outlet property="collectionViewWaveform" destination="wUn-YI-p87" id="7tK-ar-t2p"/>
-                        <outlet property="maxHeightConstraint" destination="mxI-JL-sFc" id="xcm-ij-xRI"/>
-                        <outlet property="peakConstraint" destination="Kqi-xo-Gp9" id="xW6-xe-chG"/>
                         <outlet property="record_btn_ref" destination="ufi-fB-fAa" id="sRi-nW-EQB"/>
                         <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
                         <outlet property="slider" destination="uoO-gH-8Kj" id="enP-p1-Sit"/>
