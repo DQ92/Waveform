@@ -67,22 +67,13 @@ extension WaveformView {
         elementsPerSecond = Int(width / 6)
     }
     
-    func onPause(sampleIndex: CGFloat) {
-        let halfOfCollectionViewWidth = collectionView.bounds.width / 2
-        let currentX = sampleIndex
-        
-        if currentX < halfOfCollectionViewWidth {
-            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
-            collectionView.contentSize = CGSize(width: collectionView.bounds.width + currentX, height: collectionView.bounds.height)
-        } else {
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
+    func update(value: CGFloat, sampleIndex: Int) {
+        let lastCellIdx = IndexPath(row: 0, section: collectionView.numberOfSections - 1)
+        if let lastCell = collectionView.cellForItem(at: lastCellIdx) {
+            let x = CGFloat(sampleIndex % elementsPerSecond)
+            updateCell(lastCell, x, value)
         }
     }
-}
-
-
-// MARK - delegate & datasource
-extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func newSecond(_ second: Int, _ x: CGFloat) {
         UIView.performWithoutAnimation {
@@ -109,7 +100,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         setOffset()
     }
     
-    func setOffset() {
+    private func setOffset() {
         updateLeadingLine()
         let x = CGFloat(sampleIndex)
         if(x > (width / 2) && isRecording) {
@@ -125,13 +116,22 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         }
     }
     
-    func update(value: CGFloat, sampleIndex: Int) {
-        let lastCellIdx = IndexPath(row: 0, section: collectionView.numberOfSections - 1)
-        if let lastCell = collectionView.cellForItem(at: lastCellIdx) {
-            let x = CGFloat(sampleIndex % elementsPerSecond)
-            updateCell(lastCell, x, value)
+    func onPause(sampleIndex: CGFloat) {
+        let halfOfCollectionViewWidth = collectionView.bounds.width / 2
+        let currentX = sampleIndex
+        
+        if currentX < halfOfCollectionViewWidth {
+            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
+            collectionView.contentSize = CGSize(width: collectionView.bounds.width + currentX, height: collectionView.bounds.height)
+        } else {
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
         }
     }
+}
+
+
+// MARK - delegate & datasource
+extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1
@@ -157,6 +157,21 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
             }
         }
         return cell
+    }
+}
+
+
+
+//TODO przenieść
+class WaveformCollectionViewCell: UICollectionViewCell {
+    
+    var baseLayer = CAShapeLayer()
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        contentView.layer.sublayers = []
+        contentView.backgroundColor = nil
     }
 }
 

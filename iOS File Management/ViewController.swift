@@ -67,17 +67,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 //                collectionViewRightConstraint.constant = self.padding
 //                waveform.onPause()
                 collectionViewWaveform.isUserInteractionEnabled = true
-                
                 collectionViewWaveform.onPause(sampleIndex: CGFloat(sampleIndex))
-                
-//                let halfOfCollectionViewWidth = collectionViewWaveform.bounds.width / 2
-//                let currentX = CGFloat(idx)
-//                if currentX < halfOfCollectionViewWidth {
-//                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
-//                    collectionViewWaveform.contentSize = CGSize(width: collectionViewWaveform.bounds.width + currentX, height: collectionViewWaveform.bounds.height)
-//                } else {
-//                    collectionViewWaveform.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
-//                }
             }
         }
     }
@@ -98,27 +88,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         super.viewDidLoad()
         
         removeTempDict()
-        addVerticalLayer()
         createDictInTemp()
         
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
-        
-//        collectionViewWaveform.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewCell")
-//        collectionViewWaveform.dataSource = self
-//        collectionViewWaveform.delegate = self
-//        let layout = UICollectionViewFlowLayout()
-//        layout.itemSize = CGSize(width: partOfView, height: 100)
-//        layout.minimumInteritemSpacing = 0
-//        layout.minimumLineSpacing = 0
-//        layout.sectionInset = UIEdgeInsets.zero
-//        layout.scrollDirection = .horizontal
-//        collectionViewWaveform.collectionViewLayout = layout
-//        collectionViewWaveform.reloadData()
-//        collectionViewWaveform.scrollTo(direction: .Left)
-        
-//        leadingLine.frame = CGRect(x: 0, y: -10, width: 1, height: 110)
-//        self.collectionViewWaveform.layer.addSublayer(leadingLine)
     }
 
     func listFiles() {
@@ -161,7 +134,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBAction func sliderDidChanged(_ sender: UISlider) {
         isMovedWhenPaused = true
-//        log("Slider value: \(sender.value)")
     }
     
     func getAllAudioParts() -> [AVAsset] {
@@ -269,36 +241,9 @@ extension ViewController {
             log("Don't have access to use your microphone.")
         }
     }
-    
-    func updatePeak(_ peak: Float, _ timeInterval: Int) {
-        // -160 minimum -> 0
-        // 0 -> max
-        let _peak: Float = (-1) * peak
-        var value: Float = max - _peak
-        value = value > 1 ? value : 4
-        
-//        updateLeadingLine()
-        
-//        if(Int(value) % 10 == 0) {
-            update(CGFloat(value))
-//        }
-        
-//        waveform.averagePower = value
-//        if(waveform.x < CGFloat(self.view.bounds.width / 2)) {
-//            vLayer.frame = CGRect(x: CGFloat(waveform.x + 1), y: CGFloat(self.waveform.frame.origin.y), width: 1, height: CGFloat(self.waveform.bounds.height))
-//        }
-    }
-    
-    func addVerticalLayer() {
-        vLayer.frame = CGRect(x: 0, y: Int(self.waveform.frame.origin.y), width: 1, height: Int(self.waveform.bounds.height))
-        vLayer.backgroundColor = UIColor.blue.cgColor
-        vLayer.lineWidth = 1
-        view.layer.addSublayer(vLayer)
-    }
-    
+
     @IBAction func finishButtonTapped(_ sender: Any) {
         stop()
-        
         merge(assets: getAllAudioParts())
     }
 }
@@ -319,10 +264,21 @@ extension ViewController {
             let t = totalDuration + currentDuration
             totalTimeLabel.text = "\(t) sec."
             audioRecorder.updateMeters()
-            let val = audioRecorder.averagePower(forChannel: 0) - 60
-            updatePeak(val, sampleIndex)
+            let peak = audioRecorder.averagePower(forChannel: 0) - 60
+            updatePeak(peak)
             sampleIndex = sampleIndex + 1
         }
+    }
+    
+    func updatePeak(_ peak: Float) {
+        let _peak: Float = (-1) * peak
+        var value: Float = max - _peak
+        value = value > 1 ? value : 4
+        
+        self.sec = Int(sampleIndex / elementsPerSecond) + 1
+        values[sec - 1].append(CGFloat(value))
+        collectionViewWaveform.values = values
+        collectionViewWaveform.update(value: CGFloat(value), sampleIndex: sampleIndex)
     }
     
     @IBAction func recordAt(_ sender: UIButton) {
@@ -454,99 +410,13 @@ extension ViewController {
         }
     }
 
-}
-
-
-extension ViewController {
-    
     func newSecond() {
         values.append([])
         collectionViewWaveform.values = values
         collectionViewWaveform.newSecond(values.count - 1, CGFloat(sampleIndex))
-//        UIView.performWithoutAnimation {
-//            collectionViewWaveform.performBatchUpdates({
-//                self.collectionViewWaveform.insertSections(IndexSet([values.count-1]))
-//            }) { (done) in
-//                self.setOffset()
-//            }
-//        }
     }
-    
-//    private func updateCell(_ cell: UICollectionViewCell, _ x: CGFloat, _ value: CGFloat) {
-//        let layerY = CGFloat(cell.bounds.size.height / 2)
-//        let upLayer = CAShapeLayer()
-//        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -value)
-//        upLayer.backgroundColor = UIColor.red.cgColor
-//        upLayer.lineWidth = 1
-//        cell.contentView.layer.addSublayer(upLayer)
-//        let downLayer = CAShapeLayer()
-//        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: value)
-//        downLayer.backgroundColor = UIColor.orange.cgColor
-//        downLayer.lineWidth = 1
-//        cell.contentView.layer.addSublayer(downLayer)
-//        setOffset()
-//    }
-    
-    func setOffset() {
-        collectionViewWaveform.setOffset()
-//        let x = CGFloat(idx)
-//        if(x > CGFloat(self.view.bounds.width / 2) && isRecording) {
-//            collectionViewWaveform.setContentOffset(CGPoint(x: x - CGFloat(self.view.bounds.width / 2), y: 0), animated: false)
-//        }
-    }
-    
-    func update(_ value: CGFloat) {
-        self.sec = Int(sampleIndex / elementsPerSecond) + 1
-        values[sec - 1].append(value)
-        
-//        print("SEKUNDA: \(sec)| value: \(value) | collectionViewWaveform.numberOfSections: \(collectionViewWaveform.numberOfSections)")
-//        let lastCellIdx = IndexPath(row: 0, section: collectionViewWaveform.numberOfSections - 1)
-//        if let lastCell = collectionViewWaveform.cellForItem(at: lastCellIdx) {
-//            let x = CGFloat(idx%elementsPerSecond)
-//            updateCell(lastCell, x, value)
-//        }
-        collectionViewWaveform.values = values
-        collectionViewWaveform.update(value: value, sampleIndex: sampleIndex)
-    }
-    
-//    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 1
-//    }
-//
-//    func numberOfSections(in collectionView: UICollectionView) -> Int {
-//        return values.count
-//    }
-//
-//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: elementsPerSecond, height: 100)
-//    }
-//
-//    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! WaveformCollectionViewCell
-//
-//        let second = indexPath.section
-//        let valuesInSecond: [CGFloat] = values[second]
-//
-//        if(valuesInSecond.count >= elementsPerSecond) {
-//            for x in 0..<valuesInSecond.count {
-//                updateCell(cell, CGFloat(x), valuesInSecond[x])
-//            }
-//        }
-//        return cell
-//    }
 }
 
 
-class WaveformCollectionViewCell: UICollectionViewCell {
-    
-    var baseLayer = CAShapeLayer()
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        contentView.layer.sublayers = []
-        contentView.backgroundColor = nil
-    }
-}
 
 
