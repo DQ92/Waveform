@@ -151,6 +151,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="collectionViewRightConstraint" destination="GkH-I4-ZdY" id="Qkd-TH-HLJ"/>
                         <outlet property="collectionViewWaveform" destination="wUn-YI-p87" id="7tK-ar-t2p"/>
                         <outlet property="maxHeightConstraint" destination="mxI-JL-sFc" id="xcm-ij-xRI"/>
                         <outlet property="peakConstraint" destination="Kqi-xo-Gp9" id="xW6-xe-chG"/>

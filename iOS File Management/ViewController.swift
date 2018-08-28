@@ -22,6 +22,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var waveform: WaveformView!
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var collectionViewWaveform: CollectionViewWaveform!
+    @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     
     var values = [[CGFloat]]()
     let vLayer = CAShapeLayer()
@@ -37,6 +38,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             }
         }
     }
+    
+    let padding: CGFloat = 0
     private var elementsPerSecond: Int {
         return Int((UIScreen.main.bounds.width) / 6)
     }
@@ -44,17 +47,18 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var isRecording = false {
         didSet {
             if(isRecording) {
-                waveformRightConstraint.constant = self.view.frame.width / 2
-                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-                waveform.isUserInteractionEnabled = false
+//                collectionViewRightConstraint.constant = self.view.frame.width / 2
+//                waveformRightConstraint.constant = self.view.frame.width / 2
+//                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+//                waveform.isUserInteractionEnabled = false
                 collectionViewWaveform.isUserInteractionEnabled = false
             } else {
-                waveformRightConstraint.constant = waveform.padding
-                waveform.isUserInteractionEnabled = true
+//                waveformRightConstraint.constant = waveform.padding
+//                waveform.isUserInteractionEnabled = true
+//                collectionViewRightConstraint.constant = self.padding
+//                waveform.onPause()
                 collectionViewWaveform.isUserInteractionEnabled = true
-                waveform.onPause()
             }
-            collectionViewWaveform.reloadData()
         }
     }
     var suffix: Int = 0
@@ -92,7 +96,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         layout.scrollDirection = .horizontal
         collectionViewWaveform.collectionViewLayout = layout
         collectionViewWaveform.reloadData()
-        collectionViewWaveform.scrollTo(direction: .Right)
+        collectionViewWaveform.scrollTo(direction: .Left)
     }
 
     func listFiles() {
@@ -256,11 +260,11 @@ extension ViewController {
 //        }
         
         peakConstraint.constant = CGFloat(value)
-        waveform.averagePower = value
+//        waveform.averagePower = value
         
-        if(waveform.x < CGFloat(self.view.bounds.width / 2)) {
-            vLayer.frame = CGRect(x: CGFloat(waveform.x + 1), y: CGFloat(self.waveform.frame.origin.y), width: 1, height: CGFloat(self.waveform.bounds.height))
-        }
+//        if(waveform.x < CGFloat(self.view.bounds.width / 2)) {
+//            vLayer.frame = CGRect(x: CGFloat(waveform.x + 1), y: CGFloat(self.waveform.frame.origin.y), width: 1, height: CGFloat(self.waveform.bounds.height))
+//        }
     }
     
     func addVerticalLayer() {
@@ -440,7 +444,9 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         UIView.performWithoutAnimation {
             collectionViewWaveform.performBatchUpdates({
                 self.collectionViewWaveform.insertSections(IndexSet([values.count-1]))
-            }, completion:nil)
+            }) { (done) in
+                self.setOffset()
+            }
         }
     }
     
@@ -456,6 +462,13 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         downLayer.backgroundColor = UIColor.orange.cgColor
         downLayer.lineWidth = 1
         cell.contentView.layer.addSublayer(downLayer)
+        setOffset()
+    }
+    
+    func setOffset() {
+        if(CGFloat(idx) > CGFloat(self.view.bounds.width / 2)) {
+            collectionViewWaveform.setContentOffset(CGPoint(x: idx - Int(self.view.bounds.width / 2), y: 0), animated: false)
+        }
     }
     
     func update(_ value: CGFloat) {
