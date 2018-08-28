@@ -108,7 +108,7 @@
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="AFY-QK-CKt"/>
                             <constraint firstItem="wwK-ZC-6Xh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="CKE-TD-Cza"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="FGx-uD-ajZ"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
+                            <constraint firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" id="JH6-L2-B52"/>
                             <constraint firstItem="0nj-i6-bMt" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="JYt-sh-Kg0"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="leading" id="Jn8-4B-X5q"/>
@@ -159,7 +159,7 @@
                         <outlet property="slider" destination="uoO-gH-8Kj" id="enP-p1-Sit"/>
                         <outlet property="totalTimeLabel" destination="K5L-b9-aJW" id="n2m-AI-afh"/>
                         <outlet property="waveform" destination="GrT-pG-ar6" id="6tC-cu-dBa"/>
-                        <outlet property="waveformRightConstraint" destination="7m2-NZ-QVq" id="dcg-Sx-Sl4"/>
+                        <outlet property="waveformRightConstraint" destination="7m2-NZ-QVq" id="9hv-LJ-53A"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
