@@ -10,6 +10,7 @@
 		655BAC872130961C00AB828A /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC862130961C00AB828A /* WaveformView.swift */; };
 		655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC882131EFC900AB828A /* WaveformInfoView.swift */; };
 		655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 655BAC8A2131F02500AB828A /* WaveformInfoView.xib */; };
+		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
 		BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE02088EFEF00E52984 /* AppDelegate.swift */; };
 		BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE22088EFEF00E52984 /* ViewController.swift */; };
 		BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE42088EFEF00E52984 /* Main.storyboard */; };
@@ -21,6 +22,7 @@
 		655BAC862130961C00AB828A /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		655BAC882131EFC900AB828A /* WaveformInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
 		655BAC8A2131F02500AB828A /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
+		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* iOS File Management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS File Management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC925FE02088EFEF00E52984 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC925FE22088EFEF00E52984 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				655BAC862130961C00AB828A /* WaveformView.swift */,
 				655BAC882131EFC900AB828A /* WaveformInfoView.swift */,
 				655BAC8A2131F02500AB828A /* WaveformInfoView.xib */,
+				65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */,
 			);
 			path = "iOS File Management";
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 				BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */,
 				BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */,
 				655BAC872130961C00AB828A /* WaveformView.swift in Sources */,
+				65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */,
 				655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
