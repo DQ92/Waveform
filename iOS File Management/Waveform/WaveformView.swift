@@ -8,11 +8,21 @@ class WaveformView: UIView {
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
     private var width: CGFloat {
-        return UIScreen.main.bounds.size.width //self.view.frame.size.width // TODO, nie działa dla self.view
+        return self.view.frame.size.width // TODO, nie działa dla self.view  UIScreen.main.bounds.size.width //
     }
     
     var values = [[CGFloat]]()
-    var sampleIndex: Int = 0
+    var sampleIndex: Int = 0 {
+        didSet {
+            let sec = (values.count - 1) * elementsPerSecond
+            let temp = values[values.count - 1].count + sec
+            if temp == sampleIndex {
+                
+            } else {
+                print("BŁĄD! temo: \(temp) | sampleIndex: \(sampleIndex)")
+            }
+        }
+    }
     var isRecording: Bool = false
     
     
