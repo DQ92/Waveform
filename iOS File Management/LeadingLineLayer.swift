@@ -1,7 +1,7 @@
 
 import UIKit
 
-class LeadingLineLayer: CAShapeLayer {
+class LeadingLineLayer: CALayer {
 
     private let width: CGFloat = 1
     var dotSize: CGFloat = 7
@@ -11,7 +11,6 @@ class LeadingLineLayer: CAShapeLayer {
     private func setup() {
         addSublayer(prepareDot(self.frame.size.height))
         addSublayer(prepareDot(0))
-        lineWidth = width
         backgroundColor = color.cgColor
     }
     
