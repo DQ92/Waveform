@@ -148,7 +148,8 @@ extension WaveformView {
         if(x < (self.width / 2)) {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
-            leadingLine.position = CGPoint(x: x + 1, y: y)
+            let point = CGPoint(x: x + 1, y: y)
+            leadingLine.position = point
             leadingLineTimeUpdater.changeTime(withXPosition: point.x)
             CATransaction.commit()
         }
