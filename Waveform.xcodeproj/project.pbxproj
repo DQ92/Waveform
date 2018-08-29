@@ -14,11 +14,14 @@
 		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
 		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
 		65FD73C12135E7630003029F /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65FD73C02135E7630003029F /* WaveformView.xib */; };
+		709924212136B5F300105C09 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
 		BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE02088EFEF00E52984 /* AppDelegate.swift */; };
 		BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE22088EFEF00E52984 /* ViewController.swift */; };
 		BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE42088EFEF00E52984 /* Main.storyboard */; };
-		BC925FE82088EFEF00E52984 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE72088EFEF00E52984 /* Assets.xcassets */; };
 		BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE92088EFEF00E52984 /* LaunchScreen.storyboard */; };
+		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
+		E8893DBF9D8C3E48CE3D58A4 /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B456FC016E395612722 /* WaveformCollectionViewCell.swift */; };
+		E8893FEE137AB88C5E648D38 /* LeadingLineTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88938C33E6DE8B1F4B8EDE4 /* LeadingLineTime.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,13 +32,16 @@
 		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
 		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		65FD73C02135E7630003029F /* WaveformView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
-		BC925FDD2088EFEF00E52984 /* iOS File Management.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS File Management.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC925FE02088EFEF00E52984 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC925FE22088EFEF00E52984 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BC925FE52088EFEF00E52984 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		BC925FE72088EFEF00E52984 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BC925FEA2088EFEF00E52984 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		BC925FEC2088EFEF00E52984 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
+		E88938C33E6DE8B1F4B8EDE4 /* LeadingLineTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineTime.swift; sourceTree = "<group>"; };
+		E8893B456FC016E395612722 /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
+		E8893F77695D0196AD278505 /* README.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.MD; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,56 +55,75 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		65FD73BD2135E6E60003029F /* Waveform */ = {
+		65FD73BD2135E6E60003029F /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				65FD73BE2135E6F50003029F /* WaveformView.swift */,
 				65FD73C02135E7630003029F /* WaveformView.xib */,
+				E8893C36EDD57012E5DC2C8E /* ReusableView */,
+				E88938C33E6DE8B1F4B8EDE4 /* LeadingLineTime.swift */,
 			);
-			path = Waveform;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		BC925FD42088EFEF00E52984 = {
 			isa = PBXGroup;
 			children = (
-				BC925FDF2088EFEF00E52984 /* iOS File Management */,
+				BC925FDF2088EFEF00E52984 /* Waveform */,
+				E8893976D6167E37EF11A033 /* Resources */,
 				BC925FDE2088EFEF00E52984 /* Products */,
+				E8893F77695D0196AD278505 /* README.MD */,
 			);
 			sourceTree = "<group>";
 		};
 		BC925FDE2088EFEF00E52984 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BC925FDD2088EFEF00E52984 /* iOS File Management.app */,
+				BC925FDD2088EFEF00E52984 /* Waveform.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BC925FDF2088EFEF00E52984 /* iOS File Management */ = {
+		BC925FDF2088EFEF00E52984 /* Waveform */ = {
 			isa = PBXGroup;
 			children = (
-				65FD73BD2135E6E60003029F /* Waveform */,
+				65FD73BD2135E6E60003029F /* Source */,
 				BC925FE02088EFEF00E52984 /* AppDelegate.swift */,
 				BC925FE22088EFEF00E52984 /* ViewController.swift */,
 				BC925FE42088EFEF00E52984 /* Main.storyboard */,
-				BC925FE72088EFEF00E52984 /* Assets.xcassets */,
 				BC925FE92088EFEF00E52984 /* LaunchScreen.storyboard */,
-				BC925FEC2088EFEF00E52984 /* Info.plist */,
 				655BAC862130961C00AB828A /* WaveformViewScroll.swift */,
 				655BAC882131EFC900AB828A /* WaveformInfoView.swift */,
 				655BAC8A2131F02500AB828A /* WaveformInfoView.xib */,
 				65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */,
 				65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */,
 			);
-			path = "iOS File Management";
+			path = Waveform;
+			sourceTree = "<group>";
+		};
+		E8893976D6167E37EF11A033 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E88933E17C3DD509432D589D /* Assets.xcassets */,
+				E8893772C0A0AF858ED58E14 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E8893C36EDD57012E5DC2C8E /* ReusableView */ = {
+			isa = PBXGroup;
+			children = (
+				E8893B456FC016E395612722 /* WaveformCollectionViewCell.swift */,
+			);
+			path = ReusableView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BC925FDC2088EFEF00E52984 /* iOS File Management */ = {
+		BC925FDC2088EFEF00E52984 /* Waveform */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BC925FEF2088EFEF00E52984 /* Build configuration list for PBXNativeTarget "iOS File Management" */;
+			buildConfigurationList = BC925FEF2088EFEF00E52984 /* Build configuration list for PBXNativeTarget "Waveform" */;
 			buildPhases = (
 				BC925FD92088EFEF00E52984 /* Sources */,
 				BC925FDA2088EFEF00E52984 /* Frameworks */,
@@ -108,9 +133,9 @@
 			);
 			dependencies = (
 			);
-			name = "iOS File Management";
+			name = Waveform;
 			productName = "iOS File Management";
-			productReference = BC925FDD2088EFEF00E52984 /* iOS File Management.app */;
+			productReference = BC925FDD2088EFEF00E52984 /* Waveform.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -120,7 +145,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Andrew L. Jaffee";
 				TargetAttributes = {
 					BC925FDC2088EFEF00E52984 = {
@@ -134,7 +159,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BC925FD82088EFEF00E52984 /* Build configuration list for PBXProject "iOS File Management" */;
+			buildConfigurationList = BC925FD82088EFEF00E52984 /* Build configuration list for PBXProject "Waveform" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -147,7 +172,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BC925FDC2088EFEF00E52984 /* iOS File Management */,
+				BC925FDC2088EFEF00E52984 /* Waveform */,
 			);
 		};
 /* End PBXProject section */
@@ -158,10 +183,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */,
-				BC925FE82088EFEF00E52984 /* Assets.xcassets in Resources */,
 				BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */,
+				709924212136B5F300105C09 /* Info.plist in Resources */,
 				65FD73C12135E7630003029F /* WaveformView.xib in Resources */,
 				655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */,
+				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,6 +205,8 @@
 				655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */,
 				65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */,
 				655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */,
+				E8893DBF9D8C3E48CE3D58A4 /* WaveformCollectionViewCell.swift in Sources */,
+				E8893FEE137AB88C5E648D38 /* LeadingLineTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +246,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -225,6 +254,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -275,6 +305,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -282,6 +313,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -317,7 +349,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 42TZBS6YJV;
-				INFOPLIST_FILE = "iOS File Management/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -332,7 +364,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 42TZBS6YJV;
-				INFOPLIST_FILE = "iOS File Management/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -344,7 +376,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BC925FD82088EFEF00E52984 /* Build configuration list for PBXProject "iOS File Management" */ = {
+		BC925FD82088EFEF00E52984 /* Build configuration list for PBXProject "Waveform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC925FED2088EFEF00E52984 /* Debug */,
@@ -353,7 +385,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BC925FEF2088EFEF00E52984 /* Build configuration list for PBXNativeTarget "iOS File Management" */ = {
+		BC925FEF2088EFEF00E52984 /* Build configuration list for PBXNativeTarget "Waveform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC925FF02088EFEF00E52984 /* Debug */,
