@@ -131,15 +131,15 @@ extension WaveformView {
     }
     
     func onPause(sampleIndex: CGFloat) {
-        let halfOfCollectionViewWidth = collectionView.bounds.width / 2
+        let halfOfCollectionViewWidth = width / 2
         let currentX = sampleIndex
-        
+        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
+
         if currentX < halfOfCollectionViewWidth {
-            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
-            collectionView.contentSize = CGSize(width: collectionView.bounds.width + currentX, height: collectionView.bounds.height)
+            collectionView.contentSize = CGSize(width: width + currentX, height: collectionView.bounds.height)
+            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - numberOfElementsInLastSection))
         } else {
-            let test = CGFloat(elementsPerSecond - values[values.count - 1].count)
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - test)
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
         }
     }
 }
