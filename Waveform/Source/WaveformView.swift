@@ -10,6 +10,7 @@ class WaveformView: UIView {
 
     // MARK: - Private properties
 
+    private let leadingLineAnimationDuration = timeInterval //TODO wywalić zmienną globalną
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
     private var width: CGFloat {
@@ -119,6 +120,7 @@ extension WaveformView {
     }
 
     private func updateCell(_ cell: UICollectionViewCell, _ x: CGFloat, _ value: CGFloat) {
+        updateLeadingLine()
         let layerY = CGFloat(cell.bounds.size.height / 2)
         let upLayer = CAShapeLayer()
         upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -value)
@@ -134,7 +136,6 @@ extension WaveformView {
     }
 
     private func setOffset() {
-        updateLeadingLine()
         let x = CGFloat(sampleIndex)
         if (x > (width / 2) && isRecording) {
             collectionView.setContentOffset(CGPoint(x: x - (self.width / 2), y: 0), animated: false)
@@ -143,24 +144,26 @@ extension WaveformView {
 
     private func updateLeadingLine() {
         let y: CGFloat = leadingLine.position.y
-        let x: CGFloat = leadingLine.position.x
-        if (x < (self.width / 2)) {
-            let point = CGPoint(x: x + 1, y: y)
+        let x = leadingLine.position.x
+        if(x < (self.width / 2)) {
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(leadingLineAnimationDuration)
             leadingLine.position = CGPoint(x: x + 1, y: y)
             leadingLineTimeUpdater.changeTime(withXPosition: point.x)
+            CATransaction.commit()
         }
     }
 
     func onPause(sampleIndex: CGFloat) {
-        let halfOfCollectionViewWidth = collectionView.bounds.width / 2
+        let halfOfCollectionViewWidth = width / 2
         let currentX = sampleIndex
+        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
 
         if currentX < halfOfCollectionViewWidth {
-            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
-            collectionView.contentSize = CGSize(width: collectionView.bounds.width + currentX, height: collectionView.bounds.height)
+            collectionView.contentSize = CGSize(width: width + currentX, height: collectionView.bounds.height)
+            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - numberOfElementsInLastSection))
         } else {
-            let test = CGFloat(elementsPerSecond - values[values.count - 1].count)
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - test)
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
         }
     }
 }
