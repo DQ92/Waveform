@@ -8,7 +8,7 @@ class WaveformView: UIView {
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
     private var width: CGFloat {
-        return self.view.frame.size.width // TODO, nie działa dla self.view  UIScreen.main.bounds.size.width //
+        return UIScreen.main.bounds.size.width // TODO, nie działa dla self.view  UIScreen.main.bounds.size.width //
     }
     
     var values = [[CGFloat]]()
@@ -134,7 +134,8 @@ extension WaveformView {
             collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, halfOfCollectionViewWidth + currentX)
             collectionView.contentSize = CGSize(width: collectionView.bounds.width + currentX, height: collectionView.bounds.height)
         } else {
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth)
+            let test = CGFloat(elementsPerSecond - values[values.count - 1].count)
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - test)
         }
     }
 }
@@ -161,10 +162,8 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         let second = indexPath.section
         let valuesInSecond: [CGFloat] = values[second]
         
-        if(valuesInSecond.count >= elementsPerSecond) {
-            for x in 0..<valuesInSecond.count {
-                updateCell(cell, CGFloat(x), valuesInSecond[x])
-            }
+        for x in 0..<valuesInSecond.count {
+            updateCell(cell, CGFloat(x), valuesInSecond[x])
         }
         return cell
     }
