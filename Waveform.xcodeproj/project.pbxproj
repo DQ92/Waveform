@@ -10,6 +10,7 @@
 		655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC862130961C00AB828A /* WaveformViewScroll.swift */; };
 		655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC882131EFC900AB828A /* WaveformInfoView.swift */; };
 		655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 655BAC8A2131F02500AB828A /* WaveformInfoView.xib */; };
+		65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9242421387B790097F424 /* ViewController+Recorder.swift */; };
 		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
 		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
 		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
@@ -28,6 +29,7 @@
 		655BAC862130961C00AB828A /* WaveformViewScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformViewScroll.swift; sourceTree = "<group>"; };
 		655BAC882131EFC900AB828A /* WaveformInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
 		655BAC8A2131F02500AB828A /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
+		65A9242421387B790097F424 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
 		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
 		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
 		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				655BAC8A2131F02500AB828A /* WaveformInfoView.xib */,
 				65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */,
 				65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */,
+				65A9242421387B790097F424 /* ViewController+Recorder.swift */,
 			);
 			path = Waveform;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 			files = (
 				BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */,
 				BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */,
+				65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */,
 				65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */,
 				65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */,
 				655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */,
