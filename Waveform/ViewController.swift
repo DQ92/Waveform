@@ -286,7 +286,11 @@ extension ViewController {
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
         let model = createModel(value: CGFloat(value))
 //        values[values.count - 1].append(model)
-        values[sec - 1].append(model)
+        if(values[sec - 1].count == elementsPerSecond) {
+            values[sec - 1].insert(model, at: (sampleIndex % elementsPerSecond))
+        } else {
+            values[sec - 1].append(model)
+        }
         
         collectionViewWaveform.values = values
         collectionViewWaveform.update(model: model, sampleIndex: sampleIndex)
