@@ -26,11 +26,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     private let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
                                                                in: .userDomainMask).first!
 
-    var values = [[CGFloat]]() {
+    var values = [[WaveformModel]]() {
         didSet {
             collectionViewWaveform.values = values
         }
     }
+    
     let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
@@ -48,17 +49,43 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             }
         }
     }
-
+    var leadingLineX: CGFloat = 0
     let padding: CGFloat = 0
     private var elementsPerSecond: Int {
         return Int((UIScreen.main.bounds.width) / 6)
     }
 
+    var part = 0
+    var shouldCutAudio = false {
+        didSet {
+            print("shouldCutAudio = \(shouldCutAudio)")
+        }
+    }
+    var prevScrollX = 0 {
+        didSet {
+            if(oldValue != prevScrollX && !isRecording) {
+                shouldCutAudio = true
+            }
+        }
+    }
+    
     var isRecording = false {
         didSet {
             collectionViewWaveform.isRecording = isRecording
 
             if (isRecording) {
+                
+                if(shouldCutAudio) {
+                    part = part + 1
+                    print("BEFORE: values.count: \(values.count)")
+                    let sec = Int(leadingLineX) / elementsPerSecond
+                    values = Array(values[0...sec])
+                    shouldCutAudio = false
+                    collectionViewWaveform.refresh()
+                    
+                    print("AFTER: values.count: \(values.count)")
+                }
+                
 //                collectionViewRightConstraint.constant = self.view.frame.width / 2
 //                waveformRightConstraint.constant = self.view.frame.width / 2
 //                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
@@ -94,6 +121,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
+        
+        collectionViewWaveform.delegate = self
     }
 
     func listFiles() {
@@ -246,6 +275,17 @@ extension ViewController {
         stop()
         merge(assets: getAllAudioParts())
     }
+    
+    func createModel(value: CGFloat) -> WaveformModel {
+//        let sec = self.values.count
+//        let prevC = values[sec-1].count
+//
+//        if let prevPart = values.last?.last?.part {
+//        if let prevPart = values.last?[prevC].part {
+        return WaveformModel(value: value, part: part)
+//        }
+//        return WaveformModel(value: value, part: 0)
+    }
 }
 
 //MARK - buttons - start/pause/resume
@@ -274,9 +314,12 @@ extension ViewController {
         value = value > 1 ? value : 4
 
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
-        values[sec - 1].append(CGFloat(value))
+        let model = createModel(value: CGFloat(value))
+        values[values.count - 1].append(model)
+//        values[sec - 1].append(model)
+        
         collectionViewWaveform.values = values
-        collectionViewWaveform.update(value: CGFloat(value), sampleIndex: sampleIndex)
+        collectionViewWaveform.update(model: model, sampleIndex: sampleIndex)
     }
 
     @IBAction func recordAt(_ sender: UIButton) {
@@ -417,11 +460,20 @@ extension ViewController {
     }
 }
 
-// MARK: - Timer
 
-extension ViewController {
-
-
-
-
+// MARK: - WaveformViewDelegate
+extension ViewController: WaveformViewDelegate {
+    
+    func didScroll(_ x: CGFloat, _ leadingLineX: CGFloat) {
+        if(!self.isRecording) {
+                prevScrollX = Int(x)
+                self.leadingLineX = x
+            
+//            if let last = values.last?.last?.part {
+//                print("BEFORE didScroll: \(String(describing: values.last?.last?.part))")
+//                values.last!.last!.part = last + 1
+//                print("AFTER didScroll: \(String(describing: values.last?.last?.part))")
+//            }
+        }
+    }
 }

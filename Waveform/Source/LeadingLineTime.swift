@@ -23,8 +23,8 @@ class LeadingLineTime {
     // MARK: - Access method
 
     func changeTime(withXPosition position: CGFloat) {
-        print("---------------------------------------")
-        print("X position changed: ----\(position/CGFloat(elementsPerSecond))----")
+//        print("---------------------------------------")
+//        print("X position changed: \(position/CGFloat(elementsPerSecond))")
     }
 
 }
