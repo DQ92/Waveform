@@ -56,51 +56,27 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     }
 
     var part = 0
-    var shouldCutAudio = false {
-        didSet {
-            print("shouldCutAudio = \(shouldCutAudio)")
-        }
-    }
-    var prevScrollX = 0 {
-        didSet {
-            if(oldValue != prevScrollX && !isRecording) {
-                shouldCutAudio = true
-            }
-        }
-    }
-    
     var isRecording = false {
         didSet {
             collectionViewWaveform.isRecording = isRecording
 
             if (isRecording) {
-                
-                if(shouldCutAudio) {
+                if(currentIndex < sampleIndex) {
+                    CATransaction.begin()
                     part = part + 1
-                    print("BEFORE: values.count: \(values.count)")
-                    let sec = Int(leadingLineX) / elementsPerSecond
-                    values = Array(values[0...sec])
-                    shouldCutAudio = false
+                    sampleIndex = currentIndex
+                    collectionViewWaveform.values = values
                     collectionViewWaveform.refresh()
-                    
-                    print("AFTER: values.count: \(values.count)")
+                    CATransaction.commit()
                 }
-                
-//                collectionViewRightConstraint.constant = self.view.frame.width / 2
-//                waveformRightConstraint.constant = self.view.frame.width / 2
-//                waveform.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-//                waveform.isUserInteractionEnabled = false
                 collectionViewWaveform.isUserInteractionEnabled = false
             } else {
-//                waveformRightConstraint.constant = waveform.padding
-//                waveform.isUserInteractionEnabled = true
-//                collectionViewRightConstraint.constant = self.padding
-//                waveform.onPause()
                 collectionViewWaveform.isUserInteractionEnabled = true
                 collectionViewWaveform.onPause(sampleIndex: CGFloat(sampleIndex))
             }
         }
     }
+    var currentIndex: Int = 0
     var suffix: Int = 0
     private let tempDictName = "temp_audio"
     let fileManager = FileManager.default
@@ -225,9 +201,10 @@ extension ViewController {
 
     func resume() {
         log("Resumed")
-        audioRecorder.record()
-        record_btn_ref.setTitle("Pause", for: .normal)
         isRecording = true
+        
+        record_btn_ref.setTitle("Pause", for: .normal)
+        audioRecorder.record()
     }
 
     func pause() {
@@ -277,14 +254,7 @@ extension ViewController {
     }
     
     func createModel(value: CGFloat) -> WaveformModel {
-//        let sec = self.values.count
-//        let prevC = values[sec-1].count
-//
-//        if let prevPart = values.last?.last?.part {
-//        if let prevPart = values.last?[prevC].part {
         return WaveformModel(value: value, part: part)
-//        }
-//        return WaveformModel(value: value, part: 0)
     }
 }
 
@@ -315,8 +285,8 @@ extension ViewController {
 
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
         let model = createModel(value: CGFloat(value))
-        values[values.count - 1].append(model)
-//        values[sec - 1].append(model)
+//        values[values.count - 1].append(model)
+        values[sec - 1].append(model)
         
         collectionViewWaveform.values = values
         collectionViewWaveform.update(model: model, sampleIndex: sampleIndex)
@@ -456,6 +426,7 @@ extension ViewController {
     func newSecond() {
         values.append([])
         collectionViewWaveform.values = values
+  
         collectionViewWaveform.newSecond(values.count - 1, CGFloat(sampleIndex))
     }
 }
@@ -466,8 +437,9 @@ extension ViewController: WaveformViewDelegate {
     
     func didScroll(_ x: CGFloat, _ leadingLineX: CGFloat) {
         if(!self.isRecording) {
-                prevScrollX = Int(x)
-                self.leadingLineX = x
+            currentIndex = Int(x)
+            self.leadingLineX = x
+            print("currentIndex: \(currentIndex)")
             
 //            if let last = values.last?.last?.part {
 //                print("BEFORE didScroll: \(String(describing: values.last?.last?.part))")

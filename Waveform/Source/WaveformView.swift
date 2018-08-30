@@ -52,13 +52,13 @@ class WaveformView: UIView {
     var values = [[WaveformModel]]()
     var sampleIndex: Int = 0 {
         didSet {
-            let sec = (values.count - 1) * elementsPerSecond
-            let temp = values[values.count - 1].count + sec
-            if temp == sampleIndex {
-
-            } else {
-                print("BŁĄD! temo: \(temp) | sampleIndex: \(sampleIndex)")
-            }
+//            let sec = (values.count - 1) * elementsPerSecond
+//            let temp = values[values.count - 1].count + sec
+//            if temp == sampleIndex {
+//
+//            } else {
+//                print("BŁĄD! temo: \(temp) | sampleIndex: \(sampleIndex)")
+//            }
         }
     }
     var isRecording: Bool = false
@@ -135,7 +135,9 @@ extension WaveformView {
 extension WaveformView {
     
     func refresh() {
-        collectionView.reloadData()
+//        collectionView.performBatchUpdates({
+            collectionView.reloadData()
+//        })
     }
     
     func update(model: WaveformModel, sampleIndex: Int) {
@@ -149,6 +151,7 @@ extension WaveformView {
     func newSecond(_ second: Int, _ x: CGFloat) {
         UIView.performWithoutAnimation {
             collectionView.performBatchUpdates({
+                let second = self.collectionView.numberOfSections
                 self.collectionView.insertSections(IndexSet([second]))
             }) { (done) in
                 self.setOffset()
@@ -241,13 +244,22 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
 extension WaveformView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        var x = leadingLine.position.x
+        if x < (width / 2) {
+            print("LEADING: x \(x)")
+        } else {
+            x = scrollView.contentOffset.x + leadingLine.position.x
+//            print("SCROLL: x \(x)")
+            
+            delegate?.didScroll(x, leadingLine.position.x)
+        }
 
         if( scrollView.contentOffset.x < -scrollView.contentInset.left ) || ( scrollView.contentOffset.x > scrollView
                 .contentSize.width - scrollView.frame.size.width + scrollView.contentInset.right ) {
+                    
             return
         }
-        let x = scrollView.contentOffset.x + leadingLine.position.x
-        delegate?.didScroll(x, leadingLine.position.x)
+        
         leadingLineTimeUpdater.changeTime(withXPosition: scrollView.contentOffset.x + leadingLine.position.x)
     }
 }
