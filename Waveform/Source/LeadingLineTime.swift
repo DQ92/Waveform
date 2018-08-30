@@ -23,8 +23,24 @@ class LeadingLineTime {
     // MARK: - Access method
 
     func changeTime(withXPosition position: CGFloat) {
+        
+        
+        let seconds2 = position/CGFloat(elementsPerSecond)
+        
+        
+        let baseSeconds = Int(position/CGFloat(elementsPerSecond))
+        let seconds = (baseSeconds % 3600) % 60
+        let min = (baseSeconds % 3600) / 60
+        let hr = baseSeconds / 3600
+        let fractionalPart = Int((seconds2 - CGFloat(Int(seconds2))) * 100)
+        
+        let totalTimeString = String(format: "%02d:%02d:%02d:%02d", hr, min, seconds, fractionalPart)
+        
+        timeLabel?.text = totalTimeString
+        
         print("---------------------------------------")
         print("X position changed: ----\(position/CGFloat(elementsPerSecond))----")
+        print("baseSeconds: ----\(fractionalPart)----")
+        print("total time: ----\(totalTimeString)----")
     }
-
 }

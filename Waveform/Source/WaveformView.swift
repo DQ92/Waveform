@@ -204,9 +204,10 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
 extension WaveformView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if( scrollView.contentOffset.x < -scrollView.contentInset.left ) || ( scrollView.contentOffset.x > scrollView
-                .contentSize.width - scrollView.frame.size.width + scrollView.contentInset.right ) {
+        let calculated = scrollView.contentSize.width - scrollView.frame.size.width + scrollView.contentInset.right
+        
+        if scrollView.contentOffset.x < -leadingLine.position.x {
+            leadingLineTimeUpdater.changeTime(withXPosition: 0.0)
             return
         }
 
