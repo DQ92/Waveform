@@ -15,13 +15,10 @@ class WaveformModel {
 class WaveformColor {
     
     static func colors(model: WaveformModel) -> (UIColor, UIColor)  {
-        let part: CGFloat = CGFloat(model.part * 50)
-        var rand = part
-        if(part > 255) {
-            rand = 255 - rand
-        }
-        let upColor = UIColor(red: rand/255 , green: 0.3, blue: 0.5 + rand, alpha: 1)
-        let downColor = UIColor(red: rand/255 , green: 0.3 + rand, blue: 0.5, alpha: 1)
+        let part: CGFloat = CGFloat(model.part)
+        let rand: CGFloat = part * 25
+        let upColor = UIColor(red: rand/255 , green: 0.3 + rand, blue: 0.5, alpha: 1)
+        let downColor = UIColor(red: rand/255 , green: 0.3, blue: 0.5 + rand, alpha: 1)
         return (upColor, downColor)
     }
 }
@@ -50,17 +47,8 @@ class WaveformView: UIView {
 
     weak var delegate: WaveformViewDelegate?
     var values = [[WaveformModel]]()
-    var sampleIndex: Int = 0 {
-        didSet {
-//            let sec = (values.count - 1) * elementsPerSecond
-//            let temp = values[values.count - 1].count + sec
-//            if temp == sampleIndex {
-//
-//            } else {
-//                print("BŁĄD! temo: \(temp) | sampleIndex: \(sampleIndex)")
-//            }
-        }
-    }
+    var sampleIndex: Int = 0
+        
     var isRecording: Bool = false
 
     private var leadingLineTimeUpdater: LeadingLineTime!
@@ -105,7 +93,7 @@ extension WaveformView {
 
         setupCollectionView()
 
-        leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: 110) //TODO
+        leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: 140) //TODO
         self.layer.addSublayer(leadingLine)
         elementsPerSecond = Int(width / 6)
         leadingLineTimeUpdater = LeadingLineTime(timeLabel: timeLabel, elementsPerSecond: elementsPerSecond)
@@ -120,7 +108,7 @@ extension WaveformView {
 
     private func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: partOfView, height: 100) //TODO
+        layout.itemSize = CGSize(width: partOfView, height: 130) //TODO
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.sectionInset = UIEdgeInsets.zero
@@ -135,16 +123,16 @@ extension WaveformView {
 extension WaveformView {
     
     func refresh() {
-//        collectionView.performBatchUpdates({
-            collectionView.reloadData()
-//        })
+        collectionView.reloadData()
     }
     
     func update(model: WaveformModel, sampleIndex: Int) {
-        let lastCellIdx = IndexPath(row: 0, section: collectionView.numberOfSections - 1)
+        let lastCellIdx = IndexPath(row: 0, section: sampleIndex/elementsPerSecond)
         if let lastCell = collectionView.cellForItem(at: lastCellIdx) {
             let x = CGFloat(sampleIndex % elementsPerSecond)
             updateCell(lastCell, x, model)
+        } else {
+            print("ERROR! lastCell is NIL!")
         }
     }
 

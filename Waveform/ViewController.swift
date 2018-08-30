@@ -5,6 +5,7 @@ let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.wi
 var viewWidth: CGFloat = 0
 var partOfView: CGFloat = 0 // 1/6
 
+
 class ViewController: UIViewController, AVAudioRecorderDelegate {
 
     // MARK: - IBOutlets
@@ -60,13 +61,11 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var isRecording = false {
         didSet {
             collectionViewWaveform.isRecording = isRecording
-
             if (isRecording) {
                 if(currentIndex < sampleIndex) {
                     CATransaction.begin()
                     part = part + 1
                     sampleIndex = currentIndex
-                    collectionViewWaveform.values = values
                     collectionViewWaveform.refresh()
                     CATransaction.commit()
                 }
@@ -168,7 +167,7 @@ extension ViewController {
 extension ViewController {
 
     @objc func updateAudioMeter(timer: Timer) {
-        if audioRecorder.isRecording {
+        if isRecording {
             let hr = Int((audioRecorder.currentTime / 60) / 60)
             let min = Int(audioRecorder.currentTime / 60)
             let sec = Int(audioRecorder.currentTime.truncatingRemainder(dividingBy: 60))
@@ -180,32 +179,33 @@ extension ViewController {
             audioRecorder.updateMeters()
             let peak = audioRecorder.averagePower(forChannel: 0) - 60
             updatePeak(peak)
-            sampleIndex = sampleIndex + 1
         }
     }
 
     func updatePeak(_ peak: Float) {
+        sampleIndex = sampleIndex + 1
+        
         let _peak: Float = (-1) * peak
         var value: Float = max - _peak
         value = value > 1 ? value : 4
 
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
+        let precision = sampleIndex % elementsPerSecond
         let model = createModel(value: CGFloat(value))
-//        values[values.count - 1].append(model)
         if(values[sec - 1].count == elementsPerSecond) {
-            values[sec - 1].insert(model, at: (sampleIndex % elementsPerSecond))
+            values[sec - 1][precision] = model
         } else {
             values[sec - 1].append(model)
         }
         
-        collectionViewWaveform.values = values
+        if(values[sec - 1].count > elementsPerSecond) {
+            print("ERRROR! values[sec - 1].count > elementsPerSecond")
+        }
         collectionViewWaveform.update(model: model, sampleIndex: sampleIndex)
     }
 
     func newSecond() {
         values.append([])
-        collectionViewWaveform.values = values
-  
         collectionViewWaveform.newSecond(values.count - 1, CGFloat(sampleIndex))
     }
 }
@@ -218,13 +218,8 @@ extension ViewController: WaveformViewDelegate {
         if(!self.isRecording) {
             currentIndex = Int(x)
             self.leadingLineX = x
-            print("currentIndex: \(currentIndex)")
-            
-//            if let last = values.last?.last?.part {
-//                print("BEFORE didScroll: \(String(describing: values.last?.last?.part))")
-//                values.last!.last!.part = last + 1
-//                print("AFTER didScroll: \(String(describing: values.last?.last?.part))")
-//            }
+//            print("currentIndex: \(currentIndex)")
+        
         }
     }
 }
