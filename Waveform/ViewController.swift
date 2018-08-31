@@ -44,13 +44,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             collectionViewWaveform.sampleIndex = sampleIndex
         }
     }
-    var sec: Int = 0 {
-        didSet {
-            if (sec != oldValue) {
-                newSecond()
-            }
-        }
-    }
+    var sec: Int = 0 
     var leadingLineX: CGFloat = 0
     let padding: CGFloat = 0
     private var elementsPerSecond: Int {
@@ -62,7 +56,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         didSet {
             collectionViewWaveform.isRecording = isRecording
             if (isRecording) {
-                if(currentIndex < sampleIndex) {
+                if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                     CATransaction.begin()
                     part = part + 1
                     sampleIndex = currentIndex
@@ -76,7 +70,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             }
         }
     }
-    var currentIndex: Int = 0
+    var currentIndex: Int?
     var suffix: Int = 0
     let fileManager = FileManager.default
     var isMovedWhenPaused: Bool = false // gdy przesunie seek bara to ustawić na true
@@ -190,6 +184,12 @@ extension ViewController {
         value = value > 1 ? value : 4
 
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
+        
+        //newsecon
+        if values.count <= sec {
+            newSecond()
+        }
+        
         let precision = sampleIndex % elementsPerSecond
         let model = createModel(value: CGFloat(value))
         if(values[sec - 1].count == elementsPerSecond) {
