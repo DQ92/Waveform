@@ -21,7 +21,7 @@
 + Every Raw Emoji Text(`:emoji:`) is Counted as One Char!.
 
 ### Example
-+ :books:[SM-116] Update readme.
++ :books: Update readme.
 
 ### Suggested Emojis
 

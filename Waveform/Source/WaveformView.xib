@@ -23,7 +23,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="dKD-rn-zWh">
-                    <rect key="frame" x="0.0" y="61" width="375" height="594"/>
+                    <rect key="frame" x="0.0" y="43" width="375" height="612"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="XMf-x3-6cN">
                         <size key="itemSize" width="50" height="50"/>
@@ -43,7 +43,7 @@
             <constraints>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="dKD-rn-zWh" secondAttribute="trailing" id="Gv9-8w-jrL"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="dKD-rn-zWh" secondAttribute="bottom" constant="12" id="Pn3-ph-BkA"/>
-                <constraint firstItem="dKD-rn-zWh" firstAttribute="top" secondItem="PlA-vQ-WpP" secondAttribute="bottom" constant="20" id="X3G-pB-7gj"/>
+                <constraint firstItem="dKD-rn-zWh" firstAttribute="top" secondItem="PlA-vQ-WpP" secondAttribute="bottom" constant="2" id="X3G-pB-7gj"/>
                 <constraint firstItem="dKD-rn-zWh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="fzE-Su-0Oj"/>
                 <constraint firstItem="PlA-vQ-WpP" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="i1F-Nq-t6t"/>
                 <constraint firstItem="PlA-vQ-WpP" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="zBP-Re-Aa5"/>
