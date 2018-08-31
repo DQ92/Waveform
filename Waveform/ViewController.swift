@@ -80,17 +80,41 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     var currentDuration: Float = 0
-
+    var results = [Float]()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        removeTempDict()
-        createDictInTemp()
+//        removeTempDict()
+//        createDictInTemp()
+        listFiles()
 
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
         
         collectionViewWaveform.delegate = self
+        
+        playFromFile()
+    }
+    
+    func playFromFile() {
+        let audioAssetURL = Bundle.main.url(forResource: "test", withExtension: "m4a")!
+        self.suffix = 1
+//        let audioAssetURL = documentsURL.appendingPathComponent(tempDictName).appendingPathComponent("rec_1.m4a")
+//        let audioAssetURL = documentsURL.appendingPathComponent("test.m4a")
+        let audioAsset = AVURLAsset(url: audioAssetURL)
+        let assetReader = try? AVAssetReader(asset: audioAsset)
+        let audioProcessor = AudioProcessor()
+//        let outputs = assetReader?.outputs
+//        print(outputs?.count)
+//        print(outputs)
+        
+        
+        self.results = audioProcessor.waveformSamples(from: assetReader!, count: 10000000)!
+        
+        meterTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updatePlayAudioMeter(timer:)), userInfo: nil, repeats: true)
+        isRecording = true
     }
 }
 
@@ -141,7 +165,7 @@ extension ViewController {
         log("Paused")
         record_btn_ref.setTitle("Resume", for: .normal)
         isRecording = false
-        audioRecorder.pause()
+        audioRecorder?.pause()
         listFiles()
 
         _ = getAllAudioParts()
@@ -160,6 +184,15 @@ extension ViewController {
 //MARK - buttons - start/pause/resume
 extension ViewController {
 
+    @objc func updatePlayAudioMeter(timer: Timer) {
+        if(results.count <= sampleIndex) {
+            stop()
+            return
+        }
+        let peak = results[sampleIndex] * -100
+        updatePeak(peak)
+    }
+    
     @objc func updateAudioMeter(timer: Timer) {
         if isRecording {
             let hr = Int((audioRecorder.currentTime / 60) / 60)

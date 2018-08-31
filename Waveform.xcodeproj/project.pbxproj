@@ -11,6 +11,8 @@
 		655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC882131EFC900AB828A /* WaveformInfoView.swift */; };
 		655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 655BAC8A2131F02500AB828A /* WaveformInfoView.xib */; };
 		65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9242421387B790097F424 /* ViewController+Recorder.swift */; };
+		65A924272139CF2A0097F424 /* AudioProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A924262139CF2A0097F424 /* AudioProcessor.swift */; };
+		65A924292139D1B10097F424 /* test.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 65A924282139D1B00097F424 /* test.m4a */; };
 		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
 		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
 		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
@@ -30,6 +32,8 @@
 		655BAC882131EFC900AB828A /* WaveformInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
 		655BAC8A2131F02500AB828A /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
 		65A9242421387B790097F424 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
+		65A924262139CF2A0097F424 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
+		65A924282139D1B00097F424 /* test.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.m4a; sourceTree = "<group>"; };
 		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
 		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
 		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
@@ -64,6 +68,7 @@
 				65FD73C02135E7630003029F /* WaveformView.xib */,
 				E8893C36EDD57012E5DC2C8E /* ReusableView */,
 				E88938C33E6DE8B1F4B8EDE4 /* LeadingLineTime.swift */,
+				65A924262139CF2A0097F424 /* AudioProcessor.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -107,6 +112,7 @@
 		E8893976D6167E37EF11A033 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				65A924282139D1B00097F424 /* test.m4a */,
 				E88933E17C3DD509432D589D /* Assets.xcassets */,
 				E8893772C0A0AF858ED58E14 /* Info.plist */,
 			);
@@ -185,6 +191,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65A924292139D1B10097F424 /* test.m4a in Resources */,
 				BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */,
 				BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */,
 				709924212136B5F300105C09 /* Info.plist in Resources */,
@@ -208,6 +215,7 @@
 				65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */,
 				655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */,
 				65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */,
+				65A924272139CF2A0097F424 /* AudioProcessor.swift in Sources */,
 				655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */,
 				E8893DBF9D8C3E48CE3D58A4 /* WaveformCollectionViewCell.swift in Sources */,
 				E8893FEE137AB88C5E648D38 /* LeadingLineTime.swift in Sources */,
