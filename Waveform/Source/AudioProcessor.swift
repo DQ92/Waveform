@@ -7,10 +7,10 @@ struct AudioProcessor {
         guard let audioTrack = assetReader.asset.tracks.first else {
             return nil
         }
-        
         let trackOutput = AVAssetReaderTrackOutput(track: audioTrack, outputSettings: outputSettings())
         assetReader.add(trackOutput)
-        
+
+
 //        let requiredNumberOfSamples = count
 //        let samples = extract(samplesFrom: assetReader, downsampledTo: requiredNumberOfSamples)
         let samples = extract(samplesFrom: assetReader)

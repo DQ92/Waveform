@@ -105,14 +105,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 //        let audioAssetURL = documentsURL.appendingPathComponent("test.m4a")
         let audioAsset = AVURLAsset(url: audioAssetURL)
         let assetReader = try? AVAssetReader(asset: audioAsset)
-        let audioProcessor = AudioProcessor()
+        
 //        let outputs = assetReader?.outputs
 //        print(outputs?.count)
 //        print(outputs)
-        
-        
+        let audioProcessor = AudioProcessor()
         self.results = audioProcessor.waveformSamples(from: assetReader!, count: 10000000)!
-        
         meterTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updatePlayAudioMeter(timer:)), userInfo: nil, repeats: true)
         isRecording = true
     }
