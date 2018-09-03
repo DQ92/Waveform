@@ -4,13 +4,12 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WaveformView" customModule="Waveform" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WaveformView" customModule="Waveform">
             <connections>
                 <outlet property="collectionView" destination="dKD-rn-zWh" id="4Oz-yi-jIL"/>
                 <outlet property="view" destination="iN0-l3-epB" id="ZPm-Co-90n"/>
@@ -40,7 +39,7 @@
                 <constraint firstItem="dKD-rn-zWh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="fzE-Su-0Oj"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="33.5" y="53.5"/>
+            <point key="canvasLocation" x="-692" y="-87"/>
         </view>
     </objects>
 </document>

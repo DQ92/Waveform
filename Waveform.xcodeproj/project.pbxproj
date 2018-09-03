@@ -7,42 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9242421387B790097F424 /* ViewController+Recorder.swift */; };
-		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
-		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
-		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
-		65FD73C12135E7630003029F /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65FD73C02135E7630003029F /* WaveformView.xib */; };
-		6635A2C8213D21A100CCCD9F /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6635A2C7213D21A100CCCD9F /* UIScrollView+Extension.swift */; };
-		709924212136B5F300105C09 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
-		BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE02088EFEF00E52984 /* AppDelegate.swift */; };
-		BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE22088EFEF00E52984 /* ViewController.swift */; };
-		BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE42088EFEF00E52984 /* Main.storyboard */; };
-		BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE92088EFEF00E52984 /* LaunchScreen.storyboard */; };
+		709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
+		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
+		709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
+		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
+		709AB9D6213D272800F63746 /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 709AB9D5213D272800F63746 /* WaveformView.xib */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
 		E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */; };
-		E8893B9DC5CFBEAE211612B9 /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88938B31FFE3FF1C2F13CFF /* WaveformInfoView.swift */; };
 		E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */; };
-		E8893DD4032F8CCA4E4E5B20 /* WaveformViewScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893218E3FC8845C628481E /* WaveformViewScroll.swift */; };
 		E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889367CB6423F4B57B69FE1 /* ViewController.swift */; };
 		E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		65A9242421387B790097F424 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
-		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
-		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
-		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
-		65FD73C02135E7630003029F /* WaveformView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
-		6635A2C7213D21A100CCCD9F /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
+		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
+		709AB9D5213D272800F63746 /* WaveformView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
 		E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
-		E8893218E3FC8845C628481E /* WaveformViewScroll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformViewScroll.swift; sourceTree = "<group>"; };
 		E889321E20374C0C8FD33AD5 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -50,10 +37,7 @@
 		E8893605E36346DF677F0556 /* WaveformCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionView.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
-		E88937B404DDC906CE72EA4F /* WaveformView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E88938B31FFE3FF1C2F13CFF /* WaveformInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
-		E8893A3B5711F7B47560DC1C /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
 		E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
 		E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
@@ -75,12 +59,21 @@
 		65FD73BD2135E6E60003029F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				709AB9D2213D260D00F63746 /* Common */,
 				E889377F7CF07F90DF9C63E5 /* Recorder */,
 				E88934B7BCB14371999176E0 /* LeadingLine */,
 				E8893411928FDEF318F420BF /* Model */,
 				E889308EE57AC8A701D89201 /* Views */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		709AB9D2213D260D00F63746 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		BC925FD42088EFEF00E52984 = {
@@ -113,14 +106,11 @@
 		E889308EE57AC8A701D89201 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				709AB9D5213D272800F63746 /* WaveformView.xib */,
 				E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */,
 				E8893605E36346DF677F0556 /* WaveformCollectionView.swift */,
 				E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */,
-				E88938B31FFE3FF1C2F13CFF /* WaveformInfoView.swift */,
-				E8893218E3FC8845C628481E /* WaveformViewScroll.swift */,
 				E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */,
-				E88937B404DDC906CE72EA4F /* WaveformView.xib */,
-				E8893A3B5711F7B47560DC1C /* WaveformInfoView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,10 +227,7 @@
 			files = (
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
-				709AB9CE213D0BEA00F63746 /* Info.plist in Resources */,
-				E88930598F0FFEFDEE736BB7 /* LaunchScreen.storyboard in Resources */,
-				E88937F4EAC10D163F75FB3A /* WaveformView.xib in Resources */,
-				E88931DB0FC5A74AE3E642FA /* WaveformInfoView.xib in Resources */,
+				709AB9D6213D272800F63746 /* WaveformView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,18 +238,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
-				E889387B3AA94D3D9012C1CB /* AppDelegate.swift in Sources */,
-				E889340A66B13B935C3F41FC /* ViewController+Recorder.swift in Sources */,
-				E889361D51B6CBCCA4021FB6 /* LeadingLineLayer.swift in Sources */,
 				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
+				709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */,
+				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
 				E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */,
+				709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */,
 				E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */,
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
-				E88934AF5E25F9BAA6667EAB /* WaveformCollectionView.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
-				E8893B9DC5CFBEAE211612B9 /* WaveformInfoView.swift in Sources */,
-				E8893DD4032F8CCA4E4E5B20 /* WaveformViewScroll.swift in Sources */,
 				E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
