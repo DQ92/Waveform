@@ -4,16 +4,14 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WaveformView" customModule="Waveform" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="WaveformView" customModule="Waveform">
             <connections>
                 <outlet property="collectionView" destination="dKD-rn-zWh" id="4Oz-yi-jIL"/>
-                <outlet property="timeLabel" destination="PlA-vQ-WpP" id="uUW-iw-mxb"/>
                 <outlet property="view" destination="iN0-l3-epB" id="ZPm-Co-90n"/>
             </connections>
         </placeholder>
@@ -32,24 +30,16 @@
                         <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                     </collectionViewFlowLayout>
                 </collectionView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PlA-vQ-WpP">
-                    <rect key="frame" x="166" y="20" width="42" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="dKD-rn-zWh" secondAttribute="trailing" id="Gv9-8w-jrL"/>
+                <constraint firstItem="dKD-rn-zWh" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="23" id="P27-9R-ArQ"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="dKD-rn-zWh" secondAttribute="bottom" constant="12" id="Pn3-ph-BkA"/>
-                <constraint firstItem="dKD-rn-zWh" firstAttribute="top" secondItem="PlA-vQ-WpP" secondAttribute="bottom" constant="2" id="X3G-pB-7gj"/>
                 <constraint firstItem="dKD-rn-zWh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="fzE-Su-0Oj"/>
-                <constraint firstItem="PlA-vQ-WpP" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="i1F-Nq-t6t"/>
-                <constraint firstItem="PlA-vQ-WpP" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="zBP-Re-Aa5"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="33.5" y="53.5"/>
+            <point key="canvasLocation" x="-692" y="-87"/>
         </view>
     </objects>
 </document>
