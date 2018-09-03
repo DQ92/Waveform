@@ -38,6 +38,7 @@ class WaveformView: UIView {
 
     // MARK: - Private properties
 
+    private let itemReuseIdentifier = "collectionViewCell"
     private let leadingLineAnimationDuration = timeInterval //TODO wywalić zmienną globalną
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
@@ -100,7 +101,7 @@ extension WaveformView {
     }
 
     private func setupCollectionView() {
-        collectionView.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: "collectionViewCell")
+        collectionView.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: self.itemReuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         setupCollectionViewLayout()
@@ -128,7 +129,7 @@ extension WaveformView {
 
     func update(model: WaveformModel, sampleIndex: Int) {
         let lastCellIdx = IndexPath(row: 0, section: sampleIndex/elementsPerSecond)
-        if let lastCell = collectionView.cellForItem(at: lastCellIdx) {
+        if let lastCell = collectionView.cellForItem(at: lastCellIdx) as? WaveformCollectionViewCell {
             let x = CGFloat(sampleIndex % elementsPerSecond)
             updateCell(lastCell, x, model)
         } else {
@@ -147,19 +148,9 @@ extension WaveformView {
         }
     }
 
-    private func updateCell(_ cell: UICollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
+    private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
         updateLeadingLine()
-        let layerY = CGFloat(cell.bounds.size.height / 2)
-        let upLayer = CAShapeLayer()
-        upLayer.frame = CGRect(x: x, y: layerY, width: 1, height: -model.value)
-        upLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
-        upLayer.lineWidth = 1
-        cell.contentView.layer.addSublayer(upLayer)
-        let downLayer = CAShapeLayer()
-        downLayer.frame = CGRect(x: x, y: layerY, width: 1, height: model.value)
-        downLayer.backgroundColor = WaveformColor.colors(model: model).1.cgColor
-        downLayer.lineWidth = 1
-        cell.contentView.layer.addSublayer(downLayer)
+        cell.setup(model: model, sampleIndex: x)
         setOffset()
     }
 
@@ -216,8 +207,8 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! WaveformCollectionViewCell
-
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.itemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
+        cell.numberOfLayers = elementsPerSecond
         let second = indexPath.section
         let valuesInSecond: [WaveformModel] = values[second]
 
