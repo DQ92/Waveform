@@ -2,6 +2,7 @@ import AVFoundation
 import UIKit
 import Accelerate
 import Foundation
+import AudioToolbox
 
 let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.width)))
 var viewWidth: CGFloat = 0
@@ -98,11 +99,31 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         collectionViewWaveform.delegate = self
         
         playFromFile()
+
     }
     
+    
+    
     func playFromFile() {
-        let audioAssetURL = Bundle.main.url(forResource: "test", withExtension: "m4a")!
         self.suffix = 1
+        let audioAssetURL = Bundle.main.url(forResource: "test", withExtension: "m4a")!
+//        let audioAssetURL = documentsURL.appendingPathComponent(tempDictName).appendingPathComponent("rec_1.m4a")
+
+        let file: AVAudioFile!
+        do {
+            file = try AVAudioFile(forReading: audioAssetURL)
+        } catch {
+            print("Error:", error)
+            return
+        }
+        let totSamples = file.length
+
+        let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: 2, interleaved: false)
+        let buffer = AVAudioPCMBuffer(pcmFormat: format!, frameCapacity: AVAudioFrameCount(totSamples))
+        try! file.read(into: buffer!)
+        var floatArray = Array(UnsafeBufferPointer(start: buffer!.floatChannelData![0], count:Int(buffer!.frameLength)))
+        return
+        
 //        let audioAssetURL = documentsURL.appendingPathComponent(tempDictName).appendingPathComponent("rec_1.m4a")
 //        let audioAssetURL = documentsURL.appendingPathComponent("test.m4a")
         let audioAsset = AVURLAsset(url: audioAssetURL)
@@ -121,6 +142,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
                 data.withUnsafeMutableBytes { (blockSamples: UnsafeMutablePointer<Int16>) in
                     CMBlockBufferCopyDataBytes(blockBuffer, 0, blockBufferLength, blockSamples)
                     CMSampleBufferInvalidate(sampleBuffer)
+                    
+                    
                     
                     let processedSamples = process(blockSamples,
                                                    ofLength: sampleLength,
