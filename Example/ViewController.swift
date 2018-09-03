@@ -5,7 +5,6 @@ let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.wi
 var viewWidth: CGFloat = 0
 var partOfView: CGFloat = 0 // 1/6
 
-
 class ViewController: UIViewController, AVAudioRecorderDelegate {
 
     // MARK: - IBOutlets
@@ -18,22 +17,23 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var timerLabel: UILabel!
-
+    @IBOutlet weak var timeLabel: UILabel!
+    
     // MARK: - Private Properties
+
     let preferredTimescale: CMTimeScale = 1000
     let tempDictName = "temp_audio"
     let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     let tempDirectoryURL = FileManager.default.temporaryDirectory;
     let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
-                                                               in: .userDomainMask).first!
+            in: .userDomainMask).first!
 
     var values = [[WaveformModel]]() {
         didSet {
             waveformCollectionView.values = values
         }
     }
-    
+
     let vLayer = CAShapeLayer()
     let max: Float = 120
     var audioRecorder: AVAudioRecorder!
@@ -44,8 +44,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             waveformCollectionView.sampleIndex = sampleIndex
         }
     }
-    var sec: Int = 0 
-    var leadingLineX: CGFloat = 0
+    var sec: Int = 0
+
     let padding: CGFloat = 0
     private var elementsPerSecond: Int {
         return Int((UIScreen.main.bounds.width) / 6)
@@ -89,14 +89,14 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
-        
+
         waveformCollectionView.delegate = self
+        waveformCollectionView.leadingLineTimeUpdaterDelegate = self
     }
 }
 
 //MARK - buttons - start/pause/resume
 extension ViewController {
-
     @IBAction func startRecording(_ sender: UIButton) {
         startOrPause()
     }
@@ -132,7 +132,7 @@ extension ViewController {
     func resume() {
         log("Resumed")
         isRecording = true
-        
+
         record_btn_ref.setTitle("Pause", for: .normal)
         audioRecorder.record()
     }
@@ -151,15 +151,15 @@ extension ViewController {
         stop()
         merge(assets: getAllAudioParts())
     }
-    
-    func createModel(value: CGFloat) -> WaveformModel {
-        return WaveformModel(value: value, part: part)
+
+    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
+        return WaveformModel(value: value, part: part, timeStamp: timeStamp)
     }
 }
 
-//MARK - buttons - start/pause/resume
-extension ViewController {
+// MARK: - buttons - start/pause/resume
 
+extension ViewController {
     @objc func updateAudioMeter(timer: Timer) {
         if isRecording {
             let hr = Int((audioRecorder.currentTime / 60) / 60)
@@ -172,34 +172,34 @@ extension ViewController {
             totalTimeLabel.text = "\(t) sec."
             audioRecorder.updateMeters()
             let peak = audioRecorder.averagePower(forChannel: 0) - 60
-            updatePeak(peak)
+            updatePeak(peak, with: audioRecorder.currentTime)
         }
     }
 
-    func updatePeak(_ peak: Float) {
+    func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
         sampleIndex = sampleIndex + 1
-        
+
         let _peak: Float = (-1) * peak
         var value: Float = max - _peak
         value = value > 1 ? value : 4
 
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
-        
+
         //newsecon
         if values.count <= sec {
             newSecond()
         }
-        
+
         let precision = sampleIndex % elementsPerSecond
-        let model = createModel(value: CGFloat(value))
-        if(values[sec - 1].count == elementsPerSecond) {
+        let model = createModel(value: CGFloat(value), with: timeStamp)
+        if (values[sec - 1].count == elementsPerSecond) {
             values[sec - 1][precision] = model
         } else {
             values[sec - 1].append(model)
         }
-        
-        if(values[sec - 1].count > elementsPerSecond) {
-            print("ERRROR! values[sec - 1].count > elementsPerSecond")
+
+        if (values[sec - 1].count > elementsPerSecond) {
+            print("ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
     }
@@ -210,16 +210,21 @@ extension ViewController {
     }
 }
 
-
 // MARK: - WaveformViewDelegate
+
 extension ViewController: WaveformViewDelegate {
-    
-    func didScroll(_ x: CGFloat, _ leadingLineX: CGFloat) {
-        if(!self.isRecording) {
+
+    func didScroll(_ x: CGFloat) {
+        if (!self.isRecording) {
             currentIndex = Int(x)
-            self.leadingLineX = x
 //            print("currentIndex: \(currentIndex)")
-        
         }
+    }
+}
+
+extension ViewController: LeadingLineTimeUpdaterDelegate {
+    func timeDidChange(with time: Time) {
+        let totalTimeString = String(format: "%02d:%02d:%02d:%02d", time.hours, time.minutes, time.seconds, time.milliSeconds)
+        timeLabel.text = totalTimeString
     }
 }

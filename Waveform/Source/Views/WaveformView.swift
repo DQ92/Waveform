@@ -7,7 +7,6 @@ class WaveformView: UIView {
 
     @IBOutlet private var view: UIView!
     @IBOutlet private weak var collectionView: UICollectionView!
-    @IBOutlet weak var timeLabel: UILabel!
 
     // MARK: - Private properties
 
@@ -25,7 +24,12 @@ class WaveformView: UIView {
 
     var isRecording: Bool = false
 
-    private var leadingLineTimeUpdater: LeadingLineTime!
+    private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
+    weak var leadingLineTimeUpdaterDelegate: LeadingLineTimeUpdaterDelegate? {
+        didSet {
+            self.leadingLineTimeUpdater.delegate = leadingLineTimeUpdaterDelegate
+        }
+    }
 
     // MARK: - Initialization
 
@@ -70,7 +74,7 @@ extension WaveformView {
         leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: 140) //TODO
         self.layer.addSublayer(leadingLine)
         elementsPerSecond = Int(width / 6)
-        leadingLineTimeUpdater = LeadingLineTime(timeLabel: timeLabel, elementsPerSecond: elementsPerSecond)
+        leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
 
     private func setupCollectionView() {
@@ -95,7 +99,6 @@ extension WaveformView {
 // MARK: - Waveform drawing
 
 extension WaveformView {
-
     func refresh() {
         collectionView.reloadData()
     }
@@ -141,10 +144,14 @@ extension WaveformView {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
             let point = CGPoint(x: x + 1, y: y)
+            leadingLinePositionChanged(x: point.x) // TODO: - Refactor to call this from one place
             leadingLine.position = point
-            leadingLineTimeUpdater.changeTime(withXPosition: point.x)
             CATransaction.commit()
         }
+    }
+
+    private func leadingLinePositionChanged(x value: CGFloat) {
+        leadingLineTimeUpdater.changeTime(withX: value)
     }
 
     func onPause(sampleIndex: CGFloat) {
@@ -200,19 +207,16 @@ extension WaveformView: UIScrollViewDelegate {
         if x < (width / 2) {
             print("LEADING: x \(x)")
         } else {
-            x = scrollView.contentOffset.x + leadingLine.position.x
-//            print("SCROLL: x \(x)")
-
-            delegate?.didScroll(x, leadingLine.position.x)
+            x = scrollView.contentOffset.x
+            delegate?.didScroll(x)
         }
 
         if scrollView.contentOffset.x < -leadingLine.position.x {
-            leadingLineTimeUpdater.changeTime(withXPosition: 0.0)
+            leadingLineTimeUpdater.changeTime(withX: 0.0)
             return
         }
 
-        leadingLineTimeUpdater.changeTime(withXPosition: scrollView.contentOffset.x + leadingLine.position.x)
+        leadingLinePositionChanged(x: scrollView.contentOffset.x + leadingLine.position.x)
+
     }
 }
-
-

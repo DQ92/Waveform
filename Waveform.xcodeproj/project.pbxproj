@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		709924212136B5F300105C09 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
+		709AB9CE213D0BEA00F63746 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
 		E88930598F0FFEFDEE736BB7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */; };
 		E88931DB0FC5A74AE3E642FA /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8893A3B5711F7B47560DC1C /* WaveformInfoView.xib */; };
 		E889340A66B13B935C3F41FC /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
@@ -18,7 +18,7 @@
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
-		E8893AC02DDB87355D63CAE6 /* LeadingLineTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTime.swift */; };
+		E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */; };
 		E8893B9DC5CFBEAE211612B9 /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88938B31FFE3FF1C2F13CFF /* WaveformInfoView.swift */; };
 		E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
@@ -48,7 +48,7 @@
 		E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
 		E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
-		E8893F6E3FD2FDD1DF41E510 /* LeadingLineTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineTime.swift; sourceTree = "<group>"; };
+		E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineTimeUpdater.swift; sourceTree = "<group>"; };
 		E8893F77695D0196AD278505 /* README.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.MD; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,7 +78,6 @@
 			isa = PBXGroup;
 			children = (
 				BC925FDF2088EFEF00E52984 /* Waveform */,
-				E8893976D6167E37EF11A033 /* Resources */,
 				BC925FDE2088EFEF00E52984 /* Products */,
 				E8893F77695D0196AD278505 /* README.MD */,
 				E88937264D551A08536C86C5 /* Example */,
@@ -96,6 +95,7 @@
 		BC925FDF2088EFEF00E52984 /* Waveform */ = {
 			isa = PBXGroup;
 			children = (
+				E8893976D6167E37EF11A033 /* Resources */,
 				65FD73BD2135E6E60003029F /* Source */,
 			);
 			path = Waveform;
@@ -129,7 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */,
-				E8893F6E3FD2FDD1DF41E510 /* LeadingLineTime.swift */,
+				E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */,
 			);
 			path = LeadingLine;
 			sourceTree = "<group>";
@@ -226,9 +226,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				709924212136B5F300105C09 /* Info.plist in Resources */,
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
+				709AB9CE213D0BEA00F63746 /* Info.plist in Resources */,
 				E88930598F0FFEFDEE736BB7 /* LaunchScreen.storyboard in Resources */,
 				E88937F4EAC10D163F75FB3A /* WaveformView.xib in Resources */,
 				E88931DB0FC5A74AE3E642FA /* WaveformInfoView.xib in Resources */,
@@ -246,7 +246,7 @@
 				E889387B3AA94D3D9012C1CB /* AppDelegate.swift in Sources */,
 				E889340A66B13B935C3F41FC /* ViewController+Recorder.swift in Sources */,
 				E889361D51B6CBCCA4021FB6 /* LeadingLineLayer.swift in Sources */,
-				E8893AC02DDB87355D63CAE6 /* LeadingLineTime.swift in Sources */,
+				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
 				E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */,
 				E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */,
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
@@ -378,7 +378,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 42TZBS6YJV;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -393,7 +393,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 42TZBS6YJV;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";

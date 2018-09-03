@@ -7,6 +7,5 @@ import Foundation
 import UIKit
 
 protocol WaveformViewDelegate: class {
-    func didScroll(_ x: CGFloat, _ leadingLineX: CGFloat)
+    func didScroll(_ x: CGFloat)
 }
-
