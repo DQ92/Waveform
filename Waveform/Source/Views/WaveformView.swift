@@ -1,40 +1,12 @@
 import UIKit
 
 
-
-class WaveformModel {
-    var value: CGFloat = 0.0
-    var part: Int = 0
-    
-    init(value: CGFloat, part: Int) {
-        self.value = value
-        self.part = part
-    }
-}
-
-class WaveformColor {
-    
-    static func colors(model: WaveformModel) -> (UIColor, UIColor)  {
-        let part: CGFloat = CGFloat(model.part)
-        let rand: CGFloat = part * 25
-        let upColor = UIColor(red: rand/255 , green: 0.3 + rand, blue: 0.5, alpha: 1)
-        let downColor = UIColor(red: rand/255 , green: 0.3, blue: 0.5 + rand, alpha: 1)
-        return (upColor, downColor)
-    }
-}
-
-protocol WaveformViewDelegate: class {
-    func didScroll(_ x: CGFloat, _ leadingLineX: CGFloat)
-}
-
-
 class WaveformView: UIView {
 
     // MARK: - IBOutlets
 
     @IBOutlet private var view: UIView!
     @IBOutlet private weak var collectionView: UICollectionView!
-    @IBOutlet weak var timeLabel: UILabel!
 
     // MARK: - Private properties
 
@@ -49,10 +21,15 @@ class WaveformView: UIView {
     weak var delegate: WaveformViewDelegate?
     var values = [[WaveformModel]]()
     var sampleIndex: Int = 0
-        
+
     var isRecording: Bool = false
 
-    private var leadingLineTimeUpdater: LeadingLineTime!
+    private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
+    weak var leadingLineTimeUpdaterDelegate: LeadingLineTimeUpdaterDelegate? {
+        didSet {
+            self.leadingLineTimeUpdater.delegate = leadingLineTimeUpdaterDelegate
+        }
+    }
 
     // MARK: - Initialization
 
@@ -97,7 +74,7 @@ extension WaveformView {
         leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: 140) //TODO
         self.layer.addSublayer(leadingLine)
         elementsPerSecond = Int(width / 6)
-        leadingLineTimeUpdater = LeadingLineTime(timeLabel: timeLabel, elementsPerSecond: elementsPerSecond)
+        leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
 
     private func setupCollectionView() {
@@ -122,11 +99,10 @@ extension WaveformView {
 // MARK: - Waveform drawing
 
 extension WaveformView {
-    
     func refresh() {
         collectionView.reloadData()
     }
-    
+
     func update(model: WaveformModel, sampleIndex: Int) {
         let lastCellIdx = IndexPath(row: 0, section: sampleIndex/elementsPerSecond)
         if let lastCell = collectionView.cellForItem(at: lastCellIdx) as? WaveformCollectionViewCell {
@@ -168,10 +144,14 @@ extension WaveformView {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
             let point = CGPoint(x: x + 1, y: y)
+            leadingLinePositionChanged(x: point.x) // TODO: - Refactor to call this from one place
             leadingLine.position = point
-            leadingLineTimeUpdater.changeTime(withXPosition: point.x)
             CATransaction.commit()
         }
+    }
+
+    private func leadingLinePositionChanged(x value: CGFloat) {
+        leadingLineTimeUpdater.changeTime(withX: value)
     }
 
     func onPause(sampleIndex: CGFloat) {
@@ -227,17 +207,16 @@ extension WaveformView: UIScrollViewDelegate {
         if x < (width / 2) {
             print("LEADING: x \(x)")
         } else {
-            x = scrollView.contentOffset.x + leadingLine.position.x
-//            print("SCROLL: x \(x)")
-            delegate?.didScroll(x, leadingLine.position.x)
+            x = scrollView.contentOffset.x
+            delegate?.didScroll(x)
         }
 
-        if( scrollView.contentOffset.x < -scrollView.contentInset.left ) || ( scrollView.contentOffset.x > scrollView
-                .contentSize.width - scrollView.frame.size.width + scrollView.contentInset.right ) {
+        if scrollView.contentOffset.x < -leadingLine.position.x {
+            leadingLineTimeUpdater.changeTime(withX: 0.0)
             return
         }
-        leadingLineTimeUpdater.changeTime(withXPosition: scrollView.contentOffset.x + leadingLine.position.x)
+
+        leadingLinePositionChanged(x: scrollView.contentOffset.x + leadingLine.position.x)
+
     }
 }
-
-

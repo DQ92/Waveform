@@ -1,10 +1,7 @@
 
 import UIKit
 
-
-class CollectionViewWaveform: UICollectionView {
-    
-    
+class WaveformCollectionView: UICollectionView {
     override func awakeFromNib() {
         super.awakeFromNib()
         
