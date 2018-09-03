@@ -7,14 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		709AB9CE213D0BEA00F63746 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
-		E88930598F0FFEFDEE736BB7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */; };
-		E88931DB0FC5A74AE3E642FA /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8893A3B5711F7B47560DC1C /* WaveformInfoView.xib */; };
-		E889340A66B13B935C3F41FC /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
-		E88934AF5E25F9BAA6667EAB /* WaveformCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893605E36346DF677F0556 /* WaveformCollectionView.swift */; };
-		E889361D51B6CBCCA4021FB6 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
-		E88937F4EAC10D163F75FB3A /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E88937B404DDC906CE72EA4F /* WaveformView.xib */; };
-		E889387B3AA94D3D9012C1CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
+		65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9242421387B790097F424 /* ViewController+Recorder.swift */; };
+		65D7AD8E213416FB007ABC15 /* CollectionViewWaveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */; };
+		65FD73BC2135D8B00003029F /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */; };
+		65FD73BF2135E6F50003029F /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FD73BE2135E6F50003029F /* WaveformView.swift */; };
+		65FD73C12135E7630003029F /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65FD73C02135E7630003029F /* WaveformView.xib */; };
+		6635A2C8213D21A100CCCD9F /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6635A2C7213D21A100CCCD9F /* UIScrollView+Extension.swift */; };
+		709924212136B5F300105C09 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8893772C0A0AF858ED58E14 /* Info.plist */; };
+		BC925FE12088EFEF00E52984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE02088EFEF00E52984 /* AppDelegate.swift */; };
+		BC925FE32088EFEF00E52984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC925FE22088EFEF00E52984 /* ViewController.swift */; };
+		BC925FE62088EFEF00E52984 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE42088EFEF00E52984 /* Main.storyboard */; };
+		BC925FEB2088EFEF00E52984 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC925FE92088EFEF00E52984 /* LaunchScreen.storyboard */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
@@ -29,6 +32,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		65A9242421387B790097F424 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
+		65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewWaveform.swift; sourceTree = "<group>"; };
+		65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
+		65FD73BE2135E6F50003029F /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		65FD73C02135E7630003029F /* WaveformView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
+		6635A2C7213D21A100CCCD9F /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
 		E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };

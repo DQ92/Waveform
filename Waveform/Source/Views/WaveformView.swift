@@ -92,7 +92,7 @@ extension WaveformView {
         layout.sectionInset = UIEdgeInsets.zero
         layout.scrollDirection = .horizontal
         collectionView.collectionViewLayout = layout
-        collectionView.scrollTo(direction: .Left)
+        collectionView.scrollTo(direction: .left)
     }
 }
 
