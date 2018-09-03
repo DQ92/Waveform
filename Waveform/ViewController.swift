@@ -152,6 +152,27 @@ extension ViewController {
     func createModel(value: CGFloat) -> WaveformModel {
         return WaveformModel(value: value, part: part)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let viewController = segue.destination as? AudioFilesListViewController {
+            viewController.directoryUrl = self.documentsURL.appendingPathComponent(self.tempDictName)
+            viewController.didSelectFileBlock = { [weak self] url in
+                let successHandler: (AudioContext) -> (Void) = { context in
+                    
+                }
+                let failureHandler: (Error) -> (Void) = { [weak self] error in
+                    let alertController = UIAlertController(title: "Błąd",
+                                                            message: error.localizedDescription,
+                                                            preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self?.present(alertController, animated: true)
+                }
+                
+                AudioContext.loadAudio(from: url, successHandler: successHandler, failureHandler: failureHandler)
+                self?.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
 }
 
 //MARK - buttons - start/pause/resume
