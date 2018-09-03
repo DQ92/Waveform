@@ -10,6 +10,7 @@
 		655BAC872130961C00AB828A /* WaveformViewScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC862130961C00AB828A /* WaveformViewScroll.swift */; };
 		655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655BAC882131EFC900AB828A /* WaveformInfoView.swift */; };
 		655BAC8B2131F02500AB828A /* WaveformInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 655BAC8A2131F02500AB828A /* WaveformInfoView.xib */; };
+		65964F3E213D5EC700FA931C /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65964F3D213D5EC700FA931C /* AudioController.swift */; };
 		65A9242521387B790097F424 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A9242421387B790097F424 /* ViewController+Recorder.swift */; };
 		65A924272139CF2A0097F424 /* AudioProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A924262139CF2A0097F424 /* AudioProcessor.swift */; };
 		65A924292139D1B10097F424 /* test.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 65A924282139D1B00097F424 /* test.m4a */; };
@@ -31,6 +32,7 @@
 		655BAC862130961C00AB828A /* WaveformViewScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformViewScroll.swift; sourceTree = "<group>"; };
 		655BAC882131EFC900AB828A /* WaveformInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformInfoView.swift; sourceTree = "<group>"; };
 		655BAC8A2131F02500AB828A /* WaveformInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WaveformInfoView.xib; sourceTree = "<group>"; };
+		65964F3D213D5EC700FA931C /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		65A9242421387B790097F424 /* ViewController+Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Recorder.swift"; sourceTree = "<group>"; };
 		65A924262139CF2A0097F424 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
 		65A924282139D1B00097F424 /* test.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.m4a; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				65D7AD8D213416FA007ABC15 /* CollectionViewWaveform.swift */,
 				65FD73BB2135D8B00003029F /* LeadingLineLayer.swift */,
 				65A9242421387B790097F424 /* ViewController+Recorder.swift */,
+				65964F3D213D5EC700FA931C /* AudioController.swift */,
 			);
 			path = Waveform;
 			sourceTree = "<group>";
@@ -218,6 +221,7 @@
 				65A924272139CF2A0097F424 /* AudioProcessor.swift in Sources */,
 				655BAC892131EFC900AB828A /* WaveformInfoView.swift in Sources */,
 				E8893DBF9D8C3E48CE3D58A4 /* WaveformCollectionViewCell.swift in Sources */,
+				65964F3E213D5EC700FA931C /* AudioController.swift in Sources */,
 				E8893FEE137AB88C5E648D38 /* LeadingLineTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

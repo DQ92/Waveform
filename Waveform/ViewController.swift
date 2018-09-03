@@ -9,6 +9,8 @@ var viewWidth: CGFloat = 0
 var partOfView: CGFloat = 0 // 1/6
 
 
+
+
 class ViewController: UIViewController, AVAudioRecorderDelegate {
 
     // MARK: - IBOutlets
@@ -98,8 +100,11 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         
         collectionViewWaveform.delegate = self
         
-        playFromFile()
-
+//        playFromFile()
+        
+        AudioController.sharedInstance.prepare()
+        AudioController.sharedInstance.start()
+        AudioController.sharedInstance.delegate = self
     }
     
     
@@ -117,7 +122,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             return
         }
         let totSamples = file.length
-
         let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: 2, interleaved: false)
         let buffer = AVAudioPCMBuffer(pcmFormat: format!, frameCapacity: AVAudioFrameCount(totSamples))
         try! file.read(into: buffer!)
@@ -214,6 +218,14 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             AVLinearPCMIsFloatKey: false,
             AVLinearPCMIsNonInterleaved: false
         ]
+    }
+}
+
+extension ViewController: AudioControllerDelegate {
+    func processSampleData(_ data: Data) -> Void {
+        
+        print(data)
+            print("\n ")
     }
 }
 
