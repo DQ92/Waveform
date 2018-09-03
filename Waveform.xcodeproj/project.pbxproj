@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
+		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
 		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
 		709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
+		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		709AB9D5213D272800F63746 /* WaveformView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,8 +101,8 @@
 		BC925FDF2088EFEF00E52984 /* Waveform */ = {
 			isa = PBXGroup;
 			children = (
-				E8893976D6167E37EF11A033 /* Resources */,
 				65FD73BD2135E6E60003029F /* Source */,
+				E8893976D6167E37EF11A033 /* Resources */,
 			);
 			path = Waveform;
 			sourceTree = "<group>";
@@ -136,6 +140,8 @@
 		E88937264D551A08536C86C5 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				66B83A4D213D5290004EFB6B /* AudioContext.swift */,
+				66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */,
 				E889367CB6423F4B57B69FE1 /* ViewController.swift */,
 				E889321E20374C0C8FD33AD5 /* Main.storyboard */,
 				E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */,
@@ -245,7 +251,9 @@
 				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
 				E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */,
 				709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */,
+				66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */,
 				E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */,
+				66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */,
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
 				E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */,

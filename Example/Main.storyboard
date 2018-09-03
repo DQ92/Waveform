@@ -84,7 +84,6 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="uoO-gH-8Kj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="6VJ-d8-7gu"/>
-                            <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="AFY-QK-CKt"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="FLl-vj-TP5"/>
                             <constraint firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="HS7-cA-ge4"/>
@@ -103,7 +102,6 @@
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="11k-c7-ooL" secondAttribute="bottom" constant="12" id="mNV-uH-Vk9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="K5L-b9-aJW" secondAttribute="trailing" constant="8" id="o2Y-Ex-Lat"/>
                             <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="ooG-r3-zZd"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="100" id="vte-nu-s3B"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="pH5-Ea-90P"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" constant="100" id="rfd-tS-Sph"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
