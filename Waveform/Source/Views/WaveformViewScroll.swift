@@ -1,7 +1,6 @@
 
 import UIKit
 
-
 class WaveformViewScroll : UIScrollView {
     
     var x: CGFloat = 0

@@ -16,7 +16,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveform: WaveformViewScroll!
     @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var collectionViewWaveform: WaveformView!
+    @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timerLabel: UILabel!
 
@@ -30,7 +30,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 
     var values = [[WaveformModel]]() {
         didSet {
-            collectionViewWaveform.values = values
+            waveformCollectionView.values = values
         }
     }
     
@@ -41,7 +41,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var isAudioRecordingGranted: Bool = true
     var sampleIndex = 0 {
         didSet {
-            collectionViewWaveform.sampleIndex = sampleIndex
+            waveformCollectionView.sampleIndex = sampleIndex
         }
     }
     var sec: Int = 0 
@@ -54,19 +54,19 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var part = 0
     var isRecording = false {
         didSet {
-            collectionViewWaveform.isRecording = isRecording
+            waveformCollectionView.isRecording = isRecording
             if (isRecording) {
                 if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                     CATransaction.begin()
                     part = part + 1
                     sampleIndex = currentIndex
-                    collectionViewWaveform.refresh()
+                    waveformCollectionView.refresh()
                     CATransaction.commit()
                 }
-                collectionViewWaveform.isUserInteractionEnabled = false
+                waveformCollectionView.isUserInteractionEnabled = false
             } else {
-                collectionViewWaveform.isUserInteractionEnabled = true
-                collectionViewWaveform.onPause(sampleIndex: CGFloat(sampleIndex))
+                waveformCollectionView.isUserInteractionEnabled = true
+                waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
             }
         }
     }
@@ -90,7 +90,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
         
-        collectionViewWaveform.delegate = self
+        waveformCollectionView.delegate = self
     }
 }
 
@@ -201,12 +201,12 @@ extension ViewController {
         if(values[sec - 1].count > elementsPerSecond) {
             print("ERRROR! values[sec - 1].count > elementsPerSecond")
         }
-        collectionViewWaveform.update(model: model, sampleIndex: sampleIndex)
+        waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
     }
 
     func newSecond() {
         values.append([])
-        collectionViewWaveform.newSecond(values.count - 1, CGFloat(sampleIndex))
+        waveformCollectionView.newSecond(values.count - 1, CGFloat(sampleIndex))
     }
 }
 
