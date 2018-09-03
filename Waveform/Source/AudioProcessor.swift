@@ -77,7 +77,7 @@ extension AudioProcessor {
         vDSP_vdbcon(processingBuffer, 1, &zeroDbEquivalent, &processingBuffer, 1, samplesToProcess, 1)
         vDSP_vclip(processingBuffer, 1, &quietestClipValue, &loudestClipValue, &processingBuffer, 1, samplesToProcess)
         
-        let samplesPerPixel = 1// max(1, sampleCount(from: assetReader) / targetSampleCount)
+        let samplesPerPixel =  max(1, sampleCount(from: assetReader) / 1000)
         let filter = [Float](repeating: 1.0 / Float(samplesPerPixel), count: samplesPerPixel)
         let downSampledLength = sampleLength / samplesPerPixel
         var downSampledData = [Float](repeating: 0.0, count: downSampledLength)

@@ -1,5 +1,7 @@
 import AVFoundation
 import UIKit
+import Accelerate
+import Foundation
 
 let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.width)))
 var viewWidth: CGFloat = 0
@@ -27,7 +29,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     let tempDirectoryURL = FileManager.default.temporaryDirectory;
     let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
                                                                in: .userDomainMask).first!
-
+    private var silenceDbThreshold: Float { return -50.0 } // everything below -50 dB will be clipped
     var values = [[WaveformModel]]() {
         didSet {
             collectionViewWaveform.values = values
@@ -104,15 +106,91 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 //        let audioAssetURL = documentsURL.appendingPathComponent(tempDictName).appendingPathComponent("rec_1.m4a")
 //        let audioAssetURL = documentsURL.appendingPathComponent("test.m4a")
         let audioAsset = AVURLAsset(url: audioAssetURL)
-        let assetReader = try? AVAssetReader(asset: audioAsset)
+        let assetReader = try! AVAssetReader(asset: audioAsset)
+        let videoTrack = audioAsset.tracks(withMediaType: AVMediaType.audio)[0]
+        let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings:nil)
+        assetReader.add(readerOutput)
+        assetReader.startReading()
+        var outputSamples = [Float]()
         
-//        let outputs = assetReader?.outputs
-//        print(outputs?.count)
-//        print(outputs)
-        let audioProcessor = AudioProcessor()
-        self.results = audioProcessor.waveformSamples(from: assetReader!, count: 10000000)!
-        meterTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updatePlayAudioMeter(timer:)), userInfo: nil, repeats: true)
-        isRecording = true
+        while let sampleBuffer = readerOutput.copyNextSampleBuffer()  {
+            if let blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) {
+                let blockBufferLength = CMBlockBufferGetDataLength(blockBuffer)
+                let sampleLength = CMSampleBufferGetNumSamples(sampleBuffer) * channelCount(from: assetReader)
+                var data = Data(capacity: blockBufferLength)
+                data.withUnsafeMutableBytes { (blockSamples: UnsafeMutablePointer<Int16>) in
+                    CMBlockBufferCopyDataBytes(blockBuffer, 0, blockBufferLength, blockSamples)
+                    CMSampleBufferInvalidate(sampleBuffer)
+                    
+                    let processedSamples = process(blockSamples,
+                                                   ofLength: sampleLength,
+                                                   from: assetReader,
+                                                   downsampledTo: 6000000)
+                    outputSamples += processedSamples
+                }
+            }
+        }
+        
+        print(outputSamples)
+        
+    }
+    
+    private func process(_ samples: UnsafeMutablePointer<Int16>,
+                         ofLength sampleLength: Int,
+                         from assetReader: AVAssetReader,
+                         downsampledTo targetSampleCount: Int) -> [Float] {
+        var loudestClipValue: Float = 0.0
+        var quietestClipValue = silenceDbThreshold
+        var zeroDbEquivalent: Float = Float(Int16.max) // maximum amplitude storable in Int16 = 0 Db (loudest)
+        let samplesToProcess = vDSP_Length(sampleLength)
+        
+        var processingBuffer = [Float](repeating: 0.0, count: Int(samplesToProcess))
+        vDSP_vflt16(samples, 1, &processingBuffer, 1, samplesToProcess)
+        vDSP_vabs(processingBuffer, 1, &processingBuffer, 1, samplesToProcess)
+        vDSP_vdbcon(processingBuffer, 1, &zeroDbEquivalent, &processingBuffer, 1, samplesToProcess, 1)
+        vDSP_vclip(processingBuffer, 1, &quietestClipValue, &loudestClipValue, &processingBuffer, 1, samplesToProcess)
+        
+        let samplesPerPixel = 100 //sampleCount(from: assetReader) / targetSampleCount // max(1, Int(sampleCount(from: assetReader) / targetSampleCount))
+        let filter = [Float](repeating: 1.0 / Float(samplesPerPixel), count: samplesPerPixel)
+        let downSampledLength = sampleLength / samplesPerPixel
+        var downSampledData = [Float](repeating: 0.0, count: downSampledLength)
+        
+        vDSP_desamp(processingBuffer,
+                    vDSP_Stride(samplesPerPixel),
+                    filter,
+                    &downSampledData,
+                    vDSP_Length(downSampledLength),
+                    vDSP_Length(samplesPerPixel))
+        
+        return downSampledData
+    }
+    
+    private func sampleCount(from assetReader: AVAssetReader) -> Int {
+        let samplesPerChannel = Int(assetReader.asset.duration.value)
+        return samplesPerChannel * channelCount(from: assetReader)
+    }
+    
+    private func channelCount(from assetReader: AVAssetReader) -> Int {
+        let audioTrack = (assetReader.outputs.first as? AVAssetReaderTrackOutput)?.track
+        
+        var channelCount = 0
+        audioTrack?.formatDescriptions.forEach { formatDescription in
+            let audioDescription = CFBridgingRetain(formatDescription) as! CMAudioFormatDescription
+            if let basicDescription = CMAudioFormatDescriptionGetStreamBasicDescription(audioDescription) {
+                channelCount = Int(basicDescription.pointee.mChannelsPerFrame)
+            }
+        }
+        return channelCount
+    }
+    
+    func outputSettings() -> [String: Any] {
+        return [
+            AVFormatIDKey: kAudioFormatLinearPCM,
+            AVLinearPCMBitDepthKey: 16,
+            AVLinearPCMIsBigEndianKey: false,
+            AVLinearPCMIsFloatKey: false,
+            AVLinearPCMIsNonInterleaved: false
+        ]
     }
 }
 
