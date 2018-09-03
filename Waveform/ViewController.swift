@@ -14,11 +14,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet var record_btn_ref: UIButton!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var totalTimeLabel: UILabel!
-    @IBOutlet weak var waveform: WaveformViewScroll!
-    @IBOutlet weak var waveformRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var collectionViewWaveform: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var timerLabel: UILabel!
 
     // MARK: - Private Properties
     let preferredTimescale: CMTimeScale = 1000
