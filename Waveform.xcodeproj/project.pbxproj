@@ -12,6 +12,7 @@
 		709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
 		709AB9D6213D272800F63746 /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 709AB9D5213D272800F63746 /* WaveformView.xib */; };
+		E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889314B1F48E2283EA51887 /* AudioController.swift */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
@@ -19,6 +20,7 @@
 		E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */; };
+		E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88936352B1611E5D825383D /* AudioUtils.swift */; };
 		E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889367CB6423F4B57B69FE1 /* ViewController.swift */; };
 		E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +30,7 @@
 		709AB9D5213D272800F63746 /* WaveformView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
+		E889314B1F48E2283EA51887 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
 		E889321E20374C0C8FD33AD5 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -35,6 +38,7 @@
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformViewDelegate.swift; sourceTree = "<group>"; };
 		E8893605E36346DF677F0556 /* WaveformCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionView.swift; sourceTree = "<group>"; };
+		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -64,6 +68,7 @@
 				E88934B7BCB14371999176E0 /* LeadingLine */,
 				E8893411928FDEF318F420BF /* Model */,
 				E889308EE57AC8A701D89201 /* Views */,
+				E889314B1F48E2283EA51887 /* AudioController.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -72,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */,
+				E88936352B1611E5D825383D /* AudioUtils.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -249,6 +255,8 @@
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
 				E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */,
+				E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */,
+				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
