@@ -33,15 +33,15 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         upLayer.frame = CGRect(x: sampleIndex, y: layerY, width: 1, height: -model.value)
         upLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
         upLayer.lineWidth = 1
-//        upList[Int(sampleIndex)].removeFromSuperlayer()
+        upList[Int(sampleIndex)].removeFromSuperlayer()
         self.contentView.layer.addSublayer(upLayer)
-//        upList[Int(sampleIndex)] = upLayer
+        upList[Int(sampleIndex)] = upLayer
         
         downLayer.frame = CGRect(x: sampleIndex, y: layerY, width: 1, height: model.value)
         downLayer.backgroundColor = WaveformColor.colors(model: model).1.cgColor
         downLayer.lineWidth = 1
-//        downList[Int(sampleIndex)].removeFromSuperlayer()
+        downList[Int(sampleIndex)].removeFromSuperlayer()
         self.contentView.layer.addSublayer(downLayer)
-//        downList[Int(sampleIndex)] = downLayer
+        downList[Int(sampleIndex)] = downLayer
     }
 }

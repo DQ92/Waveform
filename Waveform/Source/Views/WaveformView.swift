@@ -71,7 +71,7 @@ extension WaveformView {
 
         setupCollectionView()
 
-        leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: 140) //TODO
+        leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: self.frame.height) //TODO
         self.layer.addSublayer(leadingLine)
         elementsPerSecond = Int(width / 6)
         leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
