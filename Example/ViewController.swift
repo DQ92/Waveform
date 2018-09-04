@@ -89,9 +89,10 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
-        
+
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
+        printFloatDataFromAudioFile()
     }
 }
 
@@ -167,7 +168,7 @@ extension ViewController {
     }
 
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
-        
+
         sampleIndex = sampleIndex + 1
 
         let _peak: Float = peak
@@ -222,5 +223,60 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
         updatePeak(data * 100 * 3, with: audioRecorder.currentTime)
+    }
+}
+
+// MARK: - File loading
+
+extension ViewController {
+    func printFloatDataFromAudioFile() {
+
+        let name = "sample" //YOUR FILE NAME
+        let source = URL(string: Bundle.main.path(forResource: name, ofType: "m4a")!)! as CFURL
+
+        var fileRef: ExtAudioFileRef?
+        ExtAudioFileOpenURL(source, &fileRef)
+
+        let floatByteSize: UInt32 = 4
+        
+        var audioFormat = AudioStreamBasicDescription()
+        audioFormat.mSampleRate = Float64(44100) // GIVE YOUR SAMPLING RATE
+        audioFormat.mFormatID = kAudioFormatLinearPCM
+        audioFormat.mFormatFlags = kLinearPCMFormatFlagIsFloat
+        audioFormat.mBitsPerChannel = UInt32(MemoryLayout<Float32>.size * 8)
+        audioFormat.mChannelsPerFrame = 1 // Mono
+        audioFormat.mFramesPerPacket = 1
+        audioFormat.mBytesPerFrame = floatByteSize;
+        audioFormat.mBytesPerPacket = floatByteSize;
+        
+        ExtAudioFileSetProperty(fileRef!, kExtAudioFileProperty_ClientDataFormat, UInt32(MemoryLayout<AudioStreamBasicDescription>.size), &audioFormat)
+
+        let numSamples: UInt32 = 464
+        let sizePerPacket: UInt32 = audioFormat.mBytesPerPacket
+        let packetsPerBuffer: UInt32 = UInt32(numSamples)
+        let outputBufferSize: UInt32 = packetsPerBuffer * sizePerPacket
+
+
+        var audioBuffers: AudioBufferList = AudioBufferList()
+        audioBuffers.mNumberBuffers = 1
+        
+        let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &audioBuffers.mBuffers,
+                                                              count: Int(audioBuffers.mNumberBuffers))
+        buffers[0].mNumberChannels = audioFormat.mChannelsPerFrame
+        buffers[0].mDataByteSize = outputBufferSize
+        buffers[0].mData = nil
+
+        var frameCount: UInt32 = numSamples
+        var samplesAsCArray: [Float] = []
+
+        while frameCount > 0 {
+            ExtAudioFileRead(fileRef!,
+                             &frameCount,
+                             &audioBuffers)
+            if frameCount > 0 {
+                let ptr = audioBuffers.mBuffers.mData?.assumingMemoryBound(to: Float.self)
+                samplesAsCArray.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(numSamples)))
+            }
+        }
     }
 }
