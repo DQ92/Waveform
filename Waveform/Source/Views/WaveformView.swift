@@ -44,6 +44,10 @@ class WaveformView: UIView {
 
         xibSetup()
     }
+    
+    func reloadData() {
+        self.collectionView.reloadData()
+    }
 
     // MARK: - Nib loading
 
@@ -76,7 +80,7 @@ extension WaveformView {
         elementsPerSecond = Int(width / 6)
         leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
-
+    
     private func setupCollectionView() {
         collectionView.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: self.itemReuseIdentifier)
         collectionView.dataSource = self

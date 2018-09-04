@@ -159,6 +159,13 @@ extension ViewController {
             viewController.directoryUrl = self.documentsURL.appendingPathComponent(self.tempDictName)
             viewController.didSelectFileBlock = { [weak self] url in
                 let successHandler: (AudioContext) -> (Void) = { context in
+                    let samples = context.extractSamples()
+                    let values = self?.buildWaveformModel(from: samples, numberOfSeconds: context.numberOfSeconds)
+
+                    DispatchQueue.main.async {
+                        self?.waveformCollectionView.values = values ?? []
+                        self?.waveformCollectionView.reloadData()
+                    }
                     
                 }
                 let failureHandler: (Error) -> (Void) = { [weak self] error in
@@ -173,6 +180,32 @@ extension ViewController {
                 self?.navigationController?.popViewController(animated: true)
             }
         }
+    }
+    
+    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
+        // Liczba próbek na sekundę
+        let sampleRate = Double(samples.count) / numberOfSeconds
+        let waveformSamples = samples.enumerated().map { sample in
+            WaveformModel(value: CGFloat(sample.element), part: 0, timeStamp: Double(sample.offset) / sampleRate)
+        }
+        
+        // Po wczytaniu z pliku wykres ma się mieścić cały na ekranie. (domyślnie mieści się 6 komórek)
+        let numberOfCellsPerScreen: Int = 6
+        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfCellsPerScreen)))
+        
+        var result = [[WaveformModel]]()
+        
+        for cellIndex in 0..<numberOfCellsPerScreen {
+            let beginIndex = cellIndex * samplesPerCell
+            let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
+            var cellSamples = [WaveformModel]()
+            
+            for index in beginIndex..<endIndex {
+                cellSamples.append(waveformSamples[index])
+            }
+            result.append(cellSamples)
+        }
+        return result
     }
 }
 
