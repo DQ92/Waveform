@@ -137,6 +137,7 @@ extension WaveformView {
 
     private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
         updateLeadingLine()
+        cell.configurator = RecorderWaveformCollectionViewCellConfigurator()
         cell.setup(model: model, sampleIndex: x)
         setOffset()
     }
@@ -199,7 +200,6 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.itemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
-        cell.numberOfLayers = elementsPerSecond
         let second = indexPath.section
         let valuesInSecond: [WaveformModel] = values[second]
 
