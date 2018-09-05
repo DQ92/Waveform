@@ -16,6 +16,15 @@ class WaveformCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Initialization
 
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+     
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -38,9 +47,15 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         let waveLayer = CAShapeLayer()
         waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
         waveLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
-        layersList[Int(sampleIndex)].removeFromSuperlayer()
-        self.contentView.layer.addSublayer(waveLayer)
-        layersList[Int(sampleIndex)] = waveLayer
+        
+        let index = Int(sampleIndex)
+        if(index > layersList.count || index < 0) {
+            Assert.checkRep(true, "Wrong value of sampleIndex! : \(index)")
+        } else {
+            layersList[index].removeFromSuperlayer()
+            self.contentView.layer.addSublayer(waveLayer)
+            layersList[index] = waveLayer
+        }
     }
 }
 

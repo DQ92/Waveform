@@ -1,9 +1,6 @@
 import AVFoundation
 import UIKit
 
-let timeInterval: TimeInterval = (TimeInterval(6 / Float(UIScreen.main.bounds.width)))
-var viewWidth: CGFloat = 0
-var partOfView: CGFloat = 0 // 1/6
 
 class ViewController: UIViewController, AVAudioRecorderDelegate {
     
@@ -11,15 +8,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var record_btn_ref: UIButton!
-    @IBOutlet weak var slider: UISlider!
-    @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
     
     // MARK: - Private Properties
     
-    let preferredTimescale: CMTimeScale = 1000
     let tempDictName = "temp_audio"
     let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     let tempDirectoryURL = FileManager.default.temporaryDirectory;
@@ -31,8 +25,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
             waveformCollectionView.values = values
         }
     }
-    
-    let vLayer = CAShapeLayer()
     var audioRecorder: AVAudioRecorder!
     var meterTimer: Timer!
     var isAudioRecordingGranted: Bool = true
@@ -42,20 +34,18 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     var sec: Int = 0
-    
-    let padding: CGFloat = 0
     private var elementsPerSecond: Int {
-        return Int((UIScreen.main.bounds.width) / 6)
+        return WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: UIScreen.main.bounds.width)
     }
     
-    var part = 0
+    var numberOfRecord = 0
     var isRecording = false {
         didSet {
             waveformCollectionView.isRecording = isRecording
             if (isRecording) {
                 if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                     CATransaction.begin()
-                    part = part + 1
+                    numberOfRecord = numberOfRecord + 1
                     sampleIndex = currentIndex
                     waveformCollectionView.refresh()
                     CATransaction.commit()
@@ -71,32 +61,24 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var suffix: Int = 0
     let fileManager = FileManager.default
     var isMovedWhenPaused: Bool = false // gdy przesunie seek bara to ustawić na true
-    var totalDuration: Float = 0 {
-        didSet {
-            totalTimeLabel.text = "\(totalDuration + currentDuration) sec."
-        }
-    }
+    var totalDuration: Float = 0
     var currentDuration: Float = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        removeTempDict()
-        createDictInTemp()
-        
-        viewWidth = UIScreen.main.bounds.width
-        partOfView = viewWidth / 6
+//        removeTempDict()
+//        createDictInTemp()
         
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
-        
 //                printFloatDataFromAudioFile()
-
     }
 }
+
 
 //MARK - buttons - start/pause/resume
 extension ViewController {
@@ -158,7 +140,7 @@ extension ViewController {
     }
     
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, part: part, timeStamp: timeStamp)
+        return WaveformModel(value: value, numberOfRecord: numberOfRecord, timeStamp: timeStamp)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -192,7 +174,7 @@ extension ViewController {
         // Liczba próbek na sekundę
         let sampleRate = Double(samples.count) / numberOfSeconds
         let waveformSamples = samples.enumerated().map { sample in
-            WaveformModel(value: CGFloat(sample.element), part: 0, timeStamp: Double(sample.offset) / sampleRate)
+            WaveformModel(value: CGFloat(sample.element), numberOfRecord: 0, timeStamp: Double(sample.offset) / sampleRate)
         }
         
         // Po wczytaniu z pliku wykres ma się mieścić cały na ekranie. (domyślnie mieści się 6 komórek)
@@ -218,18 +200,17 @@ extension ViewController {
 }
 
 // MARK: - buttons - start/pause/resume
-
 extension ViewController {
     @objc func updateAudioMeter(timer: Timer) {
         //
     }
     
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
-        
         sampleIndex = sampleIndex + 1
-        
         let _peak: Float = peak
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
+        
+        Assert.checkRep(sec < 0, "Second value is less than 0!")
         
         //newsecon
         if values.count <= sec {
@@ -245,7 +226,7 @@ extension ViewController {
         }
         
         if (values[sec - 1].count > elementsPerSecond) {
-            print("ERROR! values[sec - 1].count > elementsPerSecond")
+            Assert.checkRep(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
     }
@@ -263,7 +244,6 @@ extension ViewController: WaveformViewDelegate {
     func didScroll(_ x: CGFloat) {
         if (!self.isRecording) {
             currentIndex = Int(x)
-            //            print("currentIndex: \(currentIndex)")
         }
     }
 }
@@ -286,7 +266,6 @@ extension ViewController: AudioControllerDelegate {
 extension ViewController {
 
     func printFloatDataFromAudioFile() {
-
         let name = "rec_1"
         let source = URL(string: Bundle.main.path(forResource: name, ofType: "m4a")!)! as CFURL
         

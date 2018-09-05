@@ -11,17 +11,16 @@ class WaveformView: UIView {
     // MARK: - Private properties
 
     private let itemReuseIdentifier = "collectionViewCell"
-    private let leadingLineAnimationDuration = timeInterval //TODO wywalić zmienną globalną
+    private let leadingLineAnimationDuration = WaveformConfiguration.timeInterval
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
     private var width: CGFloat {
-        return UIScreen.main.bounds.size.width // TODO, nie działa dla self.view  UIScreen.main.bounds.size.width //
+        return UIScreen.main.bounds.size.width // TODO, powinno zwracać szerokość collectionView
     }
 
     weak var delegate: WaveformViewDelegate?
     var values = [[WaveformModel]]()
     var sampleIndex: Int = 0
-
     var isRecording: Bool = false
 
     private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
@@ -31,6 +30,7 @@ class WaveformView: UIView {
         }
     }
 
+    
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -44,18 +44,6 @@ class WaveformView: UIView {
 
         xibSetup()
     }
-    
-    func load(values: [[WaveformModel]]) {
-        if let numberOfElements = values.first?.count {
-            self.elementsPerSecond = numberOfElements
-        } else {
-            self.elementsPerSecond = Int(width / 6)
-        }
-        self.values = values
-        self.collectionView.reloadData()
-    }
-
-    // MARK: - Nib loading
 
     private func loadViewFromNib() -> UIView {
         let thisType = type(of: self)
@@ -69,6 +57,17 @@ class WaveformView: UIView {
 // MARK: - Setup
 
 extension WaveformView {
+    
+    func load(values: [[WaveformModel]]) {
+        if let numberOfElements = values.first?.count {
+            self.elementsPerSecond = numberOfElements
+        } else {
+            self.elementsPerSecond = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: width)
+        }
+        self.values = values
+        self.collectionView.reloadData()
+    }
+    
     private func xibSetup() {
         view = loadViewFromNib()
         view.frame = bounds
@@ -84,7 +83,7 @@ extension WaveformView {
         leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: self.frame.height) //TODO
         self.layer.addSublayer(leadingLine)
         
-        elementsPerSecond = Int(width / 6)
+        elementsPerSecond = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: width)
         leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
     
@@ -97,7 +96,8 @@ extension WaveformView {
 
     private func setupCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: partOfView, height: 130) //TODO
+        let width = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: self.width)
+        layout.itemSize = CGSize(width: width, height: 130) //TODO: pozbyć się wbitej wysokości
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         layout.sectionInset = UIEdgeInsets.zero
@@ -120,7 +120,7 @@ extension WaveformView {
             let x = CGFloat(sampleIndex % elementsPerSecond)
             updateCell(lastCell, x, model)
         } else {
-            print("ERROR! lastCell is NIL!")
+            Assert.checkRep(true, "ERROR! lastCell is NIL!")
         }
     }
 
@@ -137,7 +137,6 @@ extension WaveformView {
 
     private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
         updateLeadingLine()
-        cell.configurator = RecorderWaveformCollectionViewCellConfigurator()
         cell.setup(model: model, sampleIndex: x)
         setOffset()
     }
@@ -200,6 +199,8 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.itemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
+        cell.configurator = RecorderWaveformCollectionViewCellConfigurator()
+
         let second = indexPath.section
         let valuesInSecond: [WaveformModel] = values[second]
 

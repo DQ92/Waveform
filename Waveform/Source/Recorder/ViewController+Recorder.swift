@@ -27,7 +27,7 @@ extension ViewController {
                 audioRecorder.isMeteringEnabled = true
                 audioRecorder.prepareToRecord()
                 audioRecorder.record()
-                meterTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updateAudioMeter(timer:)), userInfo: nil, repeats: true) //zatrzymywać timer na pauzie
+                meterTimer = Timer.scheduledTimer(timeInterval: WaveformConfiguration.timeInterval, target: self, selector: #selector(self.updateAudioMeter(timer:)), userInfo: nil, repeats: true) //zatrzymywać timer na pauzie
                 
                 record_btn_ref.setTitle("Pause", for: .normal)
                 isRecording = true
@@ -57,11 +57,9 @@ extension ViewController {
     @IBAction func recordAt(_ sender: UIButton) {
         stop()
         
-        let time: TimeInterval = TimeInterval(slider.value);
-        sender.setTitle("Crop at... \(time) sec", for: .normal)
-        crop(sourceURL: getFileUrl(), startTime: 0, endTime: time) { (url) in
-            self.suffix = self.suffix + 1
-        }
+//        crop(sourceURL: getFileUrl(), startTime: 0, endTime: time) { (url) in
+//            self.suffix = self.suffix + 1
+//        }
     }
     
     func crop(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil) {
@@ -80,8 +78,8 @@ extension ViewController {
         } catch let error {
             log(error)
         }
-        
-        let timeRange = CMTimeRange(start: CMTime(seconds: startTime, preferredTimescale: self.preferredTimescale), end: CMTime(seconds: endTime, preferredTimescale: self.preferredTimescale))
+        let preferredTimescale = WaveformConfiguration.preferredTimescale
+        let timeRange = CMTimeRange(start: CMTime(seconds: startTime, preferredTimescale: preferredTimescale), end: CMTime(seconds: endTime, preferredTimescale: preferredTimescale))
         
         try? fileManager.removeItem(at: outputURL)
         guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
@@ -226,9 +224,7 @@ extension ViewController {
             totalDuration += assetDuration(asset)
             assets.append(asset)
         }
-        
-        slider.maximumValue = totalDuration + currentDuration
-        log("slider.maximumValue: \(slider.maximumValue)")
+
         return assets
     }
 }

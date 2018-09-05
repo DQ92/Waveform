@@ -129,7 +129,6 @@
 				E8893605E36346DF677F0556 /* WaveformCollectionView.swift */,
 				E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */,
 				E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */,
-				65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -137,6 +136,7 @@
 		E8893411928FDEF318F420BF /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */,
 				E88930D698705E7F475F1D2D /* WaveformModel.swift */,
 				E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */,
 			);
@@ -404,7 +404,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.daniel;
-
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
