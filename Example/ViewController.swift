@@ -167,8 +167,7 @@ extension ViewController {
                     let values = self?.buildWaveformModel(from: samples, numberOfSeconds: context.numberOfSeconds)
 
                     DispatchQueue.main.async {
-                        self?.waveformCollectionView.values = values ?? []
-                        self?.waveformCollectionView.reloadData()
+                        self?.waveformCollectionView.load(values: values ?? [])
                     }
                     
                 }
@@ -194,12 +193,14 @@ extension ViewController {
         }
         
         // Po wczytaniu z pliku wykres ma się mieścić cały na ekranie. (domyślnie mieści się 6 komórek)
-        let numberOfCellsPerScreen: Int = 6
-        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfCellsPerScreen)))
+//        let numberOfCellsPerScreen: Int = 6
+//        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfCellsPerScreen)))
+        
+        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfSeconds)))
         
         var result = [[WaveformModel]]()
         
-        for cellIndex in 0..<numberOfCellsPerScreen {
+        for cellIndex in 0..<Int(numberOfSeconds) {
             let beginIndex = cellIndex * samplesPerCell
             let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
             var cellSamples = [WaveformModel]()
