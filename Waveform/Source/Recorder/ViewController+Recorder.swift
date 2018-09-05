@@ -40,17 +40,22 @@ extension ViewController {
     }
     
     func list(directory at: URL) -> Void {
-        let listing = try! FileManager.default.contentsOfDirectory(atPath: at.path)
-        if listing.count > 0 {
-            print("\n----------------------------")
-            print("LISTING: \(at.path) \n")
-            for file in listing {
-                print("File: \(file.debugDescription)")
+        do {
+            let listing = try FileManager.default.contentsOfDirectory(atPath: at.path)
+        
+            if listing.count > 0 {
+                print("\n----------------------------")
+                print("LISTING: \(at.path) \n")
+                for file in listing {
+                    print("File: \(file.debugDescription)")
+                }
+                print("")
+                print("----------------------------\n")
+            } else {
+                print("Brak plików w \(at.path)")
             }
-            print("")
-            print("----------------------------\n")
-        } else {
-            print("Brak plików w \(at.path)")
+        } catch {
+        
         }
     }
     
@@ -211,20 +216,23 @@ extension ViewController {
     }
     
     func getAllAudioParts() -> [AVAsset] {
-        let at = documentsURL.appendingPathComponent(tempDictName)
-        var listing = try! FileManager.default.contentsOfDirectory(atPath: at.path)
-        var assets = [AVAsset]()
-        listing = listing.sorted(by: { $0 < $1 })
-        totalDuration = 0
-        
-        for file in listing {
-            let fileURL = at.appendingPathComponent(file)
-            print("FILE URL: \(fileURL)")
-            let asset = AVAsset(url: fileURL)
-            totalDuration += assetDuration(asset)
-            assets.append(asset)
+        do {
+            let at = documentsURL.appendingPathComponent(tempDictName)
+            var listing = try FileManager.default.contentsOfDirectory(atPath: at.path)
+            var assets = [AVAsset]()
+            listing = listing.sorted(by: { $0 < $1 })
+            totalDuration = 0
+            
+            for file in listing {
+                let fileURL = at.appendingPathComponent(file)
+                print("FILE URL: \(fileURL)")
+                let asset = AVAsset(url: fileURL)
+                totalDuration += assetDuration(asset)
+                assets.append(asset)
+            }
+            return assets
+        } catch {
+            return []
         }
-
-        return assets
     }
 }
