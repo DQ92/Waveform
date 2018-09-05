@@ -10,7 +10,6 @@ class Assert {
         if(condition()) {
             let assertMessage = message ?? ""
             print("🆘 ASSERT FAILED! \(assertMessage)")
-            assert(condition)
             Assert.showAlert(message: assertMessage)
         }
         #endif

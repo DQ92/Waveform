@@ -45,21 +45,6 @@
                                     <action selector="finishButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zIj-r6-y0E"/>
                                 </connections>
                             </button>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="uoO-gH-8Kj">
-                                <rect key="frame" x="6" y="243" width="283" height="31"/>
-                                <connections>
-                                    <action selector="sliderDidChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="t0p-kc-Q58"/>
-                                </connections>
-                            </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-:-" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K5L-b9-aJW">
-                                <rect key="frame" x="319" y="248" width="48" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="48" id="chm-py-tNI"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wUn-YI-p87" customClass="WaveformView" customModule="Waveform" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="419" width="375" height="200"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -83,7 +68,6 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="uoO-gH-8Kj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="6VJ-d8-7gu"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="FLl-vj-TP5"/>
                             <constraint firstAttribute="trailing" secondItem="wUn-YI-p87" secondAttribute="trailing" id="GkH-I4-ZdY"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="HS7-cA-ge4"/>
@@ -92,22 +76,18 @@
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" id="Vuo-hh-pLR"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="DG8-iI-565" secondAttribute="bottom" constant="12" id="X2Q-i3-ufn"/>
-                            <constraint firstItem="uoO-gH-8Kj" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="8" id="ZFp-QP-M8D"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="ZeK-ql-l1j"/>
-                            <constraint firstItem="K5L-b9-aJW" firstAttribute="centerY" secondItem="uoO-gH-8Kj" secondAttribute="centerY" id="aMR-yI-Kt2"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="bcR-FO-sVP"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" id="hau-Uw-e6t"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wUn-YI-p87" secondAttribute="bottom" constant="48" id="hhd-2K-RG2"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="11k-c7-ooL" secondAttribute="bottom" constant="12" id="mNV-uH-Vk9"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="K5L-b9-aJW" secondAttribute="trailing" constant="8" id="o2Y-Ex-Lat"/>
                             <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="ooG-r3-zZd"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="pH5-Ea-90P"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" constant="100" id="rfd-tS-Sph"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="uA0-bG-Oxr"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="width" secondItem="ufi-fB-fAa" secondAttribute="width" id="wu6-hf-Zle"/>
-                            <constraint firstItem="K5L-b9-aJW" firstAttribute="leading" secondItem="uoO-gH-8Kj" secondAttribute="trailing" constant="32" id="zP4-Ur-Adl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -116,9 +96,7 @@
                         <outlet property="collectionViewRightConstraint" destination="GkH-I4-ZdY" id="Qkd-TH-HLJ"/>
                         <outlet property="record_btn_ref" destination="ufi-fB-fAa" id="sRi-nW-EQB"/>
                         <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
-                        <outlet property="slider" destination="uoO-gH-8Kj" id="enP-p1-Sit"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="wPr-HY-Pb0"/>
-                        <outlet property="totalTimeLabel" destination="K5L-b9-aJW" id="n2m-AI-afh"/>
                         <outlet property="waveformCollectionView" destination="wUn-YI-p87" id="pLo-IV-HYW"/>
                     </connections>
                 </viewController>
