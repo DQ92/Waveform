@@ -6,9 +6,9 @@ var viewWidth: CGFloat = 0
 var partOfView: CGFloat = 0 // 1/6
 
 class ViewController: UIViewController, AVAudioRecorderDelegate {
-
+    
     // MARK: - IBOutlets
-
+    
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var record_btn_ref: UIButton!
     @IBOutlet weak var slider: UISlider!
@@ -16,22 +16,22 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
-
+    
     // MARK: - Private Properties
-
+    
     let preferredTimescale: CMTimeScale = 1000
     let tempDictName = "temp_audio"
     let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     let tempDirectoryURL = FileManager.default.temporaryDirectory;
     let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
-            in: .userDomainMask).first!
-
+                                                       in: .userDomainMask).first!
+    
     var values = [[WaveformModel]]() {
         didSet {
             waveformCollectionView.values = values
         }
     }
-
+    
     let vLayer = CAShapeLayer()
     var audioRecorder: AVAudioRecorder!
     var meterTimer: Timer!
@@ -42,12 +42,12 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     var sec: Int = 0
-
+    
     let padding: CGFloat = 0
     private var elementsPerSecond: Int {
         return Int((UIScreen.main.bounds.width) / 6)
     }
-
+    
     var part = 0
     var isRecording = false {
         didSet {
@@ -77,21 +77,24 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     var currentDuration: Float = 0
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         removeTempDict()
         createDictInTemp()
-
+        
         viewWidth = UIScreen.main.bounds.width
         partOfView = viewWidth / 6
-
+        
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
+        
+//                printFloatDataFromAudioFile()
+
     }
 }
 
@@ -100,7 +103,7 @@ extension ViewController {
     @IBAction func startRecording(_ sender: UIButton) {
         startOrPause()
     }
-
+    
     func startOrPause() {
         if (isRecording) {
             pause()
@@ -114,7 +117,7 @@ extension ViewController {
             }
         }
     }
-
+    
     func stop() {
         log("stopped")
         AudioController.sharedInstance.stop()
@@ -128,16 +131,16 @@ extension ViewController {
         listFiles()
         _ = getAllAudioParts()
     }
-
+    
     func resume() {
         AudioController.sharedInstance.start()
         log("Resumed")
         isRecording = true
-
+        
         record_btn_ref.setTitle("Pause", for: .normal)
         audioRecorder.record()
     }
-
+    
     func pause() {
         log("Paused")
         AudioController.sharedInstance.stop()
@@ -145,15 +148,15 @@ extension ViewController {
         isRecording = false
         audioRecorder.pause()
         listFiles()
-
+        
         _ = getAllAudioParts()
     }
-
+    
     @IBAction func finishButtonTapped(_ sender: Any) {
         stop()
         merge(assets: getAllAudioParts())
     }
-
+    
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
         return WaveformModel(value: value, part: part, timeStamp: timeStamp)
     }
@@ -218,23 +221,21 @@ extension ViewController {
 
 extension ViewController {
     @objc func updateAudioMeter(timer: Timer) {
-//
+        //
     }
-
+    
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
         
         sampleIndex = sampleIndex + 1
-
+        
         let _peak: Float = peak
-
-        print(_peak)
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
-
+        
         //newsecon
         if values.count <= sec {
             newSecond()
         }
-
+        
         let precision = sampleIndex % elementsPerSecond
         let model = createModel(value: CGFloat(_peak), with: timeStamp)
         if (values[sec - 1].count == elementsPerSecond) {
@@ -242,13 +243,13 @@ extension ViewController {
         } else {
             values[sec - 1].append(model)
         }
-
+        
         if (values[sec - 1].count > elementsPerSecond) {
             print("ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
     }
-
+    
     func newSecond() {
         values.append([])
         waveformCollectionView.newSecond(values.count - 1, CGFloat(sampleIndex))
@@ -258,11 +259,11 @@ extension ViewController {
 // MARK: - WaveformViewDelegate
 
 extension ViewController: WaveformViewDelegate {
-
+    
     func didScroll(_ x: CGFloat) {
         if (!self.isRecording) {
             currentIndex = Int(x)
-//            print("currentIndex: \(currentIndex)")
+            //            print("currentIndex: \(currentIndex)")
         }
     }
 }
@@ -277,5 +278,83 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
         updatePeak(data * 100 * 3, with: audioRecorder.currentTime)
+    }
+}
+
+// MARK: - File loading
+
+extension ViewController {
+
+    func printFloatDataFromAudioFile() {
+
+        let name = "rec_1"
+        let source = URL(string: Bundle.main.path(forResource: name, ofType: "m4a")!)! as CFURL
+        
+        var fileRef: ExtAudioFileRef?
+        ExtAudioFileOpenURL(source, &fileRef)
+        
+        let floatByteSize: UInt32 = 4
+        let channels: UInt32 = 1
+        
+        var audioFormat = AudioStreamBasicDescription()
+        audioFormat.mBitsPerChannel = 8 * floatByteSize
+        audioFormat.mBytesPerFrame = floatByteSize
+        audioFormat.mChannelsPerFrame = channels
+        audioFormat.mSampleRate = 44100
+        audioFormat.mFormatID = kAudioFormatLinearPCM
+        audioFormat.mFormatFlags = kLinearPCMFormatFlagIsFloat|kAudioFormatFlagIsNonInterleaved
+        audioFormat.mFramesPerPacket = 1
+        audioFormat.mBytesPerPacket = audioFormat.mFramesPerPacket * audioFormat.mBytesPerFrame;
+        
+        ExtAudioFileSetProperty(fileRef!,
+                                kExtAudioFileProperty_ClientDataFormat,
+                                UInt32(MemoryLayout<AudioStreamBasicDescription>.size),
+                                &audioFormat)
+        
+        var theFileLengthInFrames: Int64 = 0
+        var thePropertySize = UInt32(MemoryLayout.stride(ofValue: theFileLengthInFrames))
+        ExtAudioFileGetProperty(fileRef!,
+                                kExtAudioFileProperty_FileLengthFrames,
+                                &thePropertySize,
+                                &theFileLengthInFrames)
+        
+        
+        
+        let duration: TimeInterval = Double(theFileLengthInFrames) / audioFormat.mSampleRate
+        let totalFrames = UInt32(duration * audioFormat.mSampleRate)
+        let framesPerBuffer: UInt32 = 62
+//        let framesPerBuffer = UInt32(totalFrames / 1024)
+
+        let dataSize = UInt32(theFileLengthInFrames) * audioFormat.mBytesPerFrame
+        
+        let theData = UnsafeMutablePointer<Float>.allocate(capacity: Int(dataSize))
+        var bufferList: AudioBufferList = AudioBufferList()
+        bufferList.mNumberBuffers = 1
+        bufferList.mBuffers.mDataByteSize = dataSize
+        bufferList.mBuffers.mNumberChannels = audioFormat.mChannelsPerFrame
+        bufferList.mBuffers.mData = UnsafeMutableRawPointer(theData)
+
+        var rmss: [Float] = []
+        let numberOfSamples = Int(62.0 * duration)
+        
+        for _ in 0..<numberOfSamples {
+            
+            var bufferSize = UInt32(framesPerBuffer)
+            
+            ExtAudioFileRead(fileRef!,
+                             &bufferSize,
+                             &bufferList)
+            
+            
+            var monoSamples = [Float]()
+            let ptr = bufferList.mBuffers.mData?.assumingMemoryBound(to: Float.self)
+            monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(bufferSize)))
+            
+            let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: Int(bufferSize))
+            rmss.append(rms * 100 * 3)
+        }
+        
+        let model = buildWaveformModel(from: rmss, numberOfSeconds: duration)
+        waveformCollectionView.load(values: model)
     }
 }
