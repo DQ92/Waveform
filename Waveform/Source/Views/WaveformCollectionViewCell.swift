@@ -6,12 +6,13 @@ class WaveformCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Private properties
     
-    var layersList = [CAShapeLayer]()
-    var numberOfLayers: Int! {
+    private var layersList = [CAShapeLayer]()
+    var configurator: WaveformCollectionViewCellConfigurator! {
         didSet {
-            layersList = [CAShapeLayer](repeating: CAShapeLayer(), count: numberOfLayers)
+            layersList = configurator.emptyListOfLayersPerOneSecond()
         }
     }
+    
     
     // MARK: - Initialization
 
@@ -24,9 +25,9 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = nil
     }
     
-    func setup(model: WaveformModel, sampleIndex: CGFloat) { 
-        let layerHeight = model.value //TODO liczyć skalę na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
-        let layerWidth: CGFloat = 1
+    func setup(model: WaveformModel, sampleIndex: CGFloat) {
+        let layerWidth = configurator.oneLayerWidth()
+        let layerHeight = model.value //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
         let layerY = (self.bounds.height - layerHeight) / 2
         let waveLayer = CAShapeLayer()
         waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
@@ -36,3 +37,9 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         layersList[Int(sampleIndex)] = waveLayer
     }
 }
+
+
+
+
+
+
