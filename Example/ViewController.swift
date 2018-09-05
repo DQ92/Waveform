@@ -227,7 +227,7 @@ extension ViewController {
 
         let _peak: Float = peak
 
-        print(_peak)
+//        print(_peak)
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
 
         //newsecon

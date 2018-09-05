@@ -6,12 +6,10 @@ class WaveformCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Private properties
     
-    var upList = [CAShapeLayer]()
-    var downList = [CAShapeLayer]()
+    var layersList = [CAShapeLayer]()
     var numberOfLayers: Int! {
         didSet {
-            upList = [CAShapeLayer](repeating: CAShapeLayer(), count: numberOfLayers)
-            downList = [CAShapeLayer](repeating: CAShapeLayer(), count: numberOfLayers)
+            layersList = [CAShapeLayer](repeating: CAShapeLayer(), count: numberOfLayers)
         }
     }
     
@@ -26,24 +24,15 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = nil
     }
     
-    
-    
-    func setup(model: WaveformModel, sampleIndex: CGFloat) { //TODO przerobić na uzywanie jednego layerka zamiast dodwać dwa, ale do tego trzeba znać wysokość celki, żeby wyznaczyć Y
-        let upLayer = CAShapeLayer()
-        let downLayer = CAShapeLayer()
-        let layerY = CGFloat(self.bounds.size.height / 2)
-        upLayer.frame = CGRect(x: sampleIndex, y: layerY, width: 1, height: -model.value)
-        upLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
-        upLayer.lineWidth = 1
-        upList[Int(sampleIndex)].removeFromSuperlayer()
-        self.contentView.layer.addSublayer(upLayer)
-        upList[Int(sampleIndex)] = upLayer
-        
-        downLayer.frame = CGRect(x: sampleIndex, y: layerY, width: 1, height: model.value)
-        downLayer.backgroundColor = WaveformColor.colors(model: model).1.cgColor
-        downLayer.lineWidth = 1
-        downList[Int(sampleIndex)].removeFromSuperlayer()
-        self.contentView.layer.addSublayer(downLayer)
-        downList[Int(sampleIndex)] = downLayer
+    func setup(model: WaveformModel, sampleIndex: CGFloat) { 
+        let layerHeight = model.value //TODO liczyć skalę na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
+        let layerWidth: CGFloat = 1
+        let layerY = (self.bounds.height - layerHeight) / 2
+        let waveLayer = CAShapeLayer()
+        waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
+        waveLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
+        layersList[Int(sampleIndex)].removeFromSuperlayer()
+        self.contentView.layer.addSublayer(waveLayer)
+        layersList[Int(sampleIndex)] = waveLayer
     }
 }
