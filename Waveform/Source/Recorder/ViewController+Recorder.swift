@@ -8,6 +8,7 @@ import AVFoundation
 extension ViewController {
  
     func startRecording() {
+        AudioController.sharedInstance.start()
         if isAudioRecordingGranted { //sprawdzać wcześniej!
             log("startRecording")
             let session = AVAudioSession.sharedInstance()

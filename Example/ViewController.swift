@@ -33,7 +33,6 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     }
 
     let vLayer = CAShapeLayer()
-    let max: Float = 120
     var audioRecorder: AVAudioRecorder!
     var meterTimer: Timer!
     var isAudioRecordingGranted: Bool = true
@@ -90,6 +89,9 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
+        
+        AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
+        AudioController.sharedInstance.delegate = self
     }
 }
 
@@ -115,7 +117,7 @@ extension ViewController {
 
     func stop() {
         log("stopped")
-
+        AudioController.sharedInstance.stop()
         isMovedWhenPaused = false
         record_btn_ref.setTitle("Start", for: .normal)
         isRecording = false
@@ -128,6 +130,7 @@ extension ViewController {
     }
 
     func resume() {
+        AudioController.sharedInstance.start()
         log("Resumed")
         isRecording = true
 
@@ -137,6 +140,7 @@ extension ViewController {
 
     func pause() {
         log("Paused")
+        AudioController.sharedInstance.stop()
         record_btn_ref.setTitle("Resume", for: .normal)
         isRecording = false
         audioRecorder.pause()
@@ -213,28 +217,16 @@ extension ViewController {
 
 extension ViewController {
     @objc func updateAudioMeter(timer: Timer) {
-        if isRecording {
-            let hr = Int((audioRecorder.currentTime / 60) / 60)
-            let min = Int(audioRecorder.currentTime / 60)
-            let sec = Int(audioRecorder.currentTime.truncatingRemainder(dividingBy: 60))
-            let totalTimeString = String(format: "%02d:%02d:%02d", hr, min, sec)
-            recordingTimeLabel.text = totalTimeString
-            currentDuration = Float(sec)
-            let t = totalDuration + currentDuration
-            totalTimeLabel.text = "\(t) sec."
-            audioRecorder.updateMeters()
-            let peak = audioRecorder.averagePower(forChannel: 0) - 60
-            updatePeak(peak, with: audioRecorder.currentTime)
-        }
+//
     }
 
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
+        
         sampleIndex = sampleIndex + 1
 
-        let _peak: Float = (-1) * peak
-        var value: Float = max - _peak
-        value = value > 1 ? value : 4
+        let _peak: Float = peak
 
+        print(_peak)
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
 
         //newsecon
@@ -243,7 +235,7 @@ extension ViewController {
         }
 
         let precision = sampleIndex % elementsPerSecond
-        let model = createModel(value: CGFloat(value), with: timeStamp)
+        let model = createModel(value: CGFloat(_peak), with: timeStamp)
         if (values[sec - 1].count == elementsPerSecond) {
             values[sec - 1][precision] = model
         } else {
@@ -278,5 +270,11 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
     func timeDidChange(with time: Time) {
         let totalTimeString = String(format: "%02d:%02d:%02d:%02d", time.hours, time.minutes, time.seconds, time.milliSeconds)
         timeLabel.text = totalTimeString
+    }
+}
+
+extension ViewController: AudioControllerDelegate {
+    func processSampleData(_ data: Float) {
+        updatePeak(data * 100 * 3, with: audioRecorder.currentTime)
     }
 }
