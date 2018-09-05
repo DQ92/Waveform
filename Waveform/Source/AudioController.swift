@@ -19,18 +19,6 @@ class AudioController { // TODO: przerobic
 
     func prepare(specifiedSampleRate: Int) -> OSStatus {
 
-        var status = noErr
-
-        let session = AVAudioSession.sharedInstance()
-        do {
-            try session.setCategory(AVAudioSessionCategoryRecord)
-            try session.setPreferredIOBufferDuration(10)
-        } catch {
-            return -1
-        }
-
-        var sampleRate: Double = 44100
-
         // Describe the RemoteIO unit
         var audioComponentDescription = AudioComponentDescription()
         audioComponentDescription.componentType = kAudioUnitType_Output;
@@ -62,7 +50,7 @@ class AudioController { // TODO: przerobic
 
 
         let floatByteSize: UInt32 = 4
-
+        let sampleRate: Double = 44100
 
         // Set format for mic input (bus 1) on RemoteIO's output scope
         var asbd = AudioStreamBasicDescription()
@@ -128,7 +116,7 @@ func recordingCallback(
     bufferList.mNumberBuffers = channelCount
     let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &bufferList.mBuffers,
             count: Int(bufferList.mNumberBuffers))
-    buffers[0].mNumberChannels = 1
+    buffers[0].mNumberChannels = channelCount
     buffers[0].mDataByteSize = inNumberFrames * 2
     buffers[0].mData = nil
 
@@ -147,7 +135,7 @@ func recordingCallback(
     let ptr = bufferList.mBuffers.mData?.assumingMemoryBound(to: Float.self)
     monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(inNumberFrames)))
 
-    let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: 512)
+    let rms = AudioUtils.toRMS(buffer: monoSamples)
     
     DispatchQueue.main.async {
         AudioController.sharedInstance.delegate.processSampleData(rms)

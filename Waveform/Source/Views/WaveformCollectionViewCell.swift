@@ -26,6 +26,8 @@ class WaveformCollectionViewCell: UICollectionViewCell {
     }
     
     func setup(model: WaveformModel, sampleIndex: CGFloat) {
+        Assert.checkRep(configurator == nil, "Set configurator for waveformCell!")
+        
         let layerWidth = configurator.oneLayerWidth()
         let layerHeight = model.value //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
         let layerY = (self.bounds.height - layerHeight) / 2

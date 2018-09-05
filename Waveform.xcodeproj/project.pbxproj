@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FF82140012D00BFA378 /* WaveformConfiguration.swift */; };
 		65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
+		65481FFD21400AAA00BFA378 /* Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFC21400AAA00BFA378 /* Assert.swift */; };
 		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		65481FF82140012D00BFA378 /* WaveformConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformConfiguration.swift; sourceTree = "<group>"; };
 		65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
+		65481FFC21400AAA00BFA378 /* Assert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assert.swift; sourceTree = "<group>"; };
 		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */,
 				E88936352B1611E5D825383D /* AudioUtils.swift */,
 				65481FF82140012D00BFA378 /* WaveformConfiguration.swift */,
+				65481FFC21400AAA00BFA378 /* Assert.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -273,6 +276,7 @@
 				E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */,
 				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
 				65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */,
+				65481FFD21400AAA00BFA378 /* Assert.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +402,7 @@
 				DEVELOPMENT_TEAM = LRVM2QE496;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.daniel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
