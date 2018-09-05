@@ -92,7 +92,9 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
-        printFloatDataFromAudioFile()
+        
+//                printFloatDataFromAudioFile()
+
     }
 }
 
@@ -227,8 +229,6 @@ extension ViewController {
         sampleIndex = sampleIndex + 1
         
         let _peak: Float = peak
-        
-        print(_peak)
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
         
         //newsecon
@@ -284,105 +284,10 @@ extension ViewController: AudioControllerDelegate {
 // MARK: - File loading
 
 extension ViewController {
-    
-    //    func readFile() {
-    //
-    //            if (pthread_mutex_trylock(&_lock) == 0)
-    //            {
-    //                // store current frame
-    //                SInt64 currentFrame = self.frameIndex;
-    //                BOOL interleaved = [EZAudioUtilities isInterleaved:self.clientFormat];
-    //                UInt32 channels = self.clientFormat.mChannelsPerFrame;
-    //                if (channels == 0)
-    //                {
-    //                    // prevent division by zero
-    //                    pthread_mutex_unlock(&_lock);
-    //                    return nil;
-    //                }
-    //                float **data = (float **)malloc( sizeof(float*) * channels );
-    //                for (int i = 0; i < channels; i++)
-    //                {
-    //                    data[i] = (float *)malloc( sizeof(float) * numberOfPoints );
-    //                }
-    //
-    //                // seek to 0
-    //                [EZAudioUtilities checkResult:ExtAudioFileSeek(self.info->extAudioFileRef,
-    //                0)
-    //                operation:"Failed to seek frame position within audio file"];
-    //
-    //                // calculate the required number of frames per buffer
-    //                SInt64 framesPerBuffer = ((SInt64) self.totalClientFrames / numberOfPoints);
-    //                SInt64 framesPerChannel = framesPerBuffer / channels;
-    //
-    //                // allocate an audio buffer list
-    //                AudioBufferList *audioBufferList = [EZAudioUtilities audioBufferListWithNumberOfFrames:(UInt32)framesPerBuffer
-    //                numberOfChannels:self.info->clientFormat.mChannelsPerFrame
-    //                interleaved:interleaved];
-    //
-    //                // read through file and calculate rms at each point
-    //                for (SInt64 i = 0; i < numberOfPoints; i++)
-    //                {
-    //                    UInt32 bufferSize = (UInt32) framesPerBuffer;
-    //                    [EZAudioUtilities checkResult:ExtAudioFileRead(self.info->extAudioFileRef,
-    //                        &bufferSize,
-    //                        audioBufferList)
-    //                        operation:"Failed to read audio data from file waveform"];
-    //                    if (interleaved)
-    //                    {
-    //                        float *buffer = (float *)audioBufferList->mBuffers[0].mData;
-    //                        for (int channel = 0; channel < channels; channel++)
-    //                        {
-    //                            float channelData[framesPerChannel];
-    //                            for (int frame = 0; frame < framesPerChannel; frame++)
-    //                            {
-    //                                channelData[frame] = buffer[frame * channels + channel];
-    //                            }
-    //                            float rms = [EZAudioUtilities RMS:channelData length:(UInt32)framesPerChannel];
-    //                            data[channel][i] = rms;
-    //                        }
-    //                    }
-    //                    else
-    //                    {
-    //                        for (int channel = 0; channel < channels; channel++)
-    //                        {
-    //                            float *channelData = audioBufferList->mBuffers[channel].mData;
-    //                            float rms = [EZAudioUtilities RMS:channelData length:bufferSize];
-    //                            data[channel][i] = rms;
-    //                        }
-    //                    }
-    //                }
-    //
-    //                // clean up
-    //                [EZAudioUtilities freeBufferList:audioBufferList];
-    //
-    //                // seek back to previous position
-    //                [EZAudioUtilities checkResult:ExtAudioFileSeek(self.info->extAudioFileRef,
-    //                currentFrame)
-    //                operation:"Failed to seek frame position within audio file"];
-    //
-    //                pthread_mutex_unlock(&_lock);
-    //
-    //                waveformData = [EZAudioFloatData dataWithNumberOfChannels:channels
-    //                buffers:(float **)data
-    //                bufferSize:numberOfPoints];
-    //
-    //                // cleanup
-    //                for (int i = 0; i < channels; i++)
-    //                {
-    //                    free(data[i]);
-    //                }
-    //                free(data);
-    //            }
-    //            return waveformData;
-    //
-    //
-    //    }
-    
-    
-    
+
     func printFloatDataFromAudioFile() {
 
-        let name = "result" //YOUR FILE NAME
+        let name = "rec_1"
         let source = URL(string: Bundle.main.path(forResource: name, ofType: "m4a")!)! as CFURL
         
         var fileRef: ExtAudioFileRef?
@@ -446,7 +351,10 @@ extension ViewController {
             monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(bufferSize)))
             
             let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: Int(bufferSize))
-            rmss.append(rms)
+            rmss.append(rms * 100 * 3)
         }
+        
+        let model = buildWaveformModel(from: rmss, numberOfSeconds: duration)
+        waveformCollectionView.load(values: model)
     }
 }

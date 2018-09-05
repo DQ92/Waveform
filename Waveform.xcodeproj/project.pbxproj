@@ -14,8 +14,8 @@
 		709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
 		709AB9D6213D272800F63746 /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 709AB9D5213D272800F63746 /* WaveformView.xib */; };
-		709BCF12213FBBF300E2AD26 /* result.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 709BCF11213FBBF300E2AD26 /* result.m4a */; };
-		70AF9910213EAA3100029B2B /* sample.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 70AF990F213EAA3000029B2B /* sample.m4a */; };
+		709BCF15213FC89A00E2AD26 /* sample.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 709BCF14213FC89A00E2AD26 /* sample.m4a */; };
+		709BCF17213FCAF800E2AD26 /* rec_1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 709BCF16213FCAF700E2AD26 /* rec_1.m4a */; };
 		E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889314B1F48E2283EA51887 /* AudioController.swift */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
@@ -34,8 +34,8 @@
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		709AB9D5213D272800F63746 /* WaveformView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
-		709BCF11213FBBF300E2AD26 /* result.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = result.m4a; path = ../../../Desktop/result.m4a; sourceTree = "<group>"; };
-		70AF990F213EAA3000029B2B /* sample.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = sample.m4a; path = ../../../Downloads/sample.m4a; sourceTree = "<group>"; };
+		709BCF14213FC89A00E2AD26 /* sample.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = sample.m4a; path = ../../../Desktop/sample.m4a; sourceTree = "<group>"; };
+		709BCF16213FCAF700E2AD26 /* rec_1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = rec_1.m4a; path = ../../../Desktop/rec_1.m4a; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
 		E889314B1F48E2283EA51887 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
@@ -111,6 +111,8 @@
 		BC925FDF2088EFEF00E52984 /* Waveform */ = {
 			isa = PBXGroup;
 			children = (
+				709BCF16213FCAF700E2AD26 /* rec_1.m4a */,
+				709BCF14213FC89A00E2AD26 /* sample.m4a */,
 				65FD73BD2135E6E60003029F /* Source */,
 				E8893976D6167E37EF11A033 /* Resources */,
 			);
@@ -241,11 +243,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70AF9910213EAA3100029B2B /* sample.m4a in Resources */,
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
 				709AB9D6213D272800F63746 /* WaveformView.xib in Resources */,
-				709BCF12213FBBF300E2AD26 /* result.m4a in Resources */,
+				709BCF17213FCAF800E2AD26 /* rec_1.m4a in Resources */,
+				709BCF15213FC89A00E2AD26 /* sample.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,10 +395,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 42TZBS6YJV;
+				DEVELOPMENT_TEAM = 5L93VD7C68;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -408,10 +410,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 42TZBS6YJV;
+				DEVELOPMENT_TEAM = 5L93VD7C68;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.test;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
