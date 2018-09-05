@@ -44,6 +44,16 @@ class WaveformView: UIView {
 
         xibSetup()
     }
+    
+    func load(values: [[WaveformModel]]) {
+        if let numberOfElements = values.first?.count {
+            self.elementsPerSecond = numberOfElements
+        } else {
+            self.elementsPerSecond = Int(width / 6)
+        }
+        self.values = values
+        self.collectionView.reloadData()
+    }
 
     // MARK: - Nib loading
 
@@ -73,10 +83,11 @@ extension WaveformView {
 
         leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: self.frame.height) //TODO
         self.layer.addSublayer(leadingLine)
+        
         elementsPerSecond = Int(width / 6)
         leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
-
+    
     private func setupCollectionView() {
         collectionView.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: self.itemReuseIdentifier)
         collectionView.dataSource = self
