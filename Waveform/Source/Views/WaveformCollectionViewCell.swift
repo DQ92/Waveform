@@ -29,7 +29,11 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         Assert.checkRep(configurator == nil, "Set configurator for waveformCell!")
         
         let layerWidth = configurator.oneLayerWidth()
-        let layerHeight = model.value //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
+        var layerHeight: CGFloat = 1
+        //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
+        if(model.value > 1) {
+            layerHeight = model.value
+        }
         let layerY = (self.bounds.height - layerHeight) / 2
         let waveLayer = CAShapeLayer()
         waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)

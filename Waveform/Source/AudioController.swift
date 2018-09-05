@@ -29,7 +29,7 @@ class AudioController { // TODO: przerobic
 
         // Get the RemoteIO unit
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
-        status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
+        var status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if (status != noErr) {
             return status
         }
@@ -135,7 +135,7 @@ func recordingCallback(
     let ptr = bufferList.mBuffers.mData?.assumingMemoryBound(to: Float.self)
     monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(inNumberFrames)))
 
-    let rms = AudioUtils.toRMS(buffer: monoSamples)
+    let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: 512)
     
     DispatchQueue.main.async {
         AudioController.sharedInstance.delegate.processSampleData(rms)
