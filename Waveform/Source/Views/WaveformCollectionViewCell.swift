@@ -26,6 +26,8 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = nil
     }
     
+    
+    
     func setup(model: WaveformModel, sampleIndex: CGFloat) { //TODO przerobić na uzywanie jednego layerka zamiast dodwać dwa, ale do tego trzeba znać wysokość celki, żeby wyznaczyć Y
         let upLayer = CAShapeLayer()
         let downLayer = CAShapeLayer()
