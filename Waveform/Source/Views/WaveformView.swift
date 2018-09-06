@@ -10,7 +10,7 @@ class WaveformView: UIView {
 
     // MARK: - Private properties
 
-    private let itemReuseIdentifier = "collectionViewCell"
+    private let itemReuseIdentifier = WaveformConfiguration.collectionViewItemReuseIdentifier
     private let leadingLineAnimationDuration = WaveformConfiguration.timeInterval
     private let leadingLine = LeadingLineLayer()
     private var elementsPerSecond: Int = 0
