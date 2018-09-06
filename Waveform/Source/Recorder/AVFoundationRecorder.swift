@@ -27,7 +27,7 @@ class AVFoundationRecorder: NSObject {
                                                                in: .userDomainMask).first!
     
     private var audioRecorder: AVAudioRecorder!
-    private var isAudioRecordingGranted: Bool = true
+    private var isAudioRecordingPermissionGranted: Bool = true
     private let fileManager = FileManager.default
     private var totalDuration: Float = 0
     private var currentDuration: Float = 0
@@ -38,20 +38,6 @@ class AVFoundationRecorder: NSObject {
             try removeTempDict()
             try createDictInTemp()
         }
-    }
-    
-    func startRecording() throws {
-        AudioController.sharedInstance.start()
-        
-        guard isAudioRecordingGranted else {
-            throw RecorderError.noMicrophoneAccess
-        }
-        
-        Log.debug("startRecording")
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
-                                with: .defaultToSpeaker) ~> RecorderError.sessionCategoryInvalid
-        try session.setActive(true) ~> RecorderError.sessionActivationFailed
         
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -59,12 +45,28 @@ class AVFoundationRecorder: NSObject {
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-        fileNameSuffix = fileNameSuffix + 1
+        
         audioRecorder = try AVAudioRecorder(url: getFileUrl(), settings: settings)
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
+    }
+    
+    func startRecording() throws {
+        AudioController.sharedInstance.start()
+        
+        guard isAudioRecordingPermissionGranted else {
+            throw RecorderError.noMicrophoneAccess
+        }
+        
+        
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
+                                with: .defaultToSpeaker) ~> RecorderError.sessionCategoryInvalid
+        try session.setActive(true) ~> RecorderError.sessionActivationFailed
+        fileNameSuffix = fileNameSuffix + 1
         audioRecorder.prepareToRecord()
         audioRecorder.record()
+        Log.debug("startRecording")
         
         delegate?.recorderStateDidChange(with: .isRecording)
     }
