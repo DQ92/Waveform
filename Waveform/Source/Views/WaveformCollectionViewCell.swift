@@ -59,7 +59,7 @@ class WaveformCollectionViewCell: UICollectionViewCell {
     }
 
     func setup(sampleValue: CGFloat, color: UIColor, sampleIndex: CGFloat) {
-        Assert.checkRep(configurator == nil, "Set configurator for waveformCell!")
+        Assert.checkRepresentation(configurator == nil, "Set configurator for waveformCell!")
 
         let layerWidth = configurator.oneLayerWidth()
         var layerHeight: CGFloat = 1
@@ -74,7 +74,7 @@ class WaveformCollectionViewCell: UICollectionViewCell {
 
         let index = Int(sampleIndex)
         if(index > layersList.count || index < 0) {
-            Assert.checkRep(true, "Wrong value of sampleIndex! : \(index)")
+            Assert.checkRepresentation(true, "Wrong value of sampleIndex! : \(index)")
         } else {
             layersList[index].removeFromSuperlayer()
             self.contentView.layer.addSublayer(waveLayer)

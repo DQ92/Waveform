@@ -10,31 +10,31 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
     
-    var currentIndex: Int?
+    // MARK: - Private properties
     
+    private var currentIndex: Int?
     private let tempDictName = "temp_audio"
     private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     private let tempDirectoryURL = FileManager.default.temporaryDirectory
     
     private let recorder: AVFoundationRecorder = AVFoundationRecorder()
 
-
-    var values = [[WaveformModel]]() {
+    private var values = [[WaveformModel]]() {
         didSet {
             waveformCollectionView.values = values
         }
     }
-    var sampleIndex = 0 {
+    private var sampleIndex = 0 {
         didSet {
             waveformCollectionView.sampleIndex = sampleIndex
         }
     }
-    var sec: Int = 0
+    private var sec: Int = 0
     private var elementsPerSecond: Int {
         return WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: UIScreen.main.bounds.width)
     }
 
-    var numberOfRecord = 0
+    private var numberOfRecord = 0
 
     // MARK: - Life cycle
     
@@ -55,6 +55,8 @@ class ViewController: UIViewController {
         
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
+        
+        recorder.delegate = self
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
@@ -191,6 +193,7 @@ extension ViewController {
             Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
+        waveformCollectionView.setOffset()
     }
     
     func newSecond() {
@@ -230,6 +233,7 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
         case .isRecording:
+            AudioController.sharedInstance.start()
             recordButton.setTitle("Pause", for: .normal)
             if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                 CATransaction.begin()
@@ -241,10 +245,12 @@ extension ViewController: RecorderDelegate {
             waveformCollectionView.isUserInteractionEnabled = false
             
         case .stopped:
+            AudioController.sharedInstance.stop()
             recordButton.setTitle("Start", for: .normal)
             waveformCollectionView.isUserInteractionEnabled = true
             waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
         case .paused:
+            AudioController.sharedInstance.stop()
             recordButton.setTitle("Resume", for: .normal)
             waveformCollectionView.isUserInteractionEnabled = true
             waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))

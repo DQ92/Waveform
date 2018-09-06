@@ -4,7 +4,7 @@ import UIKit
 
 enum RecordType {
     case first
-    case ovveride(turn: Int)
+    case override(turn: Int)
 }
 
 struct WaveformModel {

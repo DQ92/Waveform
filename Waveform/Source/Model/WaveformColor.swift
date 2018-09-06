@@ -11,7 +11,7 @@ class WaveformColor {
         case .ovveride(let turn):
             part = CGFloat(turn)
         default:
-            part = 0
+           Assert.checkRepresentation(true, "Recording type not implemented")
         }
 
         let rand: CGFloat = part * 25

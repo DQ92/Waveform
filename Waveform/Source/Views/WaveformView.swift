@@ -138,12 +138,11 @@ extension WaveformView {
     private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
         updateLeadingLine()
         cell.setup(model: model, sampleIndex: x)
-        setOffset()
     }
 
-    private func setOffset() {
+    func setOffset() {
         let x = CGFloat(sampleIndex)
-        if (x > (width / 2) && isRecording) {
+        if x > (width / 2) {
             collectionView.setContentOffset(CGPoint(x: x - (self.width / 2), y: 0), animated: false)
         }
     }
@@ -165,7 +164,7 @@ extension WaveformView {
         leadingLineTimeUpdater.changeTime(withX: value)
     }
 
-    func onPause(sampleIndex: CGFloat) {
+    func onPause(sampleIndex: CGFloat) { // TODO: Zmienić nazwe
         let halfOfCollectionViewWidth = width / 2
         let currentX = sampleIndex
         let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)

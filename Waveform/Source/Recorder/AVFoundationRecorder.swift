@@ -11,13 +11,7 @@ class AVFoundationRecorder: NSObject {
     // MARK: - Public properties
     
     weak var delegate: RecorderDelegate?
-    var currentTime: TimeInterval {
-        return audioRecorder.currentTime
-    }
-    var isRecording: Bool {
-        return audioRecorder.isRecording
-    }
-
+    
     // MARK: - Private properties
     
     private let tempDictName = "temp_audio"
@@ -52,12 +46,9 @@ class AVFoundationRecorder: NSObject {
     }
     
     func startRecording() throws {
-        AudioController.sharedInstance.start()
-        
         guard isAudioRecordingPermissionGranted else {
             throw RecorderError.noMicrophoneAccess
         }
-        
         
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
@@ -153,6 +144,13 @@ extension AVFoundationRecorder: AVAudioRecorderDelegate {
 }
 
 extension AVFoundationRecorder: RecorderProtocol {
+    var currentTime: TimeInterval {
+        return audioRecorder.currentTime
+    }
+    
+    var isRecording: Bool {
+        return audioRecorder.isRecording
+    }
     
     func crop(startTime: Double, endTime: Double) {
         
@@ -163,10 +161,8 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func stop() {
-        Log.debug("stopped")
+        Log.debug("Stopped")
         delegate?.recorderStateDidChange(with: .stopped)
-        
-        AudioController.sharedInstance.stop()
         audioRecorder?.stop()
         audioRecorder = nil
         Log.debug("recorded successfully.")
@@ -176,16 +172,13 @@ extension AVFoundationRecorder: RecorderProtocol {
     
     func resume() {
         delegate?.recorderStateDidChange(with: .isRecording)
-        AudioController.sharedInstance.start()
         Log.debug("Resumed")
         audioRecorder.record()
     }
     
     func pause() {
-        delegate?.recorderStateDidChange(with: .isRecording)
-        
+        delegate?.recorderStateDidChange(with: .paused)
         Log.debug("Paused")
-        AudioController.sharedInstance.stop()
         audioRecorder.pause()
         listFiles()
         //        _ = getAllAudioParts()
