@@ -120,7 +120,7 @@ extension WaveformView {
             let x = CGFloat(sampleIndex % elementsPerSecond)
             updateCell(lastCell, x, model)
         } else {
-            Assert.checkRep(true, "ERROR! lastCell is NIL!")
+            Assert.checkRepresentation(true, "ERROR! lastCell is NIL!")
         }
     }
 
@@ -216,7 +216,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 extension WaveformView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         var x = leadingLine.position.x
-        if x < (width / 2) {
+        if x < width / 2 {
             print("LEADING: x \(x)")
         } else {
             x = scrollView.contentOffset.x

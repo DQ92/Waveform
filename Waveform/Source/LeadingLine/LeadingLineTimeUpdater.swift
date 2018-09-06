@@ -25,8 +25,8 @@ class LeadingLineTimeUpdater {
     // MARK: - Access method
 
     func changeTime(withX position: CGFloat) {
-        let timeStamp = position/CGFloat(elementsPerSecond)
-        let baseSeconds = Int(position/CGFloat(elementsPerSecond))
+        let timeStamp = position / CGFloat(elementsPerSecond)
+        let baseSeconds = Int(position / CGFloat(elementsPerSecond))
 
         let seconds = (baseSeconds % 3600) % 60
         let minutes = (baseSeconds % 3600) / 60

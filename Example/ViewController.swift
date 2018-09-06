@@ -1,33 +1,29 @@
-import AVFoundation
 import UIKit
 
-
-class ViewController: UIViewController, AVAudioRecorderDelegate {
+class ViewController: UIViewController {
     
     // MARK: - IBOutlets
     
     @IBOutlet var recordingTimeLabel: UILabel!
-    @IBOutlet var record_btn_ref: UIButton!
+    @IBOutlet var recordButton: UIButton!
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
     
-    // MARK: - Private Properties
+    var currentIndex: Int?
     
-    let tempDictName = "temp_audio"
-    let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    let tempDirectoryURL = FileManager.default.temporaryDirectory;
-    let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
-                                                       in: .userDomainMask).first!
+    private let tempDictName = "temp_audio"
+    private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    private let tempDirectoryURL = FileManager.default.temporaryDirectory
     
+    private let recorder: AVFoundationRecorder = AVFoundationRecorder()
+
+
     var values = [[WaveformModel]]() {
         didSet {
             waveformCollectionView.values = values
         }
     }
-    var audioRecorder: AVAudioRecorder!
-    var meterTimer: Timer!
-    var isAudioRecordingGranted: Bool = true
     var sampleIndex = 0 {
         didSet {
             waveformCollectionView.sampleIndex = sampleIndex
@@ -37,110 +33,76 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     private var elementsPerSecond: Int {
         return WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: UIScreen.main.bounds.width)
     }
-    
+
     var numberOfRecord = 0
-    var isRecording = false {
-        didSet {
-            waveformCollectionView.isRecording = isRecording
-            if (isRecording) {
-                if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
-                    CATransaction.begin()
-                    numberOfRecord = numberOfRecord + 1
-                    sampleIndex = currentIndex
-                    waveformCollectionView.refresh()
-                    CATransaction.commit()
-                }
-                waveformCollectionView.isUserInteractionEnabled = false
-            } else {
-                waveformCollectionView.isUserInteractionEnabled = true
-                waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
-            }
-        }
-    }
-    var currentIndex: Int?
-    var suffix: Int = 0
-    let fileManager = FileManager.default
-    var isMovedWhenPaused: Bool = false // gdy przesunie seek bara to ustawić na true
-    var totalDuration: Float = 0
-    var currentDuration: Float = 0
+
+    // MARK: - Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let shouldClearFiles = true
         
-//        removeTempDict()
-//        createDictInTemp()
+        do {
+            try recorder.prepare(with: shouldClearFiles)
+        } catch RecorderError.directoryDeletionFailed(let error) {
+            Log.error(error)
+        } catch RecorderError.directoryCreationFailed(let error) {
+            Log.error(error)
+        } catch {
+            Log.error("Unknown error")
+        }
         
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
-//                printFloatDataFromAudioFile()
     }
 }
 
-
 //MARK - buttons - start/pause/resume
+
 extension ViewController {
     @IBAction func startRecording(_ sender: UIButton) {
         startOrPause()
     }
     
-    func startOrPause() {
-        if (isRecording) {
-            pause()
-        } else if (isMovedWhenPaused) {
-            stop()
-        } else {
-            if let curTime = audioRecorder?.currentTime, curTime > TimeInterval(0.1) {
-                resume()
-            } else {
-                startRecording()
-            }
+    @IBAction func finishButtonTapped(_ sender: Any) {
+        recorder.stop()
+        do {
+            try recorder.merge()
+        } catch RecorderError.directoryContentListingFailed(let error) {
+            Log.error(error)
+        } catch {
+            Log.error("Unknown error")
         }
     }
     
-    func stop() {
-        log("stopped")
-        AudioController.sharedInstance.stop()
-        isMovedWhenPaused = false
-        record_btn_ref.setTitle("Start", for: .normal)
-        isRecording = false
-        audioRecorder?.stop()
-        meterTimer.invalidate()
-        audioRecorder = nil
-        log("recorded successfully.")
-        listFiles()
-        _ = getAllAudioParts()
-    }
-    
-    func resume() {
-        AudioController.sharedInstance.start()
-        log("Resumed")
-        isRecording = true
-        
-        record_btn_ref.setTitle("Pause", for: .normal)
-        audioRecorder.record()
-    }
-    
-    func pause() {
-        log("Paused")
-        AudioController.sharedInstance.stop()
-        record_btn_ref.setTitle("Resume", for: .normal)
-        isRecording = false
-        audioRecorder.pause()
-        listFiles()
-        
-        _ = getAllAudioParts()
-    }
-    
-    @IBAction func finishButtonTapped(_ sender: Any) {
-        stop()
-        merge(assets: getAllAudioParts())
-    }
-    
-    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, numberOfRecord: numberOfRecord, timeStamp: timeStamp)
+    func startOrPause() {
+        if (recorder.isRecording) {
+            recorder.pause()
+        }
+            //        else if (isMovedWhenPaused) {
+            //            recorder.stop()
+            //        }
+        else {
+            if recorder.currentTime > TimeInterval(0.1) {
+                recorder.resume()
+            } else {
+                do {
+                    try recorder.startRecording()
+                } catch RecorderError.noMicrophoneAccess {
+                    Log.error("Microphone access not granted.")
+                } catch RecorderError.sessionCategoryInvalid(let error) {
+                    Log.error(error)
+                } catch RecorderError.sessionActivationFailed(let error) {
+                    Log.error(error)
+                } catch {
+                    Log.error("Unknown error.")
+                }
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -150,12 +112,12 @@ extension ViewController {
                 let successHandler: (AudioContext) -> (Void) = { context in
                     let samples = context.extractSamples()
                     let values = self?.buildWaveformModel(from: samples, numberOfSeconds: context.numberOfSeconds)
-
+                    
                     DispatchQueue.main.async {
                         self?.waveformCollectionView.load(values: values ?? [])
                     }
-                    
                 }
+                
                 let failureHandler: (Error) -> (Void) = { [weak self] error in
                     let alertController = UIAlertController(title: "Błąd",
                                                             message: error.localizedDescription,
@@ -165,21 +127,29 @@ extension ViewController {
                 }
                 
                 AudioContext.loadAudio(from: url, successHandler: successHandler, failureHandler: failureHandler)
-                self?.navigationController?.popViewController(animated: true)
+                self?.navigationController?
+                    .popViewController(animated: true)
             }
         }
+    }
+}
+
+extension ViewController {
+    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
+        return WaveformModel(value: value, recordType: .first, timeStamp: timeStamp)
     }
     
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
         // Liczba próbek na sekundę
         let sampleRate = Double(samples.count) / numberOfSeconds
-        let waveformSamples = samples.enumerated().map { sample in
-            WaveformModel(value: CGFloat(sample.element), numberOfRecord: 0, timeStamp: Double(sample.offset) / sampleRate)
+        let waveformSamples = samples.enumerated()
+            .map { sample in
+                WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: Double(sample.offset) / sampleRate)
         }
         
         // Po wczytaniu z pliku wykres ma się mieścić cały na ekranie. (domyślnie mieści się 6 komórek)
-//        let numberOfCellsPerScreen: Int = 6
-//        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfCellsPerScreen)))
+        //        let numberOfCellsPerScreen: Int = 6
+        //        let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfCellsPerScreen)))
         
         let samplesPerCell = Int(ceil(Float(samples.count) / Float(numberOfSeconds)))
         
@@ -197,20 +167,12 @@ extension ViewController {
         }
         return result
     }
-}
-
-// MARK: - buttons - start/pause/resume
-extension ViewController {
-    @objc func updateAudioMeter(timer: Timer) {
-        //
-    }
     
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
         sampleIndex = sampleIndex + 1
-        let _peak: Float = peak
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
         
-        Assert.checkRep(sec < 0, "Second value is less than 0!")
+        Assert.checkRepresentation(sec < 0, "Second value is less than 0!")
         
         //newsecon
         if values.count <= sec {
@@ -218,7 +180,7 @@ extension ViewController {
         }
         
         let precision = sampleIndex % elementsPerSecond
-        let model = createModel(value: CGFloat(_peak), with: timeStamp)
+        let model = createModel(value: CGFloat(peak), with: timeStamp)
         if (values[sec - 1].count == elementsPerSecond) {
             values[sec - 1][precision] = model
         } else {
@@ -226,7 +188,7 @@ extension ViewController {
         }
         
         if (values[sec - 1].count > elementsPerSecond) {
-            Assert.checkRep(true, "ERROR! values[sec - 1].count > elementsPerSecond")
+            Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
     }
@@ -237,12 +199,17 @@ extension ViewController {
     }
 }
 
+extension ViewController: AudioControllerDelegate {
+    func processSampleData(_ data: Float) {
+        updatePeak(data * 100 * 3, with: recorder.currentTime)
+    }
+}
+
 // MARK: - WaveformViewDelegate
 
 extension ViewController: WaveformViewDelegate {
-    
     func didScroll(_ x: CGFloat) {
-        if (!self.isRecording) {
+        if (recorder.isRecording) {
             currentIndex = Int(x)
         }
     }
@@ -250,90 +217,37 @@ extension ViewController: WaveformViewDelegate {
 
 extension ViewController: LeadingLineTimeUpdaterDelegate {
     func timeDidChange(with time: Time) {
-        let totalTimeString = String(format: "%02d:%02d:%02d:%02d", time.hours, time.minutes, time.seconds, time.milliSeconds)
+        let totalTimeString = String(format: "%02d:%02d:%02d:%02d",
+                                     time.hours,
+                                     time.minutes,
+                                     time.seconds,
+                                     time.milliSeconds)
         timeLabel.text = totalTimeString
     }
 }
 
-extension ViewController: AudioControllerDelegate {
-    func processSampleData(_ data: Float) {
-        updatePeak(data * 100 * 3, with: audioRecorder.currentTime)
-    }
-}
-
-// MARK: - File loading
-
-extension ViewController {
-
-    func printFloatDataFromAudioFile() {
-        let name = "rec_1"
-        let source = URL(string: Bundle.main.path(forResource: name, ofType: "m4a")!)! as CFURL
-        
-        var fileRef: ExtAudioFileRef?
-        ExtAudioFileOpenURL(source, &fileRef)
-        
-        let floatByteSize: UInt32 = 4
-        let channels: UInt32 = 1
-        
-        var audioFormat = AudioStreamBasicDescription()
-        audioFormat.mBitsPerChannel = 8 * floatByteSize
-        audioFormat.mBytesPerFrame = floatByteSize
-        audioFormat.mChannelsPerFrame = channels
-        audioFormat.mSampleRate = 44100
-        audioFormat.mFormatID = kAudioFormatLinearPCM
-        audioFormat.mFormatFlags = kLinearPCMFormatFlagIsFloat|kAudioFormatFlagIsNonInterleaved
-        audioFormat.mFramesPerPacket = 1
-        audioFormat.mBytesPerPacket = audioFormat.mFramesPerPacket * audioFormat.mBytesPerFrame;
-        
-        ExtAudioFileSetProperty(fileRef!,
-                                kExtAudioFileProperty_ClientDataFormat,
-                                UInt32(MemoryLayout<AudioStreamBasicDescription>.size),
-                                &audioFormat)
-        
-        var theFileLengthInFrames: Int64 = 0
-        var thePropertySize = UInt32(MemoryLayout.stride(ofValue: theFileLengthInFrames))
-        ExtAudioFileGetProperty(fileRef!,
-                                kExtAudioFileProperty_FileLengthFrames,
-                                &thePropertySize,
-                                &theFileLengthInFrames)
-        
-        
-        
-        let duration: TimeInterval = Double(theFileLengthInFrames) / audioFormat.mSampleRate
-        let totalFrames = UInt32(duration * audioFormat.mSampleRate)
-        let framesPerBuffer: UInt32 = 62
-//        let framesPerBuffer = UInt32(totalFrames / 1024)
-
-        let dataSize = UInt32(theFileLengthInFrames) * audioFormat.mBytesPerFrame
-        
-        let theData = UnsafeMutablePointer<Float>.allocate(capacity: Int(dataSize))
-        var bufferList: AudioBufferList = AudioBufferList()
-        bufferList.mNumberBuffers = 1
-        bufferList.mBuffers.mDataByteSize = dataSize
-        bufferList.mBuffers.mNumberChannels = audioFormat.mChannelsPerFrame
-        bufferList.mBuffers.mData = UnsafeMutableRawPointer(theData)
-
-        var rmss: [Float] = []
-        let numberOfSamples = Int(62.0 * duration)
-        
-        for _ in 0..<numberOfSamples {
+extension ViewController: RecorderDelegate {
+    func recorderStateDidChange(with state: RecorderState) {
+        switch state {
+        case .isRecording:
+            recordButton.setTitle("Pause", for: .normal)
+            if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
+                CATransaction.begin()
+                numberOfRecord = numberOfRecord + 1
+                sampleIndex = currentIndex
+                waveformCollectionView.refresh()
+                CATransaction.commit()
+            }
+            waveformCollectionView.isUserInteractionEnabled = false
             
-            var bufferSize = UInt32(framesPerBuffer)
-            
-            ExtAudioFileRead(fileRef!,
-                             &bufferSize,
-                             &bufferList)
-            
-            
-            var monoSamples = [Float]()
-            let ptr = bufferList.mBuffers.mData?.assumingMemoryBound(to: Float.self)
-            monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(bufferSize)))
-            
-            let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: Int(bufferSize))
-            rmss.append(rms * 100 * 3)
+        case .stopped:
+            recordButton.setTitle("Start", for: .normal)
+            waveformCollectionView.isUserInteractionEnabled = true
+            waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
+        case .paused:
+            recordButton.setTitle("Resume", for: .normal)
+            waveformCollectionView.isUserInteractionEnabled = true
+            waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
         }
-        
-        let model = buildWaveformModel(from: rmss, numberOfSeconds: duration)
-        waveformCollectionView.load(values: model)
     }
 }

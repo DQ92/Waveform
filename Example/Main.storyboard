@@ -94,7 +94,7 @@
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
                         <outlet property="collectionViewRightConstraint" destination="GkH-I4-ZdY" id="Qkd-TH-HLJ"/>
-                        <outlet property="record_btn_ref" destination="ufi-fB-fAa" id="sRi-nW-EQB"/>
+                        <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="wPr-HY-Pb0"/>
                         <outlet property="waveformCollectionView" destination="wUn-YI-p87" id="pLo-IV-HYW"/>
