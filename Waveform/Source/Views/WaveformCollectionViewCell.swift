@@ -33,7 +33,8 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         }
         contentView.backgroundColor = nil
     }
-    
+
+    //TODO ta metoda bedzie to wyrzucenia
     func setup(model: WaveformModel, sampleIndex: CGFloat) {
         Assert.checkRep(configurator == nil, "Set configurator for waveformCell!")
         
@@ -46,8 +47,32 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         let layerY = (self.bounds.height - layerHeight) / 2
         let waveLayer = CAShapeLayer()
         waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
-        waveLayer.backgroundColor = WaveformColor.colors(model: model).0.cgColor
+        waveLayer.backgroundColor = WaveformColor.color(model: model).cgColor
         
+        let index = Int(sampleIndex)
+        if(index > layersList.count || index < 0) {
+            Assert.checkRep(true, "Wrong value of sampleIndex! : \(index)")
+        } else {
+            layersList[index].removeFromSuperlayer()
+            self.contentView.layer.addSublayer(waveLayer)
+            layersList[index] = waveLayer
+        }
+    }
+
+    func setup(sampleValue: CGFloat, color: UIColor, sampleIndex: CGFloat) {
+        Assert.checkRep(configurator == nil, "Set configurator for waveformCell!")
+
+        let layerWidth = configurator.oneLayerWidth()
+        var layerHeight: CGFloat = 1
+        //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
+        if(sampleValue > 1) {
+            layerHeight = sampleValue
+        }
+        let layerY = (self.bounds.height - layerHeight) / 2
+        let waveLayer = CAShapeLayer()
+        waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
+        waveLayer.backgroundColor = color.cgColor
+
         let index = Int(sampleIndex)
         if(index > layersList.count || index < 0) {
             Assert.checkRep(true, "Wrong value of sampleIndex! : \(index)")
