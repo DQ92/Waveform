@@ -17,7 +17,7 @@ class AudioController { // TODO: przerobic
         AudioComponentInstanceDispose(remoteIOUnit!);
     }
 
-    func prepare(specifiedSampleRate: Int) -> OSStatus {
+    func prepare(with sampleRate: Double) -> OSStatus {
 
         // Describe the RemoteIO unit
         var audioComponentDescription = AudioComponentDescription()
@@ -48,26 +48,15 @@ class AudioController { // TODO: przerobic
             return status
         }
 
-
-        let floatByteSize: UInt32 = 4
         let sampleRate: Double = 44100
-
-        // Set format for mic input (bus 1) on RemoteIO's output scope
-        var asbd = AudioStreamBasicDescription()
-        asbd.mBitsPerChannel   = 8 * floatByteSize;
-        asbd.mBytesPerFrame    = floatByteSize;
-        asbd.mBytesPerPacket   = floatByteSize;
-        asbd.mChannelsPerFrame = 1;
-        asbd.mFormatFlags      = kAudioFormatFlagIsFloat|kAudioFormatFlagIsNonInterleaved;
-        asbd.mFormatID         = kAudioFormatLinearPCM;
-        asbd.mFramesPerPacket  = 1;
-        asbd.mSampleRate       = sampleRate;
+        let channels: UInt32 = 1
+        var audioFormat = AudioUtils.floatFormat(with: channels, with: sampleRate)
 
         status = AudioUnitSetProperty(remoteIOUnit!,
                 kAudioUnitProperty_StreamFormat,
                 kAudioUnitScope_Output,
                 bus1,
-                &asbd,
+                &audioFormat,
                 UInt32(MemoryLayout<AudioStreamBasicDescription>.size))
         if (status != noErr) {
             return status
@@ -136,6 +125,7 @@ func recordingCallback(
     monoSamples.append(contentsOf: UnsafeBufferPointer(start: ptr, count: Int(inNumberFrames)))
 
     let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: 512)
+    
     
     DispatchQueue.main.async {
         AudioController.sharedInstance.delegate.processSampleData(rms)

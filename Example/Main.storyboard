@@ -65,6 +65,12 @@
                                     <segue destination="TZW-qt-ODC" kind="show" id="Vpi-Si-Ymx"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HKB-nu-VKR">
+                                <rect key="frame" x="317" y="390" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -82,8 +88,10 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="wUn-YI-p87" secondAttribute="bottom" constant="48" id="hhd-2K-RG2"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="11k-c7-ooL" secondAttribute="bottom" constant="12" id="mNV-uH-Vk9"/>
+                            <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="ooG-r3-zZd"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="pH5-Ea-90P"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" constant="100" id="rfd-tS-Sph"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="uA0-bG-Oxr"/>
@@ -97,6 +105,7 @@
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="wPr-HY-Pb0"/>
+                        <outlet property="totalTimeLabel" destination="HKB-nu-VKR" id="KVX-5c-FmI"/>
                         <outlet property="waveformCollectionView" destination="wUn-YI-p87" id="pLo-IV-HYW"/>
                     </connections>
                 </viewController>

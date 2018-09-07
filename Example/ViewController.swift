@@ -9,6 +9,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var totalTimeLabel: UILabel!
     
     // MARK: - Private properties
     
@@ -17,7 +18,10 @@ class ViewController: UIViewController {
     private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     private let tempDirectoryURL = FileManager.default.temporaryDirectory
     
+    private let shouldClearFiles = false
     private let recorder: AVFoundationRecorder = AVFoundationRecorder()
+    
+    private var loader: FileDataLoader!
 
     private var values = [[WaveformModel]]() {
         didSet {
@@ -31,20 +35,29 @@ class ViewController: UIViewController {
     }
     private var sec: Int = 0
     private var elementsPerSecond: Int {
-        return WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: UIScreen.main.bounds.width)
+        return WaveformConfiguration.microphoneSamplePerSecond
     }
-
-    private var numberOfRecord = 0
 
     // MARK: - Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let shouldClearFiles = true
-        
+        setupView()
+        setupRecorder()
+//        setupLoader()
+        setupWaveform()
+        setupAudioController()
+    }
+    
+    private func setupView() {
+        totalTimeLabel.text = "00:00:00"
+    }
+    
+    private func setupRecorder() {
         do {
             try recorder.prepare(with: shouldClearFiles)
+            recorder.delegate = self
         } catch RecorderError.directoryDeletionFailed(let error) {
             Log.error(error)
         } catch RecorderError.directoryCreationFailed(let error) {
@@ -52,18 +65,50 @@ class ViewController: UIViewController {
         } catch {
             Log.error("Unknown error")
         }
-        
+    }
+    
+    private func setupLoader() {
+        do {
+            loader = try FileDataLoader(fileName: "result", fileFormat: "m4a")
+            let time = AudioUtils.time(from: loader.fileDuration)
+            let totalTimeString = String(format: "%02d:%02d:%02d",
+                                         time.minutes,
+                                         time.seconds,
+                                         time.milliSeconds)
+            totalTimeLabel.text = totalTimeString
+            try loader.loadFile(completion: { [weak self] array in
+                let model = self?.buildWaveformModel(from: array, numberOfSeconds: loader.fileDuration)
+                DispatchQueue.main.async {
+                    self?.waveformCollectionView.load(values: model ?? [])
+                }
+            })
+        } catch FileDataLoaderError.openUrlFailed {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Błędny url",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        } catch {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Nieznany",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
+    }
+    
+    private func setupWaveform() {
         waveformCollectionView.delegate = self
         waveformCollectionView.leadingLineTimeUpdaterDelegate = self
-        
-        recorder.delegate = self
-        
-        AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
+    }
+    
+    private func setupAudioController() {
+        AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
 }
 
-//MARK - buttons - start/pause/resume
+// MARK: - Buttons - start/pause/resume
 
 extension ViewController {
     @IBAction func startRecording(_ sender: UIButton) {
@@ -92,43 +137,57 @@ extension ViewController {
             if recorder.currentTime > TimeInterval(0.1) {
                 recorder.resume()
             } else {
-                do {
-                    try recorder.startRecording()
-                } catch RecorderError.noMicrophoneAccess {
-                    Log.error("Microphone access not granted.")
-                } catch RecorderError.sessionCategoryInvalid(let error) {
-                    Log.error(error)
-                } catch RecorderError.sessionActivationFailed(let error) {
-                    Log.error(error)
-                } catch {
-                    Log.error("Unknown error.")
-                }
+                startRecording()
             }
         }
+    }
+    
+    private func startRecording() {
+        do {
+            try recorder.startRecording()
+        } catch RecorderError.noMicrophoneAccess {
+            Log.error("Microphone access not granted.")
+        } catch {
+            Log.error("Unknown error.")
+        }
+    }
+    
+    private func retriveFileDataAndSet(with url: URL) {
+        do {
+            loader = try FileDataLoader(fileURL: url)
+            let time = AudioUtils.time(from: (loader.fileDuration)!)
+            let totalTimeString = String(format: "%02d:%02d:%02d",
+                                         time.minutes,
+                                         time.seconds,
+                                         time.milliSeconds)
+            totalTimeLabel.text = totalTimeString
+            try loader.loadFile(completion: { [weak self] (array) in
+                let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                DispatchQueue.main.async {
+                    self?.waveformCollectionView.load(values: model ?? [])
+                }
+            })
+        } catch FileDataLoaderError.openUrlFailed {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Błędny url",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        } catch {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Nieznany",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
             viewController.directoryUrl = self.documentsURL.appendingPathComponent(self.tempDictName)
             viewController.didSelectFileBlock = { [weak self] url in
-                let successHandler: (AudioContext) -> (Void) = { context in
-                    let samples = context.extractSamples()
-                    let values = self?.buildWaveformModel(from: samples, numberOfSeconds: context.numberOfSeconds)
-                    
-                    DispatchQueue.main.async {
-                        self?.waveformCollectionView.load(values: values ?? [])
-                    }
-                }
-                
-                let failureHandler: (Error) -> (Void) = { [weak self] error in
-                    let alertController = UIAlertController(title: "Błąd",
-                                                            message: error.localizedDescription,
-                                                            preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self?.present(alertController, animated: true)
-                }
-                
-                AudioContext.loadAudio(from: url, successHandler: successHandler, failureHandler: failureHandler)
+                self?.retriveFileDataAndSet(with: url)
                 self?.navigationController?
                     .popViewController(animated: true)
             }
@@ -144,6 +203,7 @@ extension ViewController {
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
         // Liczba próbek na sekundę
         let sampleRate = Double(samples.count) / numberOfSeconds
+        
         let waveformSamples = samples.enumerated()
             .map { sample in
                 WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: Double(sample.offset) / sampleRate)
@@ -202,9 +262,11 @@ extension ViewController {
     }
 }
 
+var maxim: Float = 0
+
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
-        updatePeak(data * 100 * 3, with: recorder.currentTime)
+        updatePeak(data * AudioUtils.defaultWaveformFloatModifier, with: recorder.currentTime)
     }
 }
 
@@ -220,8 +282,7 @@ extension ViewController: WaveformViewDelegate {
 
 extension ViewController: LeadingLineTimeUpdaterDelegate {
     func timeDidChange(with time: Time) {
-        let totalTimeString = String(format: "%02d:%02d:%02d:%02d",
-                                     time.hours,
+        let totalTimeString = String(format: "%02d:%02d:%02d",
                                      time.minutes,
                                      time.seconds,
                                      time.milliSeconds)
@@ -237,7 +298,6 @@ extension ViewController: RecorderDelegate {
             recordButton.setTitle("Pause", for: .normal)
             if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                 CATransaction.begin()
-                numberOfRecord = numberOfRecord + 1
                 sampleIndex = currentIndex
                 waveformCollectionView.refresh()
                 CATransaction.commit()

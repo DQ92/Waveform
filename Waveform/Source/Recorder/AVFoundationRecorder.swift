@@ -1,6 +1,6 @@
 //
 // Created by Michał Kos on 06/09/2018.
-// Copyright (c) 2018 Andrew L. Jaffee. All rights reserved.
+// Copyright (c) 2018 Daniel Kuta. All rights reserved.
 //
 
 import Foundation
@@ -25,13 +25,16 @@ class AVFoundationRecorder: NSObject {
     private let fileManager = FileManager.default
     private var totalDuration: Float = 0
     private var currentDuration: Float = 0
-    private var fileNameSuffix: Int = 0
+    private var fileNameSuffix: Int = 1
     
     func prepare(with clear: Bool) throws {
         if clear {
-            try removeTempDict()
+            removeTempDict()
             try createDictInTemp()
         }
+
+//        let urlString = documentsURL.appendingPathComponent(tempDictName)
+//        fileNameSuffix = retriveLastSavedFileSuffix(from: urlString)
         
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -77,10 +80,10 @@ class AVFoundationRecorder: NSObject {
         return filePath
     }
     
-    func removeTempDict() throws {
+    func removeTempDict() {
         let fileManager = FileManager.default
         let dictPath = documentsURL.appendingPathComponent("\(tempDictName)")
-        try fileManager.removeItem(at: dictPath) ~> RecorderError.directoryDeletionFailed
+        try? fileManager.removeItem(at: dictPath) ~> RecorderError.directoryDeletionFailed
     }
     
     func createDictInTemp() throws {
@@ -111,6 +114,28 @@ class AVFoundationRecorder: NSObject {
         return assets
     }
     
+    private func retriveLastSavedFileSuffix(from directoryURL: URL) -> Int {
+        do {
+            let listing = try FileManager.default.contentsOfDirectory(atPath: directoryURL.path)
+
+//            guard let last = listing.last else {
+//                return 1
+//            }
+//
+//            let regex = try? NSRegularExpression(pattern: "rec_/(/\d/).m4a", options: .caseInsensitive)
+//            guard let results = regex?.matches(in: last, options: [], range: NSRange(location: 0, length: last.count)) else {
+//                return 0
+//            }
+//            let string = results.map {
+//                String(last[Range($0.range, in: last)!])
+//            }.first
+//
+//            let fileNameSuffix = Int(string!)! + 1
+            return fileNameSuffix
+        } catch {
+            return 1
+        }
+    }
 }
 
 // MARK: - Helper

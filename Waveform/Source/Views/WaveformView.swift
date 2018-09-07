@@ -56,6 +56,8 @@ class WaveformView: UIView {
 
 // MARK: - Setup
 
+
+
 extension WaveformView {
     
     func load(values: [[WaveformModel]]) {
@@ -66,6 +68,11 @@ extension WaveformView {
         }
         self.values = values
         self.collectionView.reloadData()
+        
+        let halfOfCollectionViewWidth = width / 2
+        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
+        collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
+        leadingLineTimeUpdater.changeTime(withX: 0.0)
     }
     
     private func xibSetup() {
@@ -77,14 +84,13 @@ extension WaveformView {
 
     private func setup() {
         self.view.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-
+        elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
+        leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
+        
         setupCollectionView()
 
         leadingLine.frame = CGRect(x: 0, y: leadingLine.dotSize / 2, width: 1, height: self.frame.height) //TODO
         self.layer.addSublayer(leadingLine)
-        
-        elementsPerSecond = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: width)
-        leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
     
     private func setupCollectionView() {
@@ -103,7 +109,7 @@ extension WaveformView {
         layout.sectionInset = UIEdgeInsets.zero
         layout.scrollDirection = .horizontal
         collectionView.collectionViewLayout = layout
-        collectionView.scrollTo(direction: .left)
+        collectionView.scrollTo(direction: .right)
     }
 }
 

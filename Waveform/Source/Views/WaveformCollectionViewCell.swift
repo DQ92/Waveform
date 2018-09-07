@@ -49,7 +49,7 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         waveLayer.backgroundColor = WaveformColor.color(model: model).cgColor
         
         let index = Int(sampleIndex)
-        if(index > layersList.count || index < 0) {
+        if(index >= layersList.count || index < 0) {
             Assert.checkRepresentation(true, "Wrong value of sampleIndex! : \(index)")
         } else {
             layersList[index].removeFromSuperlayer()

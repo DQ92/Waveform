@@ -8,7 +8,7 @@ class WaveformColor {
         switch model.recordType {
         case .first:
             part = 0
-        case .ovveride(let turn):
+        case .override(let turn):
             part = CGFloat(turn)
         default:
            Assert.checkRepresentation(true, "Recording type not implemented")
