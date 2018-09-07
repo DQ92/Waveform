@@ -28,6 +28,8 @@ class TimelineView: UIView {
     var lineWidth: CGFloat = 1.0 {
         didSet {
             self.boundsVew.lineWidth = lineWidth
+            self.timeLabelInsets.left = lineWidth + 4
+            self.timeLabelInsets.right = lineWidth + 4
             self.setNeedsReloadData()
         }
     }
@@ -42,6 +44,7 @@ class TimelineView: UIView {
     var sublineHeight: CGFloat = 7.0 {
         didSet {
             self.boundsVew.sublineHeight = sublineHeight
+            self.timeLabelInsets.bottom = lineWidth + 2
             self.setNeedsReloadData()
         }
     }
@@ -53,18 +56,15 @@ class TimelineView: UIView {
         }
     }
     
+    var contentOffset: CGPoint = .zero {
+        didSet {
+            self.collectionView.contentOffset = contentOffset
+        }
+    }
+    
     // MARK: - Private attributes
     
     private static let collectionViewCellIdentifier = "CollectionViewCellIdentifier"
-    
-    private lazy var collectionViewFlowLayout: UICollectionViewFlowLayout = {
-        let collectionViewLayout = UICollectionViewFlowLayout()
-        collectionViewLayout.scrollDirection = .horizontal
-        collectionViewLayout.minimumInteritemSpacing = 0.0
-        collectionViewLayout.minimumLineSpacing = 0.0
-        
-        return collectionViewLayout
-    }()
     
     private lazy var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -73,17 +73,28 @@ class TimelineView: UIView {
         return formatter
     }()
     
+    private var timeLabelInsets: UIEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 10.0, 5.0) {
+        didSet {
+            self.setNeedsReloadData()
+        }
+    }
     private var numberOfItems: Int = 20
     private var reloadTimer: Timer?
     
     // MARK: - Views
     
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewFlowLayout)
+        let collectionViewLayout = UICollectionViewFlowLayout()
+        collectionViewLayout.scrollDirection = .horizontal
+        collectionViewLayout.minimumInteritemSpacing = 0.0
+        collectionViewLayout.minimumLineSpacing = 0.0
+        collectionViewLayout.sectionInset = .zero
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: TimelineView.collectionViewCellIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
-        //collectionView.isScrollEnabled = false
+        collectionView.isScrollEnabled = false
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = .clear
@@ -183,9 +194,15 @@ extension TimelineView: UICollectionViewDataSource {
         let timeInterval = self.timeInterval * Double(indexPath.row)
         let date = Date(timeIntervalSince1970: timeInterval)
         
-        cell.timeLabelInsets = UIEdgeInsets(top: 0.0, left: self.lineWidth + 4.0, bottom: self.sublineHeight + 2, right: self.lineWidth + 4)
+        cell.timeLabelInsets = self.timeLabelInsets
         cell.timeLabel.font = UIFont.systemFont(ofSize: 10.5)
         cell.timeLabel.text = self.timeFormatter.string(from: date)
+        
+        cell.intervalView.intervalWidth = self.intervalWidth
+        cell.intervalView.lineWidth = self.lineWidth
+        cell.intervalView.lineColor = self.lineColor
+        cell.intervalView.sublineHeight = self.sublineHeight
+        cell.intervalView.numberOfSublines = self.numberOfSublines
         
         return cell
     }
@@ -210,23 +227,5 @@ extension TimelineView: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: self.intervalWidth, height: collectionView.bounds.size.height)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .zero
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0.0
     }
 }
