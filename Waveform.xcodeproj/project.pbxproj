@@ -10,13 +10,18 @@
 		65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FF82140012D00BFA378 /* WaveformConfiguration.swift */; };
 		65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
 		65481FFD21400AAA00BFA378 /* Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFC21400AAA00BFA378 /* Assert.swift */; };
+		66427A1221428B9300C6BCE9 /* IntervalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */; };
+		66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1021428B9300C6BCE9 /* IntervalView.swift */; };
+		66427A1421428B9300C6BCE9 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1121428B9300C6BCE9 /* TimelineView.swift */; };
+		66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */; };
+		66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */; };
+		66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1921428FE300C6BCE9 /* WaveformPlot.swift */; };
 		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
 		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
 		709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C9883B170D20CEC8D37 /* ViewController+Recorder.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
-		709AB9D6213D272800F63746 /* WaveformView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 709AB9D5213D272800F63746 /* WaveformView.xib */; };
 		B02F1663B291D21802C8E919 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1757D608EF13DD455EBE /* Waveform.swift */; };
 		B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */; };
 		B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */; };
@@ -37,10 +42,15 @@
 		65481FF82140012D00BFA378 /* WaveformConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformConfiguration.swift; sourceTree = "<group>"; };
 		65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
 		65481FFC21400AAA00BFA378 /* Assert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assert.swift; sourceTree = "<group>"; };
+		66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalCollectionViewCell.swift; sourceTree = "<group>"; };
+		66427A1021428B9300C6BCE9 /* IntervalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalView.swift; sourceTree = "<group>"; };
+		66427A1121428B9300C6BCE9 /* TimelineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIVIew+Extension.swift"; sourceTree = "<group>"; };
+		66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extension.swift"; sourceTree = "<group>"; };
+		66427A1921428FE300C6BCE9 /* WaveformPlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformPlot.swift; sourceTree = "<group>"; };
 		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
-		709AB9D5213D272800F63746 /* WaveformView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaveformView.xib; sourceTree = "<group>"; };
 		B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDelegateFlowLayout.swift; sourceTree = "<group>"; };
 		B02F1757D608EF13DD455EBE /* Waveform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waveform.swift; sourceTree = "<group>"; };
 		B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDataSource.swift; sourceTree = "<group>"; };
@@ -90,9 +100,34 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		66427A0E21428B9300C6BCE9 /* TimelineView */ = {
+			isa = PBXGroup;
+			children = (
+				66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */,
+				66427A1021428B9300C6BCE9 /* IntervalView.swift */,
+				66427A1121428B9300C6BCE9 /* TimelineView.swift */,
+			);
+			path = TimelineView;
+			sourceTree = "<group>";
+		};
+		66427A1B2142900300C6BCE9 /* WaveformView */ = {
+			isa = PBXGroup;
+			children = (
+				E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */,
+				E8893605E36346DF677F0556 /* WaveformCollectionView.swift */,
+				E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */,
+				E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */,
+				B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */,
+				B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */,
+			);
+			path = WaveformView;
+			sourceTree = "<group>";
+		};
 		709AB9D2213D260D00F63746 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */,
+				66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */,
 				709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */,
 				E88936352B1611E5D825383D /* AudioUtils.swift */,
 				65481FF82140012D00BFA378 /* WaveformConfiguration.swift */,
@@ -131,13 +166,9 @@
 		E889308EE57AC8A701D89201 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				709AB9D5213D272800F63746 /* WaveformView.xib */,
-				E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */,
-				E8893605E36346DF677F0556 /* WaveformCollectionView.swift */,
-				E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */,
-				E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */,
-				B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */,
-				B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */,
+				66427A0E21428B9300C6BCE9 /* TimelineView */,
+				66427A1B2142900300C6BCE9 /* WaveformView */,
+				66427A1921428FE300C6BCE9 /* WaveformPlot.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,7 +288,6 @@
 			files = (
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
-				709AB9D6213D272800F63746 /* WaveformView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,15 +299,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */,
+				66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
 				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
 				709AB9D3213D262200F63746 /* ViewController+Recorder.swift in Sources */,
 				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
+				66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */,
 				65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */,
+				66427A1421428B9300C6BCE9 /* TimelineView.swift in Sources */,
 				E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */,
 				709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */,
 				66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */,
 				E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */,
+				66427A1221428B9300C6BCE9 /* IntervalCollectionViewCell.swift in Sources */,
+				66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */,
 				66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */,
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
@@ -286,6 +321,7 @@
 				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
 				65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */,
 				65481FFD21400AAA00BFA378 /* Assert.swift in Sources */,
+				66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */,
 				B02F1663B291D21802C8E919 /* Waveform.swift in Sources */,
 				B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */,
 				B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */,

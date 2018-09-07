@@ -8,9 +8,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var record_btn_ref: UIButton!
-    @IBOutlet weak var waveformCollectionView: WaveformView!
-    @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var waveformPlot: WaveformPlot!
     
     // MARK: - Private Properties
     
@@ -22,7 +21,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     var values = [[WaveformModel]]() {
         didSet {
-            waveformCollectionView.values = values
+            self.waveformPlot.waveformView.values = values
         }
     }
     var audioRecorder: AVAudioRecorder!
@@ -30,7 +29,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var isAudioRecordingGranted: Bool = true
     var sampleIndex = 0 {
         didSet {
-            waveformCollectionView.sampleIndex = sampleIndex
+            self.waveformPlot.waveformView.sampleIndex = sampleIndex
         }
     }
     var sec: Int = 0
@@ -41,19 +40,19 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     var numberOfRecord = 0
     var isRecording = false {
         didSet {
-            waveformCollectionView.isRecording = isRecording
+            self.waveformPlot.waveformView.isRecording = isRecording
             if (isRecording) {
                 if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                     CATransaction.begin()
                     numberOfRecord = numberOfRecord + 1
                     sampleIndex = currentIndex
-                    waveformCollectionView.refresh()
+                    self.waveformPlot.waveformView.refresh()
                     CATransaction.commit()
                 }
-                waveformCollectionView.isUserInteractionEnabled = false
+                self.waveformPlot.waveformView.isUserInteractionEnabled = false
             } else {
-                waveformCollectionView.isUserInteractionEnabled = true
-                waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
+                self.waveformPlot.waveformView.isUserInteractionEnabled = true
+                self.waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
             }
         }
     }
@@ -70,8 +69,8 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
 //        removeTempDict()
 //        createDictInTemp()
         
-        waveformCollectionView.delegate = self
-        waveformCollectionView.leadingLineTimeUpdaterDelegate = self
+        self.waveformPlot.waveformView.delegate = self
+        self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
         
         AudioController.sharedInstance.prepare(specifiedSampleRate: 16000)
         AudioController.sharedInstance.delegate = self
@@ -152,7 +151,7 @@ extension ViewController {
                     let values = self?.buildWaveformModel(from: samples, numberOfSeconds: context.numberOfSeconds)
 
                     DispatchQueue.main.async {
-                        self?.waveformCollectionView.load(values: values ?? [])
+                        self?.waveformPlot.waveformView.load(values: values ?? [])
                     }
                     
                 }
@@ -228,12 +227,12 @@ extension ViewController {
         if (values[sec - 1].count > elementsPerSecond) {
             Assert.checkRep(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
-        waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
+        self.waveformPlot.waveformView.update(model: model, sampleIndex: sampleIndex)
     }
     
     func newSecond() {
         values.append([])
-        waveformCollectionView.newSecond(values.count - 1, CGFloat(sampleIndex))
+        self.waveformPlot.waveformView.newSecond(values.count - 1, CGFloat(sampleIndex))
     }
 }
 
@@ -334,6 +333,6 @@ extension ViewController {
         }
         
         let model = buildWaveformModel(from: rmss, numberOfSeconds: duration)
-        waveformCollectionView.load(values: model)
+        self.waveformPlot.waveformView.load(values: model)
     }
 }
