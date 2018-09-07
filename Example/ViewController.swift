@@ -8,6 +8,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var record_btn_ref: UIButton!
+    @IBOutlet weak var timelineView: TimelineView!
     @IBOutlet weak var waveformCollectionView: WaveformView!
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
