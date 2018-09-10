@@ -13,4 +13,5 @@ struct Time {
     let minutes: Int
     let seconds: Int
     let milliSeconds: Int
+    let interval: TimeInterval
 }

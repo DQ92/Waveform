@@ -14,13 +14,9 @@ class ViewController: UIViewController {
     // MARK: - Private properties
     
     private var currentIndex: Int?
-    private let tempDictName = "temp_audio"
-    private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    private let tempDirectoryURL = FileManager.default.temporaryDirectory
-    
     private let shouldClearFiles = false
-    private let recorder: AVFoundationRecorder = AVFoundationRecorder()
-    
+    private var recorder: RecorderProtocol = AVFoundationRecorder()
+    private var currentlySelectedTime: TimeInterval = 0.0
     private var loader: FileDataLoader!
 
     private var values = [[WaveformModel]]() {
@@ -45,7 +41,6 @@ class ViewController: UIViewController {
 
         setupView()
         setupRecorder()
-//        setupLoader()
         setupWaveform()
         setupAudioController()
     }
@@ -55,16 +50,7 @@ class ViewController: UIViewController {
     }
     
     private func setupRecorder() {
-        do {
-            try recorder.prepare(with: shouldClearFiles)
-            recorder.delegate = self
-        } catch RecorderError.directoryDeletionFailed(let error) {
-            Log.error(error)
-        } catch RecorderError.directoryCreationFailed(let error) {
-            Log.error(error)
-        } catch {
-            Log.error("Unknown error")
-        }
+        recorder.delegate = self
     }
     
     private func setupLoader() {
@@ -118,35 +104,40 @@ extension ViewController {
     @IBAction func finishButtonTapped(_ sender: Any) {
         recorder.stop()
         do {
-            try recorder.merge()
+            try recorder.finish()
         } catch RecorderError.directoryContentListingFailed(let error) {
             Log.error(error)
+        } catch RecorderError.fileExportFailed {
+            Log.error("Export failed")
         } catch {
             Log.error("Unknown error")
         }
     }
     
     func startOrPause() {
+        
         if (recorder.isRecording) {
             recorder.pause()
-        }
-            //        else if (isMovedWhenPaused) {
-            //            recorder.stop()
-            //        }
-        else {
+//        } else if (currentlyShownTime < recorder.currentTime) {
+//            startRecording(with: true)
+        } else {
             if recorder.currentTime > TimeInterval(0.1) {
                 recorder.resume()
             } else {
-                startRecording()
+                startRecording(with: false)
             }
         }
     }
     
-    private func startRecording() {
+    private func startRecording(with overwrite: Bool) {
         do {
-            try recorder.startRecording()
+            try recorder.start(with: overwrite)
         } catch RecorderError.noMicrophoneAccess {
             Log.error("Microphone access not granted.")
+        } catch RecorderError.directoryDeletionFailed(let error) {
+            Log.error(error)
+        } catch RecorderError.directoryCreationFailed(let error) {
+            Log.error(error)
         } catch {
             Log.error("Unknown error.")
         }
@@ -185,7 +176,7 @@ extension ViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
-            viewController.directoryUrl = self.documentsURL.appendingPathComponent(self.tempDictName)
+            viewController.directoryUrl = recorder.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
                 self?.retriveFileDataAndSet(with: url)
                 self?.navigationController?
@@ -262,8 +253,6 @@ extension ViewController {
     }
 }
 
-var maxim: Float = 0
-
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
         updatePeak(data * AudioUtils.defaultWaveformFloatModifier, with: recorder.currentTime)
@@ -286,7 +275,12 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
                                      time.minutes,
                                      time.seconds,
                                      time.milliSeconds)
+   
         timeLabel.text = totalTimeString
+
+//        print("X interval: \(time.interval)")
+//        print("recorder time: \(recorder.currentTime)")
+//        print("-------------------------------------")
     }
 }
 
@@ -314,6 +308,8 @@ extension ViewController: RecorderDelegate {
             recordButton.setTitle("Resume", for: .normal)
             waveformCollectionView.isUserInteractionEnabled = true
             waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
+        case .notInitialized, .initialized:
+            break
         }
     }
 }

@@ -9,4 +9,14 @@ enum RecorderState {
     case isRecording
     case stopped
     case paused
+    case notInitialized
+    case initialized
+    
+    mutating func changeState(with state: RecorderState) {
+        if state != .initialized && self == .notInitialized {
+            Assert.checkRepresentation(false, "Could not change state to \(state) from invalid state: \(self)")
+        }
+        
+        self = state
+    }
 }

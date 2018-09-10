@@ -13,4 +13,5 @@ enum RecorderError: Error {
     case directoryCreationFailed(Error)
     case directoryContentListingFailed(Error)
     case timeRangeInsertFailed(Error)
+    case fileExportFailed
 }

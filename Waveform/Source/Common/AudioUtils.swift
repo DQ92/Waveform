@@ -73,7 +73,7 @@ class AudioUtils {
         let minutes = Int(interval.truncatingRemainder(dividingBy: 3600) / 60)
         let hours = Int(interval / 3600)
         let milliSeconds = Int((interval - TimeInterval(Int(interval))) * 100)
-        let time = Time(hours: hours, minutes: minutes, seconds: seconds, milliSeconds: milliSeconds)
+        let time = Time(hours: hours, minutes: minutes, seconds: seconds, milliSeconds: milliSeconds, interval: interval)
         
         return time
     }

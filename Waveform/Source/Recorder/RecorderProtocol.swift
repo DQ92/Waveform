@@ -9,11 +9,13 @@ import AVFoundation
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
     var isRecording: Bool { get }
+    var resultsDirectoryURL: URL { get }
+    var delegate: RecorderDelegate? { get set }
 
-    func start() throws
+    func start(with overwrite: Bool) throws
     func stop()
     func resume()
     func pause()
     func crop(startTime: Double, endTime: Double)
-    func merge() throws
+    func finish() throws
 }
