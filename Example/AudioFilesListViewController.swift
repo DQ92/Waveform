@@ -34,7 +34,7 @@ class AudioFilesListViewController: UIViewController {
             self.fileUrls = try FileManager.default.contentsOfDirectory(at: self.directoryUrl, includingPropertiesForKeys: nil)
         } catch {
             let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Nie udało się dczytać listy plików",
+                                                    message: "Nie udało się odczytać listy plików",
                                                     preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)

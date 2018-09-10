@@ -10,8 +10,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
-    
-    // MARK: - Private properties
+    @IBOutlet weak var waveformPlot: WaveformPlot!
+
+    // MARK: - Private Properties
     
     private var currentIndex: Int?
     private let shouldClearFiles = false
@@ -21,12 +22,12 @@ class ViewController: UIViewController {
 
     private var values = [[WaveformModel]]() {
         didSet {
-            waveformCollectionView.values = values
+            self.waveformPlot.waveformView.values = values
         }
     }
     private var sampleIndex = 0 {
         didSet {
-            waveformCollectionView.sampleIndex = sampleIndex
+            self.waveformPlot.waveformView.sampleIndex = sampleIndex
         }
     }
     private var sec: Int = 0
@@ -44,15 +45,15 @@ class ViewController: UIViewController {
         setupWaveform()
         setupAudioController()
     }
-    
+
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
     }
-    
+
     private func setupRecorder() {
         recorder.delegate = self
     }
-    
+
     private func setupLoader() {
         do {
             loader = try FileDataLoader(fileName: "result", fileFormat: "m4a")
@@ -82,12 +83,12 @@ class ViewController: UIViewController {
             present(alertController, animated: true)
         }
     }
-    
+
     private func setupWaveform() {
-        waveformCollectionView.delegate = self
-        waveformCollectionView.leadingLineTimeUpdaterDelegate = self
+        self.waveformPlot.waveformView.delegate = self
+        self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
     }
-    
+
     private func setupAudioController() {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
@@ -113,9 +114,9 @@ extension ViewController {
             Log.error("Unknown error")
         }
     }
-    
+
     func startOrPause() {
-        
+
         if (recorder.isRecording) {
             recorder.pause()
 //        } else if (currentlyShownTime < recorder.currentTime) {
@@ -155,7 +156,7 @@ extension ViewController {
             try loader.loadFile(completion: { [weak self] (array) in
                 let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 DispatchQueue.main.async {
-                    self?.waveformCollectionView.load(values: model ?? [])
+                    self?.waveformPlot.waveformView.load(values: model ?? [])
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -171,9 +172,9 @@ extension ViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
-        
+
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
             viewController.directoryUrl = recorder.resultsDirectoryURL
@@ -190,11 +191,11 @@ extension ViewController {
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
         return WaveformModel(value: value, recordType: .first, timeStamp: timeStamp)
     }
-    
+
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
         // Liczba próbek na sekundę
         let sampleRate = Double(samples.count) / numberOfSeconds
-        
+
         let waveformSamples = samples.enumerated()
             .map { sample in
                 WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: Double(sample.offset) / sampleRate)
@@ -243,13 +244,13 @@ extension ViewController {
         if (values[sec - 1].count > elementsPerSecond) {
             Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
-        waveformCollectionView.update(model: model, sampleIndex: sampleIndex)
+        waveformPlot.waveformView.update(model: model, sampleIndex: sampleIndex)
         waveformCollectionView.setOffset()
     }
     
     func newSecond() {
         values.append([])
-        waveformCollectionView.newSecond(values.count - 1, CGFloat(sampleIndex))
+        self.waveformPlot.waveformView.newSecond(values.count - 1, CGFloat(sampleIndex))
     }
 }
 
@@ -275,7 +276,7 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
                                      time.minutes,
                                      time.seconds,
                                      time.milliSeconds)
-   
+
         timeLabel.text = totalTimeString
 
 //        print("X interval: \(time.interval)")
@@ -297,7 +298,7 @@ extension ViewController: RecorderDelegate {
                 CATransaction.commit()
             }
             waveformCollectionView.isUserInteractionEnabled = false
-            
+
         case .stopped:
             AudioController.sharedInstance.stop()
             recordButton.setTitle("Start", for: .normal)
