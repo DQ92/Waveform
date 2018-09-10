@@ -93,7 +93,7 @@ extension WaveformView {
     private func commonInit() {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         
-        elementsPerSecond = WWaveformConfiguration.microphoneSamplePerSecond
+        elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
         leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
     }
     

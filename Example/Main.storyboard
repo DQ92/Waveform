@@ -59,7 +59,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HKB-nu-VKR">
-                                <rect key="frame" x="317" y="390" width="42" height="21"/>
+                                <rect key="frame" x="317" y="-29" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -71,6 +71,12 @@
                                     <constraint firstAttribute="height" constant="220" id="8aM-OE-WMh"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qI7-tB-YBO">
+                                <rect key="frame" x="317" y="370" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -84,11 +90,11 @@
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="ZeK-ql-l1j"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
                             <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="bcR-FO-sVP"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" id="hau-Uw-e6t"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
                             <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="11k-c7-ooL" secondAttribute="bottom" constant="12" id="mNV-uH-Vk9"/>
-                            <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
-                            <constraint firstItem="wUn-YI-p87" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="ooG-r3-zZd"/>
+                            <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="pH5-Ea-90P"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
@@ -96,17 +102,17 @@
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="seq-qm-DFe"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="uA0-bG-Oxr"/>
+                            <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="qI7-tB-YBO" secondAttribute="bottom" constant="8" id="wea-Dv-Ddo"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="width" secondItem="ufi-fB-fAa" secondAttribute="width" id="wu6-hf-Zle"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
-                        <outlet property="collectionViewRightConstraint" destination="GkH-I4-ZdY" id="Qkd-TH-HLJ"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
-                        <outlet property="timeLabel" destination="O19-fk-XHQ" id="wPr-HY-Pb0"/>
-                        <outlet property="totalTimeLabel" destination="HKB-nu-VKR" id="KVX-5c-FmI"/>
+                        <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>
+                        <outlet property="totalTimeLabel" destination="qI7-tB-YBO" id="YWu-fT-OEf"/>
                         <outlet property="waveformPlot" destination="YA8-B8-5Ec" id="bqn-QM-8LD"/>
                     </connections>
                 </viewController>

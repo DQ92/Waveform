@@ -6,8 +6,6 @@ class ViewController: UIViewController {
     
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var recordButton: UIButton!
-    @IBOutlet weak var waveformCollectionView: WaveformView!
-    @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformPlot: WaveformPlot!
@@ -48,6 +46,7 @@ class ViewController: UIViewController {
 
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
+        timeLabel.text = "00:00:00"
     }
 
     private func setupRecorder() {
@@ -66,7 +65,7 @@ class ViewController: UIViewController {
             try loader.loadFile(completion: { [weak self] array in
                 let model = self?.buildWaveformModel(from: array, numberOfSeconds: loader.fileDuration)
                 DispatchQueue.main.async {
-                    self?.waveformCollectionView.load(values: model ?? [])
+                    self?.waveformPlot.waveformView.load(values: model ?? [])
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -245,7 +244,7 @@ extension ViewController {
             Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformPlot.waveformView.update(model: model, sampleIndex: sampleIndex)
-        waveformCollectionView.setOffset()
+        waveformPlot.waveformView.setOffset()
     }
     
     func newSecond() {
@@ -294,21 +293,21 @@ extension ViewController: RecorderDelegate {
             if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
                 CATransaction.begin()
                 sampleIndex = currentIndex
-                waveformCollectionView.refresh()
+                waveformPlot.waveformView.refresh()
                 CATransaction.commit()
             }
-            waveformCollectionView.isUserInteractionEnabled = false
+            waveformPlot.waveformView.isUserInteractionEnabled = false
 
         case .stopped:
             AudioController.sharedInstance.stop()
             recordButton.setTitle("Start", for: .normal)
-            waveformCollectionView.isUserInteractionEnabled = true
-            waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
+            waveformPlot.waveformView.isUserInteractionEnabled = true
+            waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
         case .paused:
             AudioController.sharedInstance.stop()
             recordButton.setTitle("Resume", for: .normal)
-            waveformCollectionView.isUserInteractionEnabled = true
-            waveformCollectionView.onPause(sampleIndex: CGFloat(sampleIndex))
+            waveformPlot.waveformView.isUserInteractionEnabled = true
+            waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
         case .notInitialized, .initialized:
             break
         }
