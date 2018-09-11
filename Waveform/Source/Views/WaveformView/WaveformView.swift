@@ -24,7 +24,8 @@ class WaveformView: UIView {
 
     private lazy var leadingLine: LeadingLineLayer = {
         let layer = LeadingLineLayer()
-        layer.frame = CGRect(x: 0.0, y: layer.dotSize / 2, width: 1, height: self.bounds.height)
+        layer.frame = CGRect(x: 0.0, y: layer.dotSize / 2, width: 1, height: self.bounds.height - 2 * layer.dotSize)
+        // TODO: Refactor
         self.layer.addSublayer(layer)
 
         return layer
@@ -69,6 +70,13 @@ class WaveformView: UIView {
         self.setupConstraints()
     }
 
+    func reload() {
+        values = []
+        collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        leadingLine.position = CGPoint(x: 0, y: leadingLine.position.y)
+        collectionView.reloadData()
+    }
+    
     // MARK: - Access methods
     
     func load(values: [[WaveformModel]]) {
@@ -82,8 +90,14 @@ class WaveformView: UIView {
 
         let halfOfCollectionViewWidth = width / 2
         let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
-        collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
-        leadingLineTimeUpdater.changeTime(withX: 0.0)
+        collectionView.contentInset = UIEdgeInsetsMake(0,
+                                                       halfOfCollectionViewWidth,
+                                                       0,
+                                                       halfOfCollectionViewWidth - numberOfElementsInLastSection)
+       
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
+                                    at: .left,
+                                    animated: true)
     }
 }
 
@@ -116,6 +130,7 @@ extension WaveformView {
         let lastCellIdx = IndexPath(row: 0, section: sampleIndex/elementsPerSecond)
         if let lastCell = collectionView.cellForItem(at: lastCellIdx) as? WaveformCollectionViewCell {
             let x = CGFloat(sampleIndex % elementsPerSecond)
+            updateLeadingLine()
             updateCell(lastCell, x, model)
         } else {
             Assert.checkRepresentation(true, "ERROR! lastCell is NIL!")
@@ -134,7 +149,6 @@ extension WaveformView {
     }
 
     private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
-        updateLeadingLine()
         cell.setup(model: model, sampleIndex: x)
     }
 
@@ -165,13 +179,15 @@ extension WaveformView {
     func onPause(sampleIndex: CGFloat) { // TODO: Zmienić nazwe
         let halfOfCollectionViewWidth = width / 2
         let currentX = sampleIndex
-        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
+        let numberOfElementsMissingInLastSection = CGFloat(elementsPerSecond - values[values.count - 2].count)
+        let additionalSectionWidth = CGFloat(elementsPerSecond)
+        let rightInsetShiftToEndOfWaveform =  numberOfElementsMissingInLastSection + additionalSectionWidth
 
         if currentX < halfOfCollectionViewWidth {
             collectionView.contentSize = CGSize(width: width + currentX, height: collectionView.bounds.height)
-            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - numberOfElementsInLastSection))
+            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - rightInsetShiftToEndOfWaveform))
         } else {
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - rightInsetShiftToEndOfWaveform)
         }
     }
 }
@@ -202,6 +218,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         let valuesInSecond: [WaveformModel] = values[second]
 
         for x in 0..<valuesInSecond.count {
+            updateLeadingLine()
             updateCell(cell, CGFloat(x), valuesInSecond[x])
         }
         return cell

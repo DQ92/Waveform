@@ -80,10 +80,7 @@ class FileDataLoader {
     // MARK: - Access methods
     
     func loadFile(completion: (_ fileFloatArray: [Float]) -> Void) throws {
-        //        let totalFrames = UInt32(duration * defaultFormat.mSampleRate)
-        
-        
-        let numberOfPoints = WaveformConfiguration.microphoneSamplePerSecond * Int(fileDuration)
+        let numberOfPoints = Int(Double(WaveformConfiguration.microphoneSamplePerSecond) * fileDuration)
         let framesPerBuffer = UInt32(fileLengthInFrames! / numberOfPoints)
 
         let dataSize = UInt32(fileLengthInFrames!) * audioFormat.mBytesPerFrame
@@ -96,7 +93,6 @@ class FileDataLoader {
         bufferList.mBuffers.mData = UnsafeMutableRawPointer(theData)
 
         var rmss: [Float] = []
-        
 
         for _ in 0..<numberOfPoints {
 
