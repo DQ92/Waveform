@@ -213,7 +213,7 @@ extension AVFoundationRecorder: RecorderProtocol {
         listFiles()
     }
     
-    func resume() {
+    func resume(from timeRange: CMTimeRange) {
         changeRecorderStateWithViewUpdate(with: .isRecording)
         Log.debug("Resumed")
         audioRecorder.record()

@@ -39,7 +39,6 @@
 		E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */; };
 		E88939FBDCF1003F3B2CCE04 /* RecorderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893423F0FE312759A629FB /* RecorderProtocol.swift */; };
 		E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */; };
-		E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893D805570A16F976C1699 /* RecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889393E8158E41990DB5443 /* RecorderState.swift */; };
 		E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */; };
@@ -79,7 +78,6 @@
 		E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E8893423F0FE312759A629FB /* RecorderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderProtocol.swift; sourceTree = "<group>"; };
-		E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformViewDelegate.swift; sourceTree = "<group>"; };
 		E8893605E36346DF677F0556 /* WaveformCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionView.swift; sourceTree = "<group>"; };
 		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -134,7 +132,6 @@
 		66427A1B2142900300C6BCE9 /* WaveformView */ = {
 			isa = PBXGroup;
 			children = (
-				E88934ABE4CC26140170E385 /* WaveformViewDelegate.swift */,
 				E8893605E36346DF677F0556 /* WaveformCollectionView.swift */,
 				E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */,
 				E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */,
@@ -353,7 +350,6 @@
 				66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */,
 				66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */,
 				70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */,
-				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
 				70B52CB02142549F000D4989 /* Time.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
 				705F9BD42141039F00C98859 /* String+Extension.swift in Sources */,
@@ -495,11 +491,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5L93VD7C68;
+				DEVELOPMENT_TEAM = F6YSVD36L6;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.robert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -511,10 +507,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5L93VD7C68;
+				DEVELOPMENT_TEAM = F6YSVD36L6;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.robert;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
