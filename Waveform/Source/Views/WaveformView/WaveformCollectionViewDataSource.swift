@@ -35,9 +35,9 @@ class WaveformCollectionViewDataSource: NSObject, UICollectionViewDataSource {
     }
 
     private func updateCell(_ cell: WaveformCollectionViewCell, _ sampleIndex: CGFloat, _ model: WaveformModel) {
-        let sampleValue = model.value
-        let color = WaveformColor.color(model: model)
-        cell.setup(sampleValue: sampleValue, color: color, sampleIndex: sampleIndex)
+//        let sampleValue = model.value
+//        let color = WaveformColor.color(model: model)
+//        cell.setup(sampleValue: sampleValue, color: color, sampleIndex: sampleIndex)
     }
 }
 

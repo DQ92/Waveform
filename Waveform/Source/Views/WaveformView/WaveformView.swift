@@ -28,12 +28,13 @@ class WaveformView: UIView {
 
     private lazy var leadingLine: LeadingLineLayer = {
         let layer = LeadingLineLayer()
-        layer.frame = CGRect(x: 0.0, y: layer.dotSize / 2, width: 1, height: self.bounds.height)
+        layer.frame = CGRect(x: 0.0, y: layer.dotSize / 2, width: 1, height: self.bounds.height - 2 * layer.dotSize)
+        // TODO: Refactor
         self.layer.addSublayer(layer)
 
         return layer
     }()
-    
+
     private(set) var currentTimeInterval: TimeInterval = 0.0
     private(set) var sampleIndex: Int = 0
 
@@ -46,7 +47,7 @@ class WaveformView: UIView {
     }
 
     var values = [[WaveformModel]]()
-    
+
     var elementsPerSecond: Int = 0
     weak var delegate: WaveformViewDelegate?
 
@@ -70,6 +71,13 @@ class WaveformView: UIView {
         self.setupConstraints()
     }
 
+    func reload() {
+        values = []
+        collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        leadingLine.position = CGPoint(x: 0, y: leadingLine.position.y)
+        collectionView.reloadData()
+    }
+
     // MARK: - Access methods
     
     func load(values: [[WaveformModel]]) {
@@ -83,8 +91,14 @@ class WaveformView: UIView {
 
         let halfOfCollectionViewWidth = width / 2
         let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
-        collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
-        leadingLineTimeUpdater.changeTime(withX: 0.0)
+        collectionView.contentInset = UIEdgeInsetsMake(0,
+                                                       halfOfCollectionViewWidth,
+                                                       0,
+                                                       halfOfCollectionViewWidth - numberOfElementsInLastSection)
+
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
+                                    at: .left,
+                                    animated: true)
     }
 }
 
@@ -93,7 +107,7 @@ extension WaveformView {
         let indexOfCell = Int(floor(self.currentTimeInterval))
         let indexOfSample = self.sampleIndex
         let currentItem: WaveformModel
-        
+
         if self.values.count <= indexOfCell {
             currentItem = WaveformModel(value: CGFloat(value), recordType: .first, timeStamp: timeInterval)
             self.appendSecond(data: [currentItem])
@@ -106,7 +120,7 @@ extension WaveformView {
                 self.values[indexOfCell] = items + [currentItem]
             } else {
                 let previousItem = self.values[indexOfCell][indexOfItem]
-                
+
                 if case .override(let turn) = previousItem.recordType {
                     currentItem = WaveformModel(value: CGFloat(value),
                                                 recordType: .override(turn: turn + 1),
@@ -121,11 +135,11 @@ extension WaveformView {
         }
         self.update(model: currentItem, sampleIndex: indexOfSample)
         self.setOffset(CGFloat(indexOfSample))
-        
+
         print("currentTimeInterval = \(currentTimeInterval)")
         print("sampleIndex = \(CGFloat(indexOfSample + 1))")
     }
-    
+
     private func appendSecond(data: [WaveformModel], completion: ((Bool) -> Void)? = nil) {
         UIView.performWithoutAnimation {
             self.values.append(data)
@@ -166,6 +180,7 @@ extension WaveformView {
         let lastCellIdx = IndexPath(row: 0, section: sampleIndex/elementsPerSecond)
         if let lastCell = collectionView.cellForItem(at: lastCellIdx) as? WaveformCollectionViewCell {
             let x = CGFloat(sampleIndex % elementsPerSecond)
+            updateLeadingLine()
             updateCell(lastCell, x, model)
         } else {
             Assert.checkRepresentation(true, "ERROR! lastCell is NIL!")
@@ -184,7 +199,6 @@ extension WaveformView {
     }
 
     private func updateCell(_ cell: WaveformCollectionViewCell, _ x: CGFloat, _ model: WaveformModel) {
-        updateLeadingLine()
         cell.setup(model: model, sampleIndex: x)
     }
 
@@ -215,14 +229,16 @@ extension WaveformView {
 
     func onPause() { // TODO: Zmienić nazwe
         let halfOfCollectionViewWidth = width / 2
-        let currentX: CGFloat = 0.0
-        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
+        let currentX = 0.0
+        let numberOfElementsMissingInLastSection = CGFloat(elementsPerSecond - values[values.count - 2].count)
+        let additionalSectionWidth = CGFloat(elementsPerSecond)
+        let rightInsetShiftToEndOfWaveform =  numberOfElementsMissingInLastSection + additionalSectionWidth
 
         if currentX < halfOfCollectionViewWidth {
             collectionView.contentSize = CGSize(width: width + currentX, height: collectionView.bounds.height)
-            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - numberOfElementsInLastSection))
+            collectionView.contentInset = UIEdgeInsetsMake(0, currentX, 0, (width - currentX - rightInsetShiftToEndOfWaveform))
         } else {
-            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - numberOfElementsInLastSection)
+            collectionView.contentInset = UIEdgeInsetsMake(0, halfOfCollectionViewWidth, 0, halfOfCollectionViewWidth - rightInsetShiftToEndOfWaveform)
         }
     }
 }
@@ -241,6 +257,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
     public func collectionView(_ collectionView: UICollectionView,
                                layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
+
         return CGSize(width: elementsPerSecond, height: Int(collectionView.bounds.size.height))
     }
 
@@ -253,6 +270,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         let valuesInSecond: [WaveformModel] = values[second]
 
         for x in 0..<valuesInSecond.count {
+            updateLeadingLine()
             updateCell(cell, CGFloat(x), valuesInSecond[x])
         }
         return cell
@@ -270,8 +288,8 @@ extension WaveformView: UIScrollViewDelegate {
 
 extension WaveformView: LeadingLineTimeUpdaterDelegate {
     func timeIntervalDidChange(with timeInterval: TimeInterval) {
-        
-        
+
+
 //        let difference = timeInterval - self.currentTimeInterval
 //
 //        if abs(difference) < 1.0 {
@@ -284,10 +302,10 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
 //
 //        }
         self.sampleIndex = Int(floor(Double(self.elementsPerSecond) * timeInterval))
-        
+
         self.currentTimeInterval = timeInterval
         self.delegate?.currentTimeIntervalDidChange(with: timeInterval)
-        
+
 //        print("difference = \(difference)")
 //        print("currentTimeInterval = \(currentTimeInterval)")
 //        print("sampleIndex = \(sampleIndex)")

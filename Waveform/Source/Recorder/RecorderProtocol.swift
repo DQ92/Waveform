@@ -18,4 +18,5 @@ protocol RecorderProtocol {
     func pause()
     func crop(startTime: Double, endTime: Double)
     func finish() throws
+    func clearRecordings() throws
 }

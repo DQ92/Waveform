@@ -7,7 +7,6 @@ class LeadingLineLayer: CALayer {
     var dotSize: CGFloat = 7
     let color: UIColor = .blue
     
-    
     private func setup() {
         addSublayer(prepareDot(self.frame.size.height))
         addSublayer(prepareDot(0))

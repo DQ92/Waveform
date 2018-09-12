@@ -31,9 +31,7 @@ class AVFoundationRecorder: NSObject {
     private var currentDuration: Float = 0
     private var resultFileNamePrefix: String = "result"
     private var temporaryFileNameSuffix: Int = 0
-    private let clearResultsDirectory = false
     private var recorderState: RecorderState = .notInitialized
-    
     
     // MARK: - Setup
     
@@ -43,10 +41,6 @@ class AVFoundationRecorder: NSObject {
             removeTemporaryDirectory()
         }
         try createTemporaryDirectoryIfNeeded()
-        
-        if clearResultsDirectory {
-            removeResultsDirectory()
-        }
         try createResultsDirectoryIfNeeded()
         
         let settings = [
@@ -109,9 +103,9 @@ extension AVFoundationRecorder {
 extension AVFoundationRecorder {
     func generateResultFileName() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM.dd.yyyy.hh:mm:ss"
+        dateFormatter.dateFormat = "MM.dd.yyyy-hh:mm:ss"
         let dateString = dateFormatter.string(from: Date())
-        let fileName = "\(resultFileNamePrefix)_\(dateString).m4a"
+        let fileName = "\(dateString).m4a"
         return fileName
     }
     
@@ -282,6 +276,11 @@ extension AVFoundationRecorder: RecorderProtocol {
             default: break
             }
         }
+    }
+    
+    func clearRecordings() throws {
+        removeResultsDirectory()
+        try createResultsDirectoryIfNeeded()
     }
     
     func crop(startTime: Double, endTime: Double) {

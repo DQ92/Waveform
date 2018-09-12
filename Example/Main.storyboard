@@ -18,46 +18,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ufi-fB-fAa">
-                                <rect key="frame" x="100" y="68" width="85" height="30"/>
-                                <state key="normal" title="Start"/>
-                                <connections>
-                                    <action selector="startRecording:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hyL-nr-pWp"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FsX-67-dIh">
-                                <rect key="frame" x="100" y="110" width="175" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DG8-iI-565">
-                                <rect key="frame" x="100" y="163" width="175" height="30"/>
-                                <state key="normal" title="Record At"/>
-                                <connections>
-                                    <action selector="recordAt:" destination="BYZ-38-t0r" eventType="touchUpInside" id="r47-w7-s1i"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gUe-QH-dQa">
-                                <rect key="frame" x="100" y="205" width="175" height="30"/>
-                                <state key="normal" title="Finish"/>
-                                <connections>
-                                    <action selector="finishButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zIj-r6-y0E"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O19-fk-XHQ">
                                 <rect key="frame" x="166" y="370" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="11k-c7-ooL">
-                                <rect key="frame" x="190" y="68" width="85" height="30"/>
-                                <state key="normal" title="Open"/>
-                                <connections>
-                                    <segue destination="TZW-qt-ODC" kind="show" id="Vpi-Si-Ymx"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HKB-nu-VKR">
                                 <rect key="frame" x="317" y="-29" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -77,31 +43,61 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ufi-fB-fAa">
+                                <rect key="frame" x="108" y="68" width="76.5" height="30"/>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <action selector="startRecording:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hyL-nr-pWp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gUe-QH-dQa">
+                                <rect key="frame" x="108" y="110" width="158" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="158" id="VES-h0-NNR"/>
+                                </constraints>
+                                <state key="normal" title="Finish"/>
+                                <connections>
+                                    <action selector="finishButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zIj-r6-y0E"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pCv-uH-TiH">
+                                <rect key="frame" x="108" y="160" width="158" height="30"/>
+                                <state key="normal" title="Clear saved recordings">
+                                    <color key="titleColor" red="0.63319587200000005" green="0.63319587200000005" blue="0.63319587200000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="wE0-W7-UEY"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="11k-c7-ooL">
+                                <rect key="frame" x="189.5" y="68" width="76.5" height="30"/>
+                                <state key="normal" title="Open"/>
+                                <connections>
+                                    <segue destination="TZW-qt-ODC" kind="show" id="Vpi-Si-Ymx"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="FLl-vj-TP5"/>
-                            <constraint firstItem="FsX-67-dIh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="HS7-cA-ge4"/>
-                            <constraint firstItem="DG8-iI-565" firstAttribute="top" secondItem="FsX-67-dIh" secondAttribute="bottom" constant="32" id="KxZ-e5-0eU"/>
+                            <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="gUe-QH-dQa" secondAttribute="trailing" id="2za-ji-bZe"/>
+                            <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="Dbq-f3-CZs"/>
+                            <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="EBY-pu-kn4"/>
+                            <constraint firstItem="gUe-QH-dQa" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Fag-hP-cH1"/>
+                            <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="gUe-QH-dQa" secondAttribute="leading" id="KCw-pX-Qp4"/>
+                            <constraint firstItem="pCv-uH-TiH" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="20" id="P2w-c7-IUy"/>
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
-                            <constraint firstItem="DG8-iI-565" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" id="Vuo-hh-pLR"/>
-                            <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="DG8-iI-565" secondAttribute="bottom" constant="12" id="X2Q-i3-ufn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="48" id="Y8K-ys-VZt"/>
-                            <constraint firstItem="gUe-QH-dQa" firstAttribute="trailing" secondItem="DG8-iI-565" secondAttribute="trailing" id="ZeK-ql-l1j"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
-                            <constraint firstItem="DG8-iI-565" firstAttribute="leading" secondItem="FsX-67-dIh" secondAttribute="leading" id="bcR-FO-sVP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
-                            <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" id="hau-Uw-e6t"/>
-                            <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="kpi-DG-fgz"/>
-                            <constraint firstItem="FsX-67-dIh" firstAttribute="top" secondItem="11k-c7-ooL" secondAttribute="bottom" constant="12" id="mNV-uH-Vk9"/>
                             <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
-                            <constraint firstItem="gUe-QH-dQa" firstAttribute="leading" secondItem="DG8-iI-565" secondAttribute="leading" id="pH5-Ea-90P"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FsX-67-dIh" secondAttribute="trailing" constant="100" id="rfd-tS-Sph"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="seq-qm-DFe"/>
+                            <constraint firstItem="11k-c7-ooL" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="u7v-Tz-orh"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="uA0-bG-Oxr"/>
+                            <constraint firstItem="pCv-uH-TiH" firstAttribute="leading" secondItem="gUe-QH-dQa" secondAttribute="leading" id="uZa-MT-Dbo"/>
+                            <constraint firstItem="pCv-uH-TiH" firstAttribute="trailing" secondItem="gUe-QH-dQa" secondAttribute="trailing" id="w59-BO-1SQ"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="qI7-tB-YBO" secondAttribute="bottom" constant="8" id="wea-Dv-Ddo"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="width" secondItem="ufi-fB-fAa" secondAttribute="width" id="wu6-hf-Zle"/>
                         </constraints>
@@ -109,8 +105,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
+                        <outlet property="clearButton" destination="pCv-uH-TiH" id="6ef-ff-Q5q"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
-                        <outlet property="recordingTimeLabel" destination="FsX-67-dIh" id="uj9-Tx-3OB"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>
                         <outlet property="totalTimeLabel" destination="qI7-tB-YBO" id="YWu-fT-OEf"/>
                         <outlet property="waveformPlot" destination="YA8-B8-5Ec" id="bqn-QM-8LD"/>
