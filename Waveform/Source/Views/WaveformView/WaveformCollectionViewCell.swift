@@ -47,7 +47,7 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         let waveLayer = CAShapeLayer()
         waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
         waveLayer.backgroundColor = WaveformColor.color(model: model).cgColor
-        waveLayer.shouldRasterize = true
+        waveLayer.shouldRasterize = false
         
         let index = Int(sampleIndex)
         if(index >= layersList.count || index < 0) {
