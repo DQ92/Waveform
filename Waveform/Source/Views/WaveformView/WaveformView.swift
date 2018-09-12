@@ -246,6 +246,5 @@ extension WaveformView: UIScrollViewDelegate {
         }
 
         leadingLinePositionChanged(x: scrollView.contentOffset.x + leadingLine.position.x)
-
     }
 }

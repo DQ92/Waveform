@@ -10,15 +10,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformPlot: WaveformPlot!
-
+    @IBOutlet weak var playButton: UIButton!
+    @IBOutlet weak var pauseButton: UIButton!
+    
     // MARK: - Private Properties
     
     private var currentIndex: Int?
     private let shouldClearFiles = false
     private var recorder: RecorderProtocol = AVFoundationRecorder()
-    private var currentlySelectedTime: TimeInterval = 0.0
+    private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
-
+    private var url: URL!
     private var values = [[WaveformModel]]() {
         didSet {
             self.waveformPlot.waveformView.values = values
@@ -33,37 +35,38 @@ class ViewController: UIViewController {
     private var elementsPerSecond: Int {
         return WaveformConfiguration.microphoneSamplePerSecond
     }
-
+    
+    private var currentTime: TimeInterval = 0
+    
     // MARK: - Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupView()
         setupRecorder()
         setupWaveform()
         setupAudioController()
     }
-
+    
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
     }
-
+    
     private func setupRecorder() {
         recorder.delegate = self
     }
-
+    
     private func setupWaveform() {
         self.waveformPlot.waveformView.delegate = self
         self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
     }
-
+    
     private func setupAudioController() {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
-    
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -87,23 +90,49 @@ extension ViewController {
     }
     
     @IBAction func clearButtonTapped(_ sender: UIButton) {
+        self.clearRecordings()
+    }
+    
+    @IBAction func playButtonTapped(_ sender: UIButton) {
+        self.play()
+    }
+    
+    @IBAction func pauseButtonTapped(_ sender: UIButton) {
+        self.pausePlayer()
+    }
+}
+
+// MARK: - Audio player
+
+extension ViewController {
+    func play() {
+//        guard let URL = recorder.currentlyRecordedFileURL else {
+//            Log.error("Nie ma żadnego nagrywanego pliku")
+//            return
+//        }
+    
         do {
-            try recorder.clearRecordings()
+            try player.playFile(with: url, at: currentTime)
+        } catch AudioPlayerError.openFileFailed(let error) {
+            Log.error(error)
         } catch {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Nie można usunąć nagrań",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
+            Log.error("Unknown error")
         }
     }
+    
+    func pausePlayer() {
+        player.pause()
+    }
+}
 
+// MARK: - Audio recorder
+
+extension ViewController {
     func startOrPause() {
-        
         if (recorder.isRecording) {
             recorder.pause()
-//        } else if (currentlyShownTime < recorder.currentTime) {
-//            startRecording(with: true)
+            //        } else if (currentlyShownTime < recorder.currentTime) {
+            //            startRecording(with: true)
         } else {
             if recorder.currentTime > TimeInterval(0.1) {
                 recorder.resume()
@@ -131,9 +160,22 @@ extension ViewController {
         }
     }
     
+    private func clearRecordings() {
+        do {
+            try recorder.clearRecordings()
+        } catch {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Nie można usunąć nagrań",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
+    }
+    
     private func retriveFileDataAndSet(with url: URL) {
         do {
             loader = try FileDataLoader(fileURL: url)
+            self.url = url
             let time = AudioUtils.time(from: (loader.fileDuration)!)
             let totalTimeString = String(format: "%02d:%02d:%02d",
                                          time.minutes,
@@ -159,9 +201,9 @@ extension ViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
-
+        
     }
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
             viewController.directoryUrl = recorder.resultsDirectoryURL
@@ -178,16 +220,16 @@ extension ViewController {
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
         return WaveformModel(value: value, recordType: .first, timeStamp: timeStamp)
     }
-
+    
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
         // Liczba próbek na sekundę
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-
+        
         let waveformSamples = samples.enumerated()
             .map { sample in
                 WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: TimeInterval(sample.offset / sampleRate))
         }
-
+        
         let samplesPerCell = sampleRate
         var result = [[WaveformModel]]()
         
@@ -258,12 +300,9 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
                                      time.minutes,
                                      time.seconds,
                                      time.milliSeconds)
-
+        
+        currentTime = time.interval
         timeLabel.text = totalTimeString
-
-//        print("X interval: \(time.interval)")
-//        print("recorder time: \(recorder.currentTime)")
-//        print("-------------------------------------")
     }
 }
 
@@ -280,8 +319,7 @@ extension ViewController: RecorderDelegate {
                 CATransaction.commit()
             }
             waveformPlot.waveformView.isUserInteractionEnabled = false
-            
-
+            self.totalTimeLabel.text = "00:00:00"
         case .stopped:
             AudioController.sharedInstance.stop()
             recordButton.setTitle("Start", for: .normal)
