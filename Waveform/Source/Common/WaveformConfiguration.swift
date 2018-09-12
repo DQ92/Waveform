@@ -5,10 +5,11 @@ import AVFoundation
 
 
 class WaveformConfiguration {
-    #if !(TARGET_IPHONE_SIMULATOR)
+    
+    #if targetEnvironment(simulator)
     static let microphoneSamplePerSecond = 86
     #else
-    static let microphoneSamplePerSecond = 44
+    static let microphoneSamplePerSecond = 43
     #endif
     
     static let amountOfSecondsDisplayingOnScreen = 6

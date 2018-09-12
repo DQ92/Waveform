@@ -206,6 +206,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
     public func collectionView(_ collectionView: UICollectionView,
                                layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
         return CGSize(width: elementsPerSecond, height: Int(collectionView.bounds.size.height))
     }
 
