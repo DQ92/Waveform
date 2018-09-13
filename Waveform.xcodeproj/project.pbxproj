@@ -19,6 +19,11 @@
 		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		705F9BD42141039F00C98859 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705F9BD32141039F00C98859 /* String+Extension.swift */; };
+		70973B4921493739000C71E0 /* AVFoundationAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70973B4821493739000C71E0 /* AVFoundationAudioPlayer.swift */; };
+		7097B15321491772006EE8FB /* AudioPlayerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7097B15221491772006EE8FB /* AudioPlayerProtocol.swift */; };
+		7097B15721491981006EE8FB /* AudioPlayerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7097B15621491981006EE8FB /* AudioPlayerError.swift */; };
+		7097B15921492573006EE8FB /* AudioPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7097B15821492573006EE8FB /* AudioPlayerDelegate.swift */; };
+		7097B15B214925A7006EE8FB /* AudioPlayerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7097B15A214925A7006EE8FB /* AudioPlayerState.swift */; };
 		709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */; };
 		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
@@ -61,6 +66,11 @@
 		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		705F9BD32141039F00C98859 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		70973B4821493739000C71E0 /* AVFoundationAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVFoundationAudioPlayer.swift; sourceTree = "<group>"; };
+		7097B15221491772006EE8FB /* AudioPlayerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerProtocol.swift; sourceTree = "<group>"; };
+		7097B15621491981006EE8FB /* AudioPlayerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerError.swift; sourceTree = "<group>"; };
+		7097B15821492573006EE8FB /* AudioPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerDelegate.swift; sourceTree = "<group>"; };
+		7097B15A214925A7006EE8FB /* AudioPlayerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerState.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		709E2EC22146547000BC0DE5 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		70B52CAF2142549F000D4989 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
@@ -109,6 +119,7 @@
 		65FD73BD2135E6E60003029F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7097B151214916EF006EE8FB /* AudioPlayer */,
 				709AB9D2213D260D00F63746 /* Common */,
 				E889377F7CF07F90DF9C63E5 /* Recorder */,
 				E88934B7BCB14371999176E0 /* LeadingLine */,
@@ -142,6 +153,18 @@
 				B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */,
 			);
 			path = WaveformView;
+			sourceTree = "<group>";
+		};
+		7097B151214916EF006EE8FB /* AudioPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				7097B15221491772006EE8FB /* AudioPlayerProtocol.swift */,
+				7097B15621491981006EE8FB /* AudioPlayerError.swift */,
+				7097B15821492573006EE8FB /* AudioPlayerDelegate.swift */,
+				7097B15A214925A7006EE8FB /* AudioPlayerState.swift */,
+				70973B4821493739000C71E0 /* AVFoundationAudioPlayer.swift */,
+			);
+			path = AudioPlayer;
 			sourceTree = "<group>";
 		};
 		709AB9D2213D260D00F63746 /* Common */ = {
@@ -338,9 +361,12 @@
 			files = (
 				709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */,
 				66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */,
+				7097B15321491772006EE8FB /* AudioPlayerProtocol.swift in Sources */,
+				7097B15721491981006EE8FB /* AudioPlayerError.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
 				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
 				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
+				70973B4921493739000C71E0 /* AVFoundationAudioPlayer.swift in Sources */,
 				66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */,
 				65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */,
 				66427A1421428B9300C6BCE9 /* TimelineView.swift in Sources */,
@@ -355,6 +381,7 @@
 				70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */,
 				E8893CB4C9DD45796FD408AE /* WaveformViewDelegate.swift in Sources */,
 				70B52CB02142549F000D4989 /* Time.swift in Sources */,
+				7097B15B214925A7006EE8FB /* AudioPlayerState.swift in Sources */,
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
 				705F9BD42141039F00C98859 /* String+Extension.swift in Sources */,
 				E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */,
@@ -369,6 +396,7 @@
 				E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */,
 				E8893D805570A16F976C1699 /* RecorderState.swift in Sources */,
 				66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */,
+				7097B15921492573006EE8FB /* AudioPlayerDelegate.swift in Sources */,
 				B02F1663B291D21802C8E919 /* Waveform.swift in Sources */,
 				B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */,
 				B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */,
