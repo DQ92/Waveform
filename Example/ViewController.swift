@@ -109,8 +109,7 @@ extension ViewController {
 
                 recorder.resume(from: range)
             } else {
-                sampleIndex = 0
-                values = [] // TODO: Refactor
+                waveformPlot.waveformView.values = []
                 waveformPlot.waveformView.reload()
                 startRecording(with: false)
             }

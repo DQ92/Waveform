@@ -23,14 +23,14 @@ class WaveformCollectionViewDataSource: NSObject, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WaveformConfiguration.collectionViewItemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
-        cell.configurator = configurator
-
-        let second = indexPath.section
-        let valuesInSecond: [WaveformModel] = values[second]
-
-        for x in 0..<valuesInSecond.count {
-            updateCell(cell, CGFloat(x), valuesInSecond[x])
-        }
+//        cell.configurator = configurator
+//
+//        let second = indexPath.section
+//        let valuesInSecond: [WaveformModel] = values[second]
+//
+//        for x in 0..<valuesInSecond.count {
+//            updateCell(cell, CGFloat(x), valuesInSecond[x])
+//        }
         return cell
     }
 
