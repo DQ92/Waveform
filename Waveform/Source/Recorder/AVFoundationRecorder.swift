@@ -193,6 +193,13 @@ extension AVFoundationRecorder: RecorderProtocol {
         return audioRecorder.isRecording
     }
     
+    var currentlyRecordedFileURL: URL? {
+        if recorderState == .notInitialized {
+            return nil
+        }
+        return audioRecorder.url
+    }
+    
     func start(with overwrite: Bool) throws {
         try startRecording(with: overwrite)
     }

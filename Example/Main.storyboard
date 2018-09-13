@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O19-fk-XHQ">
-                                <rect key="frame" x="166" y="370" width="42" height="21"/>
+                                <rect key="frame" x="166" y="398" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -31,14 +31,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YA8-B8-5Ec" customClass="WaveformPlot" customModule="Waveform" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="399" width="375" height="220"/>
+                                <rect key="frame" x="0.0" y="427" width="375" height="220"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="220" id="8aM-OE-WMh"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qI7-tB-YBO">
-                                <rect key="frame" x="317" y="370" width="42" height="21"/>
+                                <rect key="frame" x="317" y="398" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -76,6 +76,13 @@
                                     <segue destination="TZW-qt-ODC" kind="show" id="Vpi-Si-Ymx"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wdD-mk-kQB">
+                                <rect key="frame" x="108" y="198" width="158" height="30"/>
+                                <state key="normal" title="Play"/>
+                                <connections>
+                                    <action selector="playOrPauseButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qs5-Iz-xUd"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -86,9 +93,12 @@
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="gUe-QH-dQa" secondAttribute="leading" id="KCw-pX-Qp4"/>
                             <constraint firstItem="pCv-uH-TiH" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="20" id="P2w-c7-IUy"/>
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="48" id="Y8K-ys-VZt"/>
+                            <constraint firstItem="wdD-mk-kQB" firstAttribute="top" secondItem="pCv-uH-TiH" secondAttribute="bottom" constant="8" id="R03-fd-epd"/>
+                            <constraint firstItem="wdD-mk-kQB" firstAttribute="trailing" secondItem="pCv-uH-TiH" secondAttribute="trailing" id="Wvf-vj-x4b"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="20" id="Y8K-ys-VZt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
+                            <constraint firstItem="wdD-mk-kQB" firstAttribute="leading" secondItem="pCv-uH-TiH" secondAttribute="leading" id="hId-sa-YqD"/>
                             <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
@@ -106,6 +116,7 @@
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
                         <outlet property="clearButton" destination="pCv-uH-TiH" id="6ef-ff-Q5q"/>
+                        <outlet property="playOrPauseButton" destination="wdD-mk-kQB" id="pSy-VY-Oby"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>
                         <outlet property="totalTimeLabel" destination="qI7-tB-YBO" id="YWu-fT-OEf"/>
