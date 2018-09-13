@@ -9,6 +9,9 @@
 import Foundation
 
 protocol AudioPlayerProtocol {
+    var delegate: AudioPlayerDelegate? { get set }
+    var state: AudioPlayerState { get }
+
     func playFile(with URL: URL, at timeInterval: TimeInterval) throws
     func pause()
 }

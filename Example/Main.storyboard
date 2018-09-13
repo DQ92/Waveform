@@ -77,17 +77,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wdD-mk-kQB">
-                                <rect key="frame" x="108" y="198" width="76.5" height="30"/>
+                                <rect key="frame" x="108" y="198" width="158" height="30"/>
                                 <state key="normal" title="Play"/>
                                 <connections>
-                                    <action selector="playButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="h9Z-Cx-IIN"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ADM-ut-Rig">
-                                <rect key="frame" x="190" y="198" width="76" height="30"/>
-                                <state key="normal" title="Pause"/>
-                                <connections>
-                                    <action selector="pauseButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8wG-sc-2ya"/>
+                                    <action selector="playOrPauseButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qs5-Iz-xUd"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -97,13 +90,11 @@
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="Dbq-f3-CZs"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="EBY-pu-kn4"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Fag-hP-cH1"/>
-                            <constraint firstItem="ADM-ut-Rig" firstAttribute="width" secondItem="wdD-mk-kQB" secondAttribute="width" id="GAh-5p-TdC"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="gUe-QH-dQa" secondAttribute="leading" id="KCw-pX-Qp4"/>
                             <constraint firstItem="pCv-uH-TiH" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="20" id="P2w-c7-IUy"/>
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="top" secondItem="pCv-uH-TiH" secondAttribute="bottom" constant="8" id="R03-fd-epd"/>
-                            <constraint firstItem="ADM-ut-Rig" firstAttribute="top" secondItem="pCv-uH-TiH" secondAttribute="bottom" constant="8" id="V3n-kp-vdR"/>
-                            <constraint firstItem="ADM-ut-Rig" firstAttribute="trailing" secondItem="pCv-uH-TiH" secondAttribute="trailing" id="XKT-HK-WXa"/>
+                            <constraint firstItem="wdD-mk-kQB" firstAttribute="trailing" secondItem="pCv-uH-TiH" secondAttribute="trailing" id="Wvf-vj-x4b"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="20" id="Y8K-ys-VZt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
@@ -111,7 +102,6 @@
                             <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
-                            <constraint firstItem="ADM-ut-Rig" firstAttribute="leading" secondItem="wdD-mk-kQB" secondAttribute="trailing" constant="5" id="rYV-kC-cOH"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="leading" secondItem="ufi-fB-fAa" secondAttribute="trailing" constant="5" id="sP7-h3-ezT"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="seq-qm-DFe"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="u7v-Tz-orh"/>
@@ -126,8 +116,7 @@
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
                         <outlet property="clearButton" destination="pCv-uH-TiH" id="6ef-ff-Q5q"/>
-                        <outlet property="pauseButton" destination="ADM-ut-Rig" id="T8v-C1-fei"/>
-                        <outlet property="playButton" destination="wdD-mk-kQB" id="UQC-dB-x0y"/>
+                        <outlet property="playOrPauseButton" destination="wdD-mk-kQB" id="pSy-VY-Oby"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>
                         <outlet property="totalTimeLabel" destination="qI7-tB-YBO" id="YWu-fT-OEf"/>

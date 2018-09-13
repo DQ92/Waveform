@@ -10,8 +10,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformPlot: WaveformPlot!
-    @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var pauseButton: UIButton!
+    @IBOutlet weak var playOrPauseButton: UIButton!
     
     // MARK: - Private Properties
     
@@ -46,6 +45,7 @@ class ViewController: UIViewController {
         setupView()
         setupRecorder()
         setupWaveform()
+        setupPlayer()
         setupAudioController()
     }
     
@@ -63,10 +63,15 @@ class ViewController: UIViewController {
         self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
     }
     
+    private func setupPlayer() {
+        self.player.delegate = self
+    }
+    
     private func setupAudioController() {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
+   
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -93,35 +98,30 @@ extension ViewController {
         self.clearRecordings()
     }
     
-    @IBAction func playButtonTapped(_ sender: UIButton) {
-        self.play()
-    }
-    
-    @IBAction func pauseButtonTapped(_ sender: UIButton) {
-        self.pausePlayer()
+    @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
+        self.playOrPause()
     }
 }
 
 // MARK: - Audio player
 
 extension ViewController {
-    func play() {
-//        guard let URL = recorder.currentlyRecordedFileURL else {
-//            Log.error("Nie ma żadnego nagrywanego pliku")
-//            return
-//        }
-    
-        do {
-            try player.playFile(with: url, at: currentTime)
-        } catch AudioPlayerError.openFileFailed(let error) {
-            Log.error(error)
-        } catch {
-            Log.error("Unknown error")
+    func playOrPause() {
+        if player.state == .paused {
+            do {
+                try player.playFile(with: url, at: currentTime)
+            } catch AudioPlayerError.openFileFailed(let error) {
+                Log.error(error)
+            } catch {
+                Log.error("Unknown error")
+            }
+        } else if player.state == .isPlaying {
+            player.pause()
         }
     }
     
     func pausePlayer() {
-        player.pause()
+
     }
 }
 
@@ -172,7 +172,7 @@ extension ViewController {
         }
     }
     
-    private func retriveFileDataAndSet(with url: URL) {
+    private func retrieveFileDataAndSet(with url: URL) {
         do {
             loader = try FileDataLoader(fileURL: url)
             self.url = url
@@ -208,7 +208,7 @@ extension ViewController {
         if let viewController = segue.destination as? AudioFilesListViewController {
             viewController.directoryUrl = recorder.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
-                self?.retriveFileDataAndSet(with: url)
+                self?.retrieveFileDataAndSet(with: url)
                 self?.navigationController?
                     .popViewController(animated: true)
             }
@@ -333,6 +333,21 @@ extension ViewController: RecorderDelegate {
             waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
         case .notInitialized, .initialized:
             break
+        }
+    }
+}
+
+extension ViewController: AudioPlayerDelegate {
+    func playerStateDidChange(with state: AudioPlayerState) {
+        switch state {
+            case .isPlaying:
+                waveformPlot.waveformView.isUserInteractionEnabled = false
+                waveformPlot.waveformView.scrollToTheEnd()
+                playOrPauseButton.setTitle("Pause", for: .normal)
+            case .paused:
+                waveformPlot.waveformView.isUserInteractionEnabled = true
+                waveformPlot.waveformView.stopScrolling()
+                playOrPauseButton.setTitle("Play", for: .normal)
         }
     }
 }

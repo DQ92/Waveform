@@ -9,12 +9,13 @@
 import Foundation
 import AVFoundation
 
-class AVFoundationAudioPlayer {
+class AVFoundationAudioPlayer: NSObject {
     
     // MARK: - Public properties
     
     weak var delegate: AudioPlayerDelegate?
-    
+    var state: AudioPlayerState = .paused
+
     // MARK: - Private properties
     
     private var player: AVAudioPlayer!
@@ -26,6 +27,12 @@ class AVFoundationAudioPlayer {
         try! AVAudioSession.sharedInstance().setActive(true)
         
         player = try AVAudioPlayer(contentsOf: URL, fileTypeHint: AVFileType.m4a.rawValue) ~> AudioPlayerError.openFileFailed
+        player.delegate = self
+    }
+
+    private func changePlayerState(with state: AudioPlayerState) {
+        self.state = state
+        delegate?.playerStateDidChange(with: state)
     }
 }
 
@@ -34,15 +41,21 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
         if player?.url == nil || player?.url != URL {
             try preparePlayer(with: URL)
         }
-        
+
         player.currentTime = timeInterval
         player.play()
-        
-        delegate?.recorderStateDidChange(with: .isPlaying)
+
+        changePlayerState(with: .isPlaying)
     }
     
     func pause() {
         player.pause()
-        delegate?.recorderStateDidChange(with: .paused)
+        changePlayerState(with: .paused)
+    }
+}
+
+extension AVFoundationAudioPlayer: AVAudioPlayerDelegate {
+    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        delegate?.playerStateDidChange(with: .paused)
     }
 }

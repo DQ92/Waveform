@@ -38,6 +38,7 @@ class WaveformView: UIView {
     private var width: CGFloat {
         return UIScreen.main.bounds.size.width // TODO, powinno zwracać szerokość collectionView
     }
+    private var autoScrollTimer: Timer!
 
     weak var delegate: WaveformViewDelegate?
     var values = [[WaveformModel]]()
@@ -98,6 +99,7 @@ class WaveformView: UIView {
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
                                     at: .left,
                                     animated: true)
+        leadingLine.position = CGPoint(x: collectionView.bounds.width / 2, y: leadingLine.position.y)
     }
 }
 
@@ -162,7 +164,7 @@ extension WaveformView {
     private func updateLeadingLine() {
         let y: CGFloat = leadingLine.position.y
         let x = leadingLine.position.x
-        if(x < (self.width / 2)) {
+        if x < (self.width / 2) {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
             let point = CGPoint(x: x + 1, y: y)
@@ -219,7 +221,6 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         let valuesInSecond: [WaveformModel] = values[second]
 
         for x in 0..<valuesInSecond.count {
-            updateLeadingLine()
             updateCell(cell, CGFloat(x), valuesInSecond[x])
         }
         return cell
@@ -246,5 +247,32 @@ extension WaveformView: UIScrollViewDelegate {
         }
 
         leadingLinePositionChanged(x: scrollView.contentOffset.x + leadingLine.position.x)
+    }
+
+    func scrollToTheEnd() {
+        let point = collectionView.contentOffset
+        collectionView.setContentOffset(point, animated: false)
+        autoScrollTimer?.invalidate()
+        autoScrollTimer = Timer.scheduledTimer(timeInterval: 0.01,
+                                target: self,
+                                selector: #selector(scrollContentOffset),
+                                userInfo: nil,
+                                repeats: true)
+    }
+
+    @objc func scrollContentOffset() {
+        let difference: CGFloat = CGFloat(WaveformConfiguration.microphoneSamplePerSecond) / 100
+        let finalPosition: CGFloat = self.collectionView.contentOffset.x + difference
+        let point = CGPoint(x: finalPosition, y: 0.0)
+        collectionView.bounds = CGRect(x: point.x,
+                                       y: point.y,
+                                       width: collectionView.bounds.size.width,
+                                       height: collectionView.bounds.size.height)
+        leadingLinePositionChanged(x: point.x + leadingLine.position.x)
+        scrollDidChangeBlock?(point)
+    }
+
+    func stopScrolling() {
+        autoScrollTimer.invalidate()
     }
 }

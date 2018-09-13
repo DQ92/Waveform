@@ -9,5 +9,5 @@
 import Foundation
 
 protocol AudioPlayerDelegate: class {
-    func recorderStateDidChange(with state: AudioPlayerState)
+    func playerStateDidChange(with state: AudioPlayerState)
 }
