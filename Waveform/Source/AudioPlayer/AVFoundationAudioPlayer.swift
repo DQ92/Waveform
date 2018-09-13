@@ -20,7 +20,7 @@ class AVFoundationAudioPlayer: NSObject {
     
     private var player: AVAudioPlayer!
     
-    // MARK: - setup
+    // MARK: - Setup
     
     private func preparePlayer(with URL: URL) throws {
         try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)

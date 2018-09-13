@@ -108,8 +108,11 @@ extension ViewController {
 extension ViewController {
     func playOrPause() {
         if player.state == .paused {
+            guard let URL = self.url else {
+                return
+            }
             do {
-                try player.playFile(with: url, at: currentTime)
+                try player.playFile(with: URL, at: currentTime)
             } catch AudioPlayerError.openFileFailed(let error) {
                 Log.error(error)
             } catch {
@@ -118,10 +121,6 @@ extension ViewController {
         } else if player.state == .isPlaying {
             player.pause()
         }
-    }
-    
-    func pausePlayer() {
-
     }
 }
 
