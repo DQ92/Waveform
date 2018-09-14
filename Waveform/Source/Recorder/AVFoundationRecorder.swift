@@ -318,11 +318,6 @@ extension AVFoundationRecorder {
     }
     
     private func merge(_ assets: [AVAsset]) throws -> AVAsset {
-        let filesPathString = documentsURL.appendingPathComponent(tempDirectoryName)
-        
-        print("\n----------------------------")
-        print("MERGE: \(filesPathString.path)")
-        
         var atTimeM: CMTime = kCMTimeZero
         let composition: AVMutableComposition = AVMutableComposition()
         var totalTime: CMTime = kCMTimeZero

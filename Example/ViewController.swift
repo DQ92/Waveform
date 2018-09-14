@@ -58,7 +58,7 @@ class ViewController: UIViewController {
     }
 
     private func setupWaveform() {
-        self.waveformPlot.waveformView.delegate = self
+        self.waveformPlot.delegate = self
     }
 
     private func setupPlayer() {
@@ -255,9 +255,13 @@ extension ViewController: AudioControllerDelegate {
 
 // MARK: - WaveformViewDelegate
 
-extension ViewController: WaveformViewDelegate {
-    func currentTimeIntervalDidChange(with timeInterval: TimeInterval) {
+extension ViewController: WaveformPlotDelegate {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
         timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
+    }
+    
+    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+        
     }
 }
 
