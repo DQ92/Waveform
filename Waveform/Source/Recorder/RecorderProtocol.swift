@@ -9,10 +9,9 @@ import AVFoundation
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
     var isRecording: Bool { get }
-    var resultsDirectoryURL: URL { get }
     var delegate: RecorderDelegate? { get set }
-    var currentlyRecordedFileURL: URL? { get }
-    
+    var resultsDirectoryURL: URL { get }
+
     func start(with overwrite: Bool) throws
     func stop()
     func resume()

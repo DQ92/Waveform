@@ -1,9 +1,9 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
+
     // MARK: - IBOutlets
-    
+
     @IBOutlet var recordingTimeLabel: UILabel!
     @IBOutlet var recordButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
@@ -11,9 +11,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
-    
+
     // MARK: - Private Properties
-    
+
     private var currentIndex: Int?
     private let shouldClearFiles = false
     private var recorder: RecorderProtocol = AVFoundationRecorder()
@@ -34,53 +34,61 @@ class ViewController: UIViewController {
     private var elementsPerSecond: Int {
         return WaveformConfiguration.microphoneSamplePerSecond
     }
-    
+
     private var currentTime: TimeInterval = 0
-    
+
+    enum PlayerSource {
+        case recorder
+        case loader(url: URL)
+        case none
+    }
+
+    private var playerSource: PlayerSource = .none
+
     // MARK: - Life cycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupView()
         setupRecorder()
         setupWaveform()
         setupPlayer()
         setupAudioController()
     }
-    
+
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
     }
-    
+
     private func setupRecorder() {
         recorder.delegate = self
     }
-    
+
     private func setupWaveform() {
         self.waveformPlot.waveformView.delegate = self
         self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
     }
-    
+
     private func setupPlayer() {
         self.player.delegate = self
     }
-    
+
     private func setupAudioController() {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
-   
+
 }
 
 // MARK: - Buttons - start/pause/resume
 
 extension ViewController {
     @IBAction func startRecording(_ sender: UIButton) {
-        startOrPause()
+        recordOrPause()
     }
-    
+
     @IBAction func finishButtonTapped(_ sender: Any) {
         recorder.stop()
         do {
@@ -93,11 +101,11 @@ extension ViewController {
             Log.error("Unknown error")
         }
     }
-    
+
     @IBAction func clearButtonTapped(_ sender: UIButton) {
         self.clearRecordings()
     }
-    
+
     @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
         self.playOrPause()
     }
@@ -108,26 +116,55 @@ extension ViewController {
 extension ViewController {
     func playOrPause() {
         if player.state == .paused {
-            guard let URL = self.url else {
-                return
-            }
-            do {
-                try player.playFile(with: URL, at: currentTime)
-            } catch AudioPlayerError.openFileFailed(let error) {
-                Log.error(error)
-            } catch {
-                Log.error("Unknown error")
+            switch playerSource {
+                case .loader(let url):
+                    do {
+                        try player.playFile(with: url, at: currentTime)
+                    } catch AudioPlayerError.openFileFailed(let error) {
+                        Log.error(error)
+                    } catch {
+                        Log.error("Unknown error")
+                    }
+                case .recorder:
+                    playFileInRecording()
+                case .none:
+                    break
             }
         } else if player.state == .isPlaying {
             player.pause()
         }
+    }
+
+    private func playFileInRecording() {
+
+//        do {
+//            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
+//                guard let URL = url else {
+//                    return
+//                }
+//
+//                DispatchQueue.main.async {
+//                    do {
+//                        try self?.player.playFile(with: URL, at: (self?.currentTime)!)
+//                    } catch AudioPlayerError.openFileFailed(let error) {
+//                        Log.error(error)
+//                    } catch {
+//                        Log.error("Unknown error")
+//                    }
+//                }
+//
+//            }
+//        } catch {
+//            Log.error("Error while exporting temporary file")
+//        }
+
     }
 }
 
 // MARK: - Audio recorder
 
 extension ViewController {
-    func startOrPause() {
+    func recordOrPause() {
         if (recorder.isRecording) {
             recorder.pause()
             //        } else if (currentlyShownTime < recorder.currentTime) {
@@ -143,9 +180,8 @@ extension ViewController {
             }
         }
     }
-    
+
     private func startRecording(with overwrite: Bool) {
-        
         do {
             try recorder.start(with: overwrite)
         } catch RecorderError.noMicrophoneAccess {
@@ -158,7 +194,7 @@ extension ViewController {
             Log.error("Unknown error.")
         }
     }
-    
+
     private func clearRecordings() {
         do {
             try recorder.clearRecordings()
@@ -170,11 +206,15 @@ extension ViewController {
             present(alertController, animated: true)
         }
     }
-    
+}
+
+// MARK: - Loader
+
+extension ViewController {
     private func retrieveFileDataAndSet(with url: URL) {
         do {
             loader = try FileDataLoader(fileURL: url)
-            self.url = url
+            playerSource = .loader(url: url)
             let time = AudioUtils.time(from: (loader.fileDuration)!)
             let totalTimeString = String(format: "%02d:%02d:%02d",
                                          time.minutes,
@@ -200,16 +240,16 @@ extension ViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
-        
+
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
             viewController.directoryUrl = recorder.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
                 self?.retrieveFileDataAndSet(with: url)
                 self?.navigationController?
-                    .popViewController(animated: true)
+                     .popViewController(animated: true)
             }
         }
     }
@@ -219,24 +259,24 @@ extension ViewController {
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
         return WaveformModel(value: value, recordType: .first, timeStamp: timeStamp)
     }
-    
+
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
         // Liczba próbek na sekundę
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-        
+
         let waveformSamples = samples.enumerated()
-            .map { sample in
-                WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: TimeInterval(sample.offset / sampleRate))
-        }
-        
+                                     .map { sample in
+                                         WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: TimeInterval(sample.offset / sampleRate))
+                                     }
+
         let samplesPerCell = sampleRate
         var result = [[WaveformModel]]()
-        
+
         for cellIndex in 0..<Int(ceil(numberOfSeconds)) {
             let beginIndex = cellIndex * samplesPerCell
             let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
             var cellSamples = [WaveformModel]()
-            
+
             for index in beginIndex..<endIndex {
                 cellSamples.append(waveformSamples[index])
             }
@@ -244,18 +284,17 @@ extension ViewController {
         }
         return result
     }
-    
+
     func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
         sampleIndex = sampleIndex + 1
         self.sec = Int(sampleIndex / elementsPerSecond) + 1
-        
+
         Assert.checkRepresentation(sec < 0, "Second value is less than 0!")
-        
-        //newsecon
+
         if values.count <= sec {
             newSecond()
         }
-        
+
         let precision = sampleIndex % elementsPerSecond
         let model = createModel(value: CGFloat(peak), with: timeStamp)
         if (values[sec - 1].count == elementsPerSecond) {
@@ -263,14 +302,14 @@ extension ViewController {
         } else {
             values[sec - 1].append(model)
         }
-        
+
         if (values[sec - 1].count > elementsPerSecond) {
             Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
         }
         waveformPlot.waveformView.update(model: model, sampleIndex: sampleIndex)
         waveformPlot.waveformView.setOffset()
     }
-    
+
     func newSecond() {
         values.append([])
         self.waveformPlot.waveformView.newSecond(values.count - 1, CGFloat(sampleIndex))
@@ -299,7 +338,7 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
                                      time.minutes,
                                      time.seconds,
                                      time.milliSeconds)
-        
+
         currentTime = time.interval
         timeLabel.text = totalTimeString
     }
@@ -308,30 +347,30 @@ extension ViewController: LeadingLineTimeUpdaterDelegate {
 extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
-        case .isRecording:
-            AudioController.sharedInstance.start()
-            recordButton.setTitle("Pause", for: .normal)
-            if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
-                CATransaction.begin()
-                sampleIndex = currentIndex
-                waveformPlot.waveformView.refresh()
-                CATransaction.commit()
-            }
-            waveformPlot.waveformView.isUserInteractionEnabled = false
-            self.totalTimeLabel.text = "00:00:00"
-        case .stopped:
-            AudioController.sharedInstance.stop()
-            recordButton.setTitle("Start", for: .normal)
-            
-            waveformPlot.waveformView.isUserInteractionEnabled = true
-            waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
-        case .paused:
-            AudioController.sharedInstance.stop()
-            recordButton.setTitle("Resume", for: .normal)
-            waveformPlot.waveformView.isUserInteractionEnabled = true
-            waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
-        case .notInitialized, .initialized:
-            break
+            case .isRecording:
+                AudioController.sharedInstance.start()
+                recordButton.setTitle("Pause", for: .normal)
+                if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
+                    CATransaction.begin()
+                    sampleIndex = currentIndex
+                    waveformPlot.waveformView.refresh()
+                    CATransaction.commit()
+                }
+                waveformPlot.waveformView.isUserInteractionEnabled = false
+                self.totalTimeLabel.text = "00:00:00"
+            case .stopped:
+                AudioController.sharedInstance.stop()
+                recordButton.setTitle("Start", for: .normal)
+
+                waveformPlot.waveformView.isUserInteractionEnabled = true
+                waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+            case .paused:
+                AudioController.sharedInstance.stop()
+                recordButton.setTitle("Resume", for: .normal)
+                waveformPlot.waveformView.isUserInteractionEnabled = true
+                waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+            case .notInitialized, .initialized:
+                break
         }
     }
 }
