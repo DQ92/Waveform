@@ -116,6 +116,7 @@
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
                         <outlet property="clearButton" destination="pCv-uH-TiH" id="6ef-ff-Q5q"/>
+                        <outlet property="finishButton" destination="gUe-QH-dQa" id="9Gk-6D-Rlu"/>
                         <outlet property="playOrPauseButton" destination="wdD-mk-kQB" id="pSy-VY-Oby"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>

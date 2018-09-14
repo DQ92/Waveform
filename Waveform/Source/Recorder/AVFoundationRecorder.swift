@@ -32,7 +32,7 @@ class AVFoundationRecorder: NSObject {
     private var currentDuration: Float = 0
     private var resultFileNamePrefix: String = "result"
     private var temporaryFileNameSuffix: Int = 0
-    private var recorderState: RecorderState = .notInitialized
+    var recorderState: RecorderState = .notInitialized
 
     // MARK: - Setup
 
@@ -205,13 +205,6 @@ extension AVFoundationRecorder: RecorderProtocol {
         return audioRecorder.currentTime
     }
 
-    var isRecording: Bool {
-        if recorderState == .notInitialized {
-            return false
-        }
-        return audioRecorder.isRecording
-    }
-
     var currentlyRecordedFileURL: URL? {
         if recorderState == .notInitialized {
             return nil
@@ -224,10 +217,12 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func stop() {
+        if recorderState == .notInitialized {
+            return
+        }
         Log.debug("Stopped")
         changeRecorderStateWithViewUpdate(with: .stopped)
-        audioRecorder?.stop()
-        
+        audioRecorder.stop()
         audioRecorder = nil
         recorderState.changeState(with: .notInitialized)
         Log.debug("Recorded successfully.")
@@ -235,12 +230,18 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func resume() {
+        if recorderState == .notInitialized {
+            return
+        }
         changeRecorderStateWithViewUpdate(with: .isRecording)
         Log.debug("Resumed")
         audioRecorder.record()
     }
 
     func pause() {
+        if recorderState == .notInitialized {
+            return
+        }
         changeRecorderStateWithViewUpdate(with: .paused)
         Log.debug("Paused")
         audioRecorder.pause()
@@ -248,6 +249,10 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func finish() throws {
+        if recorderState == .notInitialized {
+            return
+        }
+        stop()
         let assets = try getAllTemporaryAudioParts()
         var assetToExport: AVAsset
         if assets.count > 1 {
@@ -263,6 +268,9 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func crop(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil) {
+        if recorderState == .notInitialized {
+            return
+        }
         let asset = AVAsset(url: sourceURL)
         let length = assetDuration(asset)
         Log.info("length asset to crop: \(length) seconds")
@@ -315,6 +323,7 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws {
+        pause()
         let assets = try getAllTemporaryAudioParts()
         var assetToExport: AVAsset
         if assets.count > 1 {
@@ -325,6 +334,8 @@ extension AVFoundationRecorder: RecorderProtocol {
             Log.error("No assets to export at \(documentsURL)")
             throw RecorderError.fileExportFailed
         }
+        
+        exportAsset(assetToExport, completion: completion)
     }
 }
 

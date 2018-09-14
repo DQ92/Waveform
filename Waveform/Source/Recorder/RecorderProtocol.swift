@@ -8,9 +8,9 @@ import AVFoundation
 
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
-    var isRecording: Bool { get }
     var delegate: RecorderDelegate? { get set }
     var resultsDirectoryURL: URL { get }
+    var recorderState: RecorderState { get }
 
     func start(with overwrite: Bool) throws
     func stop()
@@ -19,4 +19,6 @@ protocol RecorderProtocol {
     func crop(startTime: Double, endTime: Double)
     func finish() throws
     func clearRecordings() throws
+    func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws
+
 }

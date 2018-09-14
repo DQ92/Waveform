@@ -41,6 +41,10 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
         if player?.url == nil || player?.url != URL {
             try preparePlayer(with: URL)
         }
+        
+        if timeInterval > player.duration {
+            return
+        }
 
         player.currentTime = timeInterval
         player.play()
@@ -56,6 +60,6 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
 
 extension AVFoundationAudioPlayer: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        delegate?.playerStateDidChange(with: .paused)
+        changePlayerState(with: .paused)
     }
 }

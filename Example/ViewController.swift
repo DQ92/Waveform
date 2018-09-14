@@ -11,7 +11,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
-
+    @IBOutlet weak var finishButton: UIButton!
+    
     // MARK: - Private Properties
 
     private var currentIndex: Int?
@@ -60,6 +61,7 @@ class ViewController: UIViewController {
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
+        
     }
 
     private func setupRecorder() {
@@ -79,7 +81,6 @@ class ViewController: UIViewController {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
-
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -90,7 +91,7 @@ extension ViewController {
     }
 
     @IBAction func finishButtonTapped(_ sender: Any) {
-        recorder.stop()
+        
         do {
             try recorder.finish()
         } catch RecorderError.directoryContentListingFailed(let error) {
@@ -115,8 +116,9 @@ extension ViewController {
 
 extension ViewController {
     func playOrPause() {
-        if player.state == .paused {
+        if player.state == .paused && recorder.recorderState != .isRecording {
             switch playerSource {
+                
                 case .loader(let url):
                     do {
                         try player.playFile(with: url, at: currentTime)
@@ -137,26 +139,26 @@ extension ViewController {
 
     private func playFileInRecording() {
 
-//        do {
-//            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
-//                guard let URL = url else {
-//                    return
-//                }
-//
-//                DispatchQueue.main.async {
-//                    do {
-//                        try self?.player.playFile(with: URL, at: (self?.currentTime)!)
-//                    } catch AudioPlayerError.openFileFailed(let error) {
-//                        Log.error(error)
-//                    } catch {
-//                        Log.error("Unknown error")
-//                    }
-//                }
-//
-//            }
-//        } catch {
-//            Log.error("Error while exporting temporary file")
-//        }
+        do {
+            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
+                guard let URL = url else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    do {
+                        try self?.player.playFile(with: URL, at: (self?.currentTime)!)
+                    } catch AudioPlayerError.openFileFailed(let error) {
+                        Log.error(error)
+                    } catch {
+                        Log.error("Unknown error")
+                    }
+                }
+
+            }
+        } catch {
+            Log.error("Error while exporting temporary file")
+        }
 
     }
 }
@@ -165,7 +167,7 @@ extension ViewController {
 
 extension ViewController {
     func recordOrPause() {
-        if (recorder.isRecording) {
+        if recorder.recorderState == .isRecording {
             recorder.pause()
             //        } else if (currentlyShownTime < recorder.currentTime) {
             //            startRecording(with: true)
@@ -213,6 +215,9 @@ extension ViewController {
 extension ViewController {
     private func retrieveFileDataAndSet(with url: URL) {
         do {
+            if recorder.recorderState == .isRecording {
+                recorder.stop()
+            }
             loader = try FileDataLoader(fileURL: url)
             playerSource = .loader(url: url)
             let time = AudioUtils.time(from: (loader.fileDuration)!)
@@ -240,11 +245,13 @@ extension ViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
-
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
+            if recorder.recorderState == .isRecording {
+                recorder.pause()
+            }
             viewController.directoryUrl = recorder.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
                 self?.retrieveFileDataAndSet(with: url)
@@ -326,7 +333,7 @@ extension ViewController: AudioControllerDelegate {
 
 extension ViewController: WaveformViewDelegate {
     func didScroll(_ x: CGFloat) {
-        if (recorder.isRecording) {
+        if recorder.recorderState == .isRecording {
             currentIndex = Int(x)
         }
     }
@@ -358,17 +365,22 @@ extension ViewController: RecorderDelegate {
                 }
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 self.totalTimeLabel.text = "00:00:00"
+                playerSource = .recorder
+
             case .stopped:
                 AudioController.sharedInstance.stop()
                 recordButton.setTitle("Start", for: .normal)
-
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+                playerSource = .recorder
+
             case .paused:
                 AudioController.sharedInstance.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+                playerSource = .recorder
+
             case .notInitialized, .initialized:
                 break
         }
@@ -382,6 +394,7 @@ extension ViewController: AudioPlayerDelegate {
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 waveformPlot.waveformView.scrollToTheEnd()
                 playOrPauseButton.setTitle("Pause", for: .normal)
+                recordButton.setTitle("Start", for: .normal)
             case .paused:
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.stopScrolling()
