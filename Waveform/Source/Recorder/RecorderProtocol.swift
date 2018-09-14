@@ -15,7 +15,7 @@ protocol RecorderProtocol {
     
     func start(with overwrite: Bool) throws
     func stop()
-    func resume()
+    func resume(from timeRange: CMTimeRange)
     func pause()
     func crop(startTime: Double, endTime: Double)
     func finish() throws
