@@ -28,27 +28,24 @@ class WaveformPlot: UIView {
         return waveformView
     }()
     
+    // MARK: - Private properties
+    
+    private var observers = [NSKeyValueObservation]()
+    
     // MARK: - Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.commonInit()
         self.setupConstraints()
+        self.setupObservers()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.commonInit()
         self.setupConstraints()
-    }
-    
-    private func commonInit() {
-        self.waveformView.scrollDidChangeBlock = { [weak self] contentOffset in
-            self?.timelineView.contentOffset = contentOffset
-        }
-        self.timelineView.intervalWidth = CGFloat(self.waveformView.elementsPerSecond)
+        self.setupObservers()
     }
     
     private func setupConstraints() {
@@ -61,5 +58,16 @@ class WaveformPlot: UIView {
         self.waveformView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
         self.waveformView.setupConstraint(attribute: .top, toItem: self.timelineView, attribute: .bottom)
         self.waveformView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+    }
+    
+    private func setupObservers() {
+        self.observers = [
+            self.waveformView.observe(\WaveformView.contentOffset, options: [.initial, .new]) { [weak self] waveformView, change in
+                self?.timelineView.contentOffset = change.newValue ?? CGPoint.zero
+            },
+            self.waveformView.observe(\WaveformView.elementsPerSecond, options: [.initial, .new]) { [weak self] waveformView, change in
+                self?.timelineView.intervalWidth = CGFloat(change.newValue ?? 0)
+            }
+        ]
     }
 }

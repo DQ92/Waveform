@@ -3,8 +3,7 @@
 // Copyright (c) 2018 Daniel Kuta. All rights reserved.
 //
 
-import Foundation
-import UIKit
+import AVFoundation
 
 class LeadingLineTimeUpdater {
 
@@ -25,14 +24,11 @@ class LeadingLineTimeUpdater {
     // MARK: - Access method
 
     func changeTime(withX position: CGFloat) {
-        let timeStamp = position / CGFloat(elementsPerSecond)
-        let time = AudioUtils.time(from: TimeInterval(timeStamp))
-        delegate?.timeDidChange(with: time)
+        let timeInterval = Double(position) / Double(elementsPerSecond)
+        delegate?.timeIntervalDidChange(with: timeInterval)
     }
 }
 
 protocol LeadingLineTimeUpdaterDelegate: class {
-    func timeDidChange(with time: Time)
+    func timeIntervalDidChange(with timeInterval: TimeInterval)
 }
-
-

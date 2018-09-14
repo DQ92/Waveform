@@ -1,91 +1,73 @@
 
-import Foundation
 import UIKit
+
+struct Sample {
+    let value: CGFloat
+    let color: UIColor
+    let width: CGFloat
+}
 
 class WaveformCollectionViewCell: UICollectionViewCell {
 
     // MARK: - Private properties
     
-    private var layersList = [CAShapeLayer]()
-    var configurator: WaveformCollectionViewCellConfigurator! {
-        didSet {
-            layersList = configurator.emptyListOfLayersPerOneSecond()
-        }
-    }
+    private var sampleDictionary = [Int: Sample]()
     
     // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-     
+        self.commonInit()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        self.commonInit()
     }
+    
+    private func commonInit() {
+        self.backgroundColor = UIColor.clear
+    }
+    
+    // MARK: - Subclass methods
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        for sublayer in contentView.layer.sublayers ?? [] {
-            sublayer.removeFromSuperlayer()
-        }
-        contentView.backgroundColor = nil
+        self.sampleDictionary = [:]
     }
-
-    //TODO ta metoda bedzie to wyrzucenia
-    func setup(model: WaveformModel, sampleIndex: CGFloat) {
-        Assert.checkRepresentation(configurator == nil, "Set configurator for waveformCell!")
-        
-        let layerWidth = configurator.oneLayerWidth()
-        var layerHeight: CGFloat = 1
-        //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
-        if(model.value > 1) {
-            layerHeight = model.value
+    
+    // MARK: - Access methods
+    
+    func setupSample(sample: Sample, at index: Int) {
+        self.sampleDictionary[index] = sample
+        self.setNeedsDisplay()
+    }
+    
+    func setupSamples(samples: [Sample]) {
+        samples.enumerated().forEach { [weak self] (index, sample) in
+            self?.sampleDictionary[index] = sample
         }
-        let layerY = (self.bounds.height - layerHeight) / 2
-        let waveLayer = CAShapeLayer()
-        waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
-        waveLayer.backgroundColor = WaveformColor.color(model: model).cgColor
-        waveLayer.shouldRasterize = false
+        self.setNeedsDisplay()
+    }
+    
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
         
-        let index = Int(sampleIndex)
-        if(index >= layersList.count || index < 0) {
-            Assert.checkRepresentation(true, "Wrong value of sampleIndex! : \(index)")
-        } else {
-            layersList[index].removeFromSuperlayer()
-            self.contentView.layer.addSublayer(waveLayer)
-            layersList[index] = waveLayer
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return
+        }
+        
+        let samples: [Sample] = self.sampleDictionary.sorted { $0.key < $1.key }.map { $0.value }
+        
+        for (index, sample) in samples.enumerated() {
+            let size = CGSize(width: sample.width, height: max(sample.value, 1))
+            let origin = CGPoint(x: CGFloat(index), y: (rect.height - size.height) * 0.5)
+            let sampleRect = CGRect(origin: origin, size: size)
+            
+            context.addRect(sampleRect)
+            context.setFillColor(sample.color.cgColor)
+            context.fill(sampleRect)
         }
     }
-
-//    func setup(sampleValue: CGFloat, color: UIColor, sampleIndex: CGFloat) {
-//        Assert.checkRepresentation(configurator == nil, "Set configurator for waveformCell!")
-//
-//        let layerWidth = configurator.oneLayerWidth()
-//        var layerHeight: CGFloat = 1
-//        //TODO przeliczyć wysokość na podstawie wysokości celki i min/max wartości z model.value, pytanie czy RMS ma jakąś wartość max...
-//        if(sampleValue > 1) {
-//            layerHeight = sampleValue
-//        }
-//        let layerY = (self.bounds.height - layerHeight) / 2
-//        let waveLayer = CAShapeLayer()
-//        waveLayer.frame = CGRect(x: sampleIndex, y: layerY, width: layerWidth, height: layerHeight)
-//        waveLayer.backgroundColor = color.cgColor
-//
-//        let index = Int(sampleIndex)
-//        if(index > layersList.count || index < 0) {
-//            Assert.checkRepresentation(true, "Wrong value of sampleIndex! : \(index)")
-//        } else {
-//            layersList[index].removeFromSuperlayer()
-//            self.contentView.layer.addSublayer(waveLayer)
-//            layersList[index] = waveLayer
-//        }
-//    }
 }
-
-
-
-
-
-

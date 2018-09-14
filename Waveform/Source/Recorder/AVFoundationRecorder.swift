@@ -229,7 +229,7 @@ extension AVFoundationRecorder: RecorderProtocol {
         listFiles()
     }
 
-    func resume() {
+    func resume(from timeRange: CMTimeRange) {
         if recorderState == .notInitialized {
             return
         }
@@ -334,7 +334,7 @@ extension AVFoundationRecorder: RecorderProtocol {
             Log.error("No assets to export at \(documentsURL)")
             throw RecorderError.fileExportFailed
         }
-        
+
         exportAsset(assetToExport, completion: completion)
     }
 }

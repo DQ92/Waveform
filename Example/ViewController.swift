@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
 
@@ -12,11 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
     @IBOutlet weak var finishButton: UIButton!
-    
+
     // MARK: - Private Properties
 
-    private var currentIndex: Int?
-    private let shouldClearFiles = false
     private var recorder: RecorderProtocol = AVFoundationRecorder()
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
@@ -26,15 +25,18 @@ class ViewController: UIViewController {
             self.waveformPlot.waveformView.values = values
         }
     }
-    private var sampleIndex = 0 {
-        didSet {
-            self.waveformPlot.waveformView.sampleIndex = sampleIndex
-        }
-    }
-    private var sec: Int = 0
+
     private var elementsPerSecond: Int {
         return WaveformConfiguration.microphoneSamplePerSecond
     }
+
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss:SS"
+
+        return formatter
+    }()
+
 
     private var currentTime: TimeInterval = 0
 
@@ -61,7 +63,7 @@ class ViewController: UIViewController {
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
-        
+
     }
 
     private func setupRecorder() {
@@ -70,7 +72,6 @@ class ViewController: UIViewController {
 
     private func setupWaveform() {
         self.waveformPlot.waveformView.delegate = self
-        self.waveformPlot.waveformView.leadingLineTimeUpdaterDelegate = self
     }
 
     private func setupPlayer() {
@@ -91,7 +92,7 @@ extension ViewController {
     }
 
     @IBAction func finishButtonTapped(_ sender: Any) {
-        
+
         do {
             try recorder.finish()
         } catch RecorderError.directoryContentListingFailed(let error) {
@@ -118,10 +119,10 @@ extension ViewController {
     func playOrPause() {
         if player.state == .paused && recorder.recorderState != .isRecording {
             switch playerSource {
-                
+
                 case .loader(let url):
                     do {
-                        try player.playFile(with: url, at: currentTime)
+                        try player.playFile(with: url, at: self.waveformPlot.waveformView.currentTimeInterval)
                     } catch AudioPlayerError.openFileFailed(let error) {
                         Log.error(error)
                     } catch {
@@ -173,10 +174,12 @@ extension ViewController {
             //            startRecording(with: true)
         } else {
             if recorder.currentTime > TimeInterval(0.1) {
-                recorder.resume()
+                let time = CMTime(seconds: self.waveformPlot.waveformView.currentTimeInterval, preferredTimescale: 1)
+                let range = CMTimeRange(start: time, duration: kCMTimeZero)
+
+                recorder.resume(from: range)
             } else {
-                sampleIndex = 0
-                values = [] // TODO: Refactor
+                waveformPlot.waveformView.values = []
                 waveformPlot.waveformView.reload()
                 startRecording(with: false)
             }
@@ -291,63 +294,21 @@ extension ViewController {
         }
         return result
     }
-
-    func updatePeak(_ peak: Float, with timeStamp: TimeInterval) {
-        sampleIndex = sampleIndex + 1
-        self.sec = Int(sampleIndex / elementsPerSecond) + 1
-
-        Assert.checkRepresentation(sec < 0, "Second value is less than 0!")
-
-        if values.count <= sec {
-            newSecond()
-        }
-
-        let precision = sampleIndex % elementsPerSecond
-        let model = createModel(value: CGFloat(peak), with: timeStamp)
-        if (values[sec - 1].count == elementsPerSecond) {
-            values[sec - 1][precision] = model
-        } else {
-            values[sec - 1].append(model)
-        }
-
-        if (values[sec - 1].count > elementsPerSecond) {
-            Assert.checkRepresentation(true, "ERROR! values[sec - 1].count > elementsPerSecond")
-        }
-        waveformPlot.waveformView.update(model: model, sampleIndex: sampleIndex)
-        waveformPlot.waveformView.setOffset()
-    }
-
-    func newSecond() {
-        values.append([])
-        self.waveformPlot.waveformView.newSecond(values.count - 1, CGFloat(sampleIndex))
-    }
 }
 
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
-        updatePeak(data * AudioUtils.defaultWaveformFloatModifier, with: recorder.currentTime)
+        self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier, for: recorder.currentTime)
     }
 }
 
 // MARK: - WaveformViewDelegate
 
-extension ViewController: WaveformViewDelegate {
-    func didScroll(_ x: CGFloat) {
-        if recorder.recorderState == .isRecording {
-            currentIndex = Int(x)
-        }
-    }
-}
+
 
 extension ViewController: LeadingLineTimeUpdaterDelegate {
-    func timeDidChange(with time: Time) {
-        let totalTimeString = String(format: "%02d:%02d:%02d",
-                                     time.minutes,
-                                     time.seconds,
-                                     time.milliSeconds)
-
-        currentTime = time.interval
-        timeLabel.text = totalTimeString
+    func currentTimeIntervalDidChange(with timeInterval: TimeInterval) {
+        timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
     }
 }
 
