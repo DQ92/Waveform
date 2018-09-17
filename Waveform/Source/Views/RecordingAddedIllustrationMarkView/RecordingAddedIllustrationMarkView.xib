@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RecordingAddedIllustrationMarkView" customModule="Waveform" customModuleProvider="target">
+            <connections>
+                <outlet property="backgroundIllustrationView" destination="5dF-uh-JhV" id="aEF-Ia-FXR"/>
+                <outlet property="illustrationImageView" destination="EyF-LR-YL8" id="m2J-w7-Lca"/>
+                <outlet property="lineView" destination="1Hk-OS-uNL" id="gKb-JL-90t"/>
+                <outlet property="removeIllustrationButton" destination="Pit-2W-615" id="btu-p6-AN9"/>
+                <outlet property="timeLabel" destination="Ogk-FL-KVh" id="brz-Cv-qyq"/>
+                <outlet property="view" destination="g7X-Y0-BRv" id="yTn-yq-7jE"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="g7X-Y0-BRv">
+            <rect key="frame" x="0.0" y="0.0" width="231" height="362"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5dF-uh-JhV">
+                    <rect key="frame" x="73" y="12" width="85" height="111.5"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EyF-LR-YL8">
+                            <rect key="frame" x="3" y="3" width="79" height="105.5"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="EyF-LR-YL8" secondAttribute="height" multiplier="3:4" id="4tr-if-3QI"/>
+                            </constraints>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="EyF-LR-YL8" firstAttribute="top" secondItem="5dF-uh-JhV" secondAttribute="top" constant="3" id="6Cm-o7-fGn"/>
+                        <constraint firstAttribute="bottom" secondItem="EyF-LR-YL8" secondAttribute="bottom" constant="3" id="HW5-oM-Znj"/>
+                        <constraint firstAttribute="trailing" secondItem="EyF-LR-YL8" secondAttribute="trailing" constant="3" id="iKC-ep-ZBm"/>
+                        <constraint firstItem="EyF-LR-YL8" firstAttribute="leading" secondItem="5dF-uh-JhV" secondAttribute="leading" constant="3" id="t4u-yY-VWW"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pit-2W-615">
+                    <rect key="frame" x="5" y="40.5" width="56" height="56"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="Pit-2W-615" secondAttribute="height" multiplier="1:1" id="RKd-Aj-eKz"/>
+                    </constraints>
+                    <connections>
+                        <action selector="removeIllustrationClicked:" destination="-1" eventType="touchUpInside" id="0t5-1e-up3"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Hk-OS-uNL" customClass="TimeLineView" customModule="Waveform" customModuleProvider="target">
+                    <rect key="frame" x="111.5" y="132.5" width="8" height="188.5"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="8" id="RpT-p1-1Kk"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ogk-FL-KVh">
+                    <rect key="frame" x="0.0" y="331" width="231" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Ogk-FL-KVh" firstAttribute="top" secondItem="1Hk-OS-uNL" secondAttribute="bottom" constant="10" id="1Lu-PL-IhJ"/>
+                <constraint firstItem="1Hk-OS-uNL" firstAttribute="centerX" secondItem="5dF-uh-JhV" secondAttribute="centerX" id="BpC-nX-8hT"/>
+                <constraint firstItem="Pit-2W-615" firstAttribute="centerY" secondItem="5dF-uh-JhV" secondAttribute="centerY" id="GQT-WP-Y6B"/>
+                <constraint firstItem="1Hk-OS-uNL" firstAttribute="top" secondItem="5dF-uh-JhV" secondAttribute="bottom" constant="9" id="GtD-SP-333"/>
+                <constraint firstAttribute="trailing" secondItem="Ogk-FL-KVh" secondAttribute="trailing" id="RtN-zy-M4d"/>
+                <constraint firstItem="5dF-uh-JhV" firstAttribute="top" secondItem="g7X-Y0-BRv" secondAttribute="top" constant="12" id="Upf-WV-f5r"/>
+                <constraint firstItem="Ogk-FL-KVh" firstAttribute="leading" secondItem="g7X-Y0-BRv" secondAttribute="leading" id="YfU-Bn-c9b"/>
+                <constraint firstAttribute="bottom" secondItem="Ogk-FL-KVh" secondAttribute="bottom" constant="10" id="f0b-8p-HAE"/>
+                <constraint firstItem="Pit-2W-615" firstAttribute="height" secondItem="5dF-uh-JhV" secondAttribute="height" multiplier="1:2" id="q7V-sw-Oxk"/>
+                <constraint firstItem="5dF-uh-JhV" firstAttribute="centerX" secondItem="g7X-Y0-BRv" secondAttribute="centerX" id="wxR-lv-1NG"/>
+                <constraint firstItem="5dF-uh-JhV" firstAttribute="width" secondItem="g7X-Y0-BRv" secondAttribute="width" multiplier="0.37" id="xON-aY-guh"/>
+                <constraint firstItem="5dF-uh-JhV" firstAttribute="leading" secondItem="Pit-2W-615" secondAttribute="trailing" constant="12" id="yOJ-NH-Vs3"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-19.5" y="-111"/>
+        </view>
+    </objects>
+</document>
