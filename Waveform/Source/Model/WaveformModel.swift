@@ -1,20 +1,14 @@
 
-import Foundation
 import UIKit
-
-enum RecordType {
-    case first
-    case override(turn: Int)
-}
 
 struct WaveformModel {
     let value: CGFloat
-    let recordType: RecordType
+    let mode: RecordingMode
     let timeStamp: TimeInterval
 
-    init(value: CGFloat, recordType: RecordType, timeStamp: TimeInterval) {
+    init(value: CGFloat, mode: RecordingMode, timeStamp: TimeInterval) {
         self.value = value
-        self.recordType = recordType
+        self.mode = mode
         self.timeStamp = timeStamp
     }
 }

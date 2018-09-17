@@ -3,8 +3,12 @@
 // Copyright (c) 2018 Daniel Kuta. All rights reserved.
 //
 
-import Foundation
 import AVFoundation
+
+enum RecordingMode {
+    case normal
+    case override(turn: Int)
+}
 
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
@@ -12,10 +16,12 @@ protocol RecorderProtocol {
     var resultsDirectoryURL: URL { get }
     var delegate: RecorderDelegate? { get set }
     var currentlyRecordedFileURL: URL? { get }
+    var mode: RecordingMode { get }
     
-    func start(with overwrite: Bool) throws
+    func activateSession(permissionBlock: @escaping (Bool) -> Void) throws
+    func start() throws
     func stop()
-    func resume(from timeRange: CMTimeRange)
+    func resume(from timeRange: CMTimeRange) throws
     func pause()
     func crop(startTime: Double, endTime: Double)
     func finish() throws

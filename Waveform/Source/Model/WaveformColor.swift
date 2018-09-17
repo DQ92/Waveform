@@ -5,13 +5,11 @@ import UIKit
 class WaveformColor {
     static func color(model: WaveformModel) -> UIColor {
         var part: CGFloat
-        switch model.recordType {
-        case .first:
+        switch model.mode {
+        case .normal:
             part = 0
         case .override(let turn):
             part = CGFloat(turn)
-        default:
-           Assert.checkRepresentation(true, "Recording type not implemented")
         }
 
         let rand: CGFloat = part * 25

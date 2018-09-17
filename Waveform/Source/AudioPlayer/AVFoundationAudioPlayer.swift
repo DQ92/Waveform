@@ -23,8 +23,8 @@ class AVFoundationAudioPlayer: NSObject {
     // MARK: - Setup
     
     private func preparePlayer(with URL: URL) throws {
-        try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-        try! AVAudioSession.sharedInstance().setActive(true)
+        try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+        try AVAudioSession.sharedInstance().setActive(true)
         
         player = try AVAudioPlayer(contentsOf: URL, fileTypeHint: AVFileType.m4a.rawValue) ~> AudioPlayerError.openFileFailed
         player.delegate = self
