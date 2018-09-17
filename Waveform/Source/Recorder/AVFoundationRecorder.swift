@@ -11,51 +11,53 @@ class AVFoundationRecorder: NSObject {
     // MARK: - Public properties
     
     weak var delegate: RecorderDelegate?
+    
     var resultsDirectoryURL: URL {
         return documentsURL.appendingPathComponent(resultDirectoryName)
     }
     
+    var mode: RecordingMode {
+        let numberOfComponents = self.components.count
+        
+        if numberOfComponents > 1 {
+            return .override(turn: numberOfComponents - 1)
+        }
+        return .normal
+    }
+    
     // MARK: - Private properties
     
-    private let tempDirectoryName = "temp_audio"
     private let resultDirectoryName = "results"
     private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    private let tempDirectoryURL = FileManager.default.temporaryDirectory
-    private let libraryDirectoryURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory,
-                                                               in: .userDomainMask).first!
+    private let tempDirectoryUrl: URL
     
     private var audioRecorder: AVAudioRecorder!
-    private var isAudioRecordingPermissionGranted: Bool = true
     private let fileManager = FileManager.default
     private var totalDuration: Float = 0
     private var currentDuration: Float = 0
     private var resultFileNamePrefix: String = "result"
-    private var temporaryFileNameSuffix: Int = 0
     private var recorderState: RecorderState = .notInitialized
+    private var components: [AssetComponent] = []
+    
+    // MARK: - Initialization
+    
+    override init() {
+        self.tempDirectoryUrl = self.documentsURL.appendingPathComponent("temp_audio")
+    }
     
     // MARK: - Setup
     
-    func prepare(with clear: Bool) throws {
-        if clear {
-            temporaryFileNameSuffix = 0
-            removeTemporaryDirectory()
-        }
-        try createTemporaryDirectoryIfNeeded()
-        try createResultsDirectoryIfNeeded()
-        
+    func setupAudioRecorder(fileName: String) throws {
+        let url = self.tempDirectoryUrl.appendingPathComponent(fileName)
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-        
-        temporaryFileNameSuffix += 1
-        let filename = "temp_\(temporaryFileNameSuffix).m4a"
-        audioRecorder = try AVAudioRecorder(url: getTemporaryFileUrl(with: filename), settings: settings)
+        audioRecorder = try AVAudioRecorder(url: url, settings: settings)
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
-        recorderState.changeState(with: .initialized)
     }
 }
 
@@ -64,25 +66,22 @@ class AVFoundationRecorder: NSObject {
 extension AVFoundationRecorder {
     private func removeTemporaryDirectory() {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(tempDirectoryName)")
-        try? fileManager.removeItem(at: dictPath) ~> RecorderError.directoryDeletionFailed
+        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
     }
     
     private func removeResultsDirectory() {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(resultDirectoryName)")
-        try? fileManager.removeItem(at: dictPath) ~> RecorderError.directoryDeletionFailed
+        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
     }
     
     private func createTemporaryDirectoryIfNeeded() throws {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(tempDirectoryName)")
-        if !fileManager.fileExists(atPath: dictPath.path) {
-            try fileManager.createDirectory(atPath: dictPath.path,
+        if !fileManager.fileExists(atPath: self.tempDirectoryUrl.path) {
+            try fileManager.createDirectory(atPath: self.tempDirectoryUrl.path,
                                             withIntermediateDirectories: true,
                                             attributes: nil) ~> RecorderError.directoryCreationFailed
         }
-        Log.info("Document directory is \(dictPath)")
+        Log.info("Document directory is \(self.tempDirectoryUrl)")
     }
     
     private func createResultsDirectoryIfNeeded() throws {
@@ -109,31 +108,8 @@ extension AVFoundationRecorder {
         return fileName
     }
     
-    func getTemporaryFileUrl(with fileName: String) -> URL {
-        let dict = documentsURL.appendingPathComponent(tempDirectoryName)
-        let filePath = dict.appendingPathComponent(fileName)
-        return filePath
-    }
-    
     func listFiles() {
-        listContentOfDirectory(at: documentsURL.appendingPathComponent(tempDirectoryName))
-    }
-    
-    func getAllTemporaryAudioParts() throws -> [AVAsset] {
-        let urlString = documentsURL.appendingPathComponent(tempDirectoryName)
-        var listing = try FileManager.default.contentsOfDirectory(atPath: urlString.path) ~> RecorderError.directoryContentListingFailed
-        var assets = [AVAsset]()
-        listing = listing.sorted(by: { $0 < $1 })
-        totalDuration = 0
-        
-        for file in listing {
-            let fileURL = urlString.appendingPathComponent(file)
-            print("FILE URL: \(fileURL)")
-            let asset = AVAsset(url: fileURL)
-            totalDuration += assetDuration(asset)
-            assets.append(asset)
-        }
-        return assets
+        listContentOfDirectory(at: self.tempDirectoryUrl)
     }
     
     func assetDuration(_ asset: AVAsset) -> Float {
@@ -200,8 +176,33 @@ extension AVFoundationRecorder: RecorderProtocol {
         return audioRecorder.url
     }
     
-    func start(with overwrite: Bool) throws {
-        try startRecording(with: overwrite)
+    func activateSession(permissionBlock: @escaping (Bool) -> Void) throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
+                                with: .defaultToSpeaker) ~> RecorderError.sessionCategoryInvalid
+        try session.setActive(true) ~> RecorderError.sessionActivationFailed
+        session.requestRecordPermission(permissionBlock)
+    }
+    
+    func start() throws {
+        removeTemporaryDirectory()
+        components.removeAll()
+        
+        try createTemporaryDirectoryIfNeeded()
+        try createResultsDirectoryIfNeeded()
+        
+        let filename = "temp_\(components.count).m4a"
+        let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
+        try self.setupAudioRecorder(fileName: filename)
+        
+        recorderState.changeState(with: .initialized)
+        
+        components.append(AssetComponent(fileName: filename, timeRange: timeRange))
+        audioRecorder.prepareToRecord()
+        audioRecorder.record()
+        Log.debug("startRecording")
+        
+        changeRecorderStateWithViewUpdate(with: .isRecording)
     }
     
     func stop() {
@@ -214,10 +215,24 @@ extension AVFoundationRecorder: RecorderProtocol {
         listFiles()
     }
     
-    func resume(from timeRange: CMTimeRange) {
+    func resume(from timeRange: CMTimeRange) throws {
+        let currentTime = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
+        let possibleTimeDiffernce = CMTime(seconds: 0.05, preferredTimescale: 100)
+        
+        if currentTime - timeRange.start <= possibleTimeDiffernce {
+            audioRecorder.record()
+            Log.debug("Resumed")
+        } else {
+            let filename = "temp_\(components.count).m4a"
+            try self.setupAudioRecorder(fileName: filename)
+            
+            components.append(AssetComponent(fileName: filename, timeRange: timeRange))
+            audioRecorder.prepareToRecord()
+            audioRecorder.record()
+            
+            Log.debug("Overwrite")
+        }
         changeRecorderStateWithViewUpdate(with: .isRecording)
-        Log.debug("Resumed")
-        audioRecorder.record()
     }
     
     func pause() {
@@ -228,18 +243,8 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func finish() throws {
-        let assets = try getAllTemporaryAudioParts()
-        var assetToExport: AVAsset
-        if assets.count > 1 {
-            assetToExport = try merge(assets)
-        } else if let asset = assets.first {
-            assetToExport = asset
-        } else {
-            Log.error("No assets to export at \(documentsURL)")
-            throw RecorderError.fileExportFailed
-        }
-        
-        exportAsset(assetToExport)
+        let result = try self.merge(components: self.components)
+        self.exportAsset(result)
     }
     
     func crop(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil) {
@@ -251,7 +256,7 @@ extension AVFoundationRecorder: RecorderProtocol {
             Log.error("Error! endTime > length")
         }
         
-        var outputURL = documentsURL.appendingPathComponent(tempDirectoryName)
+        var outputURL = self.tempDirectoryUrl
         do {
             try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
             outputURL = outputURL.appendingPathComponent("\(sourceURL.lastPathComponent)")
@@ -298,52 +303,30 @@ extension AVFoundationRecorder: RecorderProtocol {
 // MARK: - Files operations
 
 extension AVFoundationRecorder {
-    func startRecording(with overwrite: Bool) throws {
-        guard isAudioRecordingPermissionGranted else {
-            throw RecorderError.noMicrophoneAccess
-        }
+    private func merge(components: [AssetComponent]) throws -> AVAsset {
+        let audioComposition = AVMutableComposition()
         
-        try prepare(with: !overwrite)
-        
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
-                                with: .defaultToSpeaker) ~> RecorderError.sessionCategoryInvalid
-        try session.setActive(true) ~> RecorderError.sessionActivationFailed
-        
-        audioRecorder.prepareToRecord()
-        audioRecorder.record()
-        Log.debug("startRecording")
-        
-        changeRecorderStateWithViewUpdate(with: .isRecording)
-    }
-    
-    private func merge(_ assets: [AVAsset]) throws -> AVAsset {
-        var atTimeM: CMTime = kCMTimeZero
-        let composition: AVMutableComposition = AVMutableComposition()
-        var totalTime: CMTime = kCMTimeZero
-        let audioTrack: AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaType.audio,
-                                                                                preferredTrackID: kCMPersistentTrackID_Invalid)!
-        for asset in assets {
-            if asset == assets.first {
-                atTimeM = kCMTimeZero
+        for component in components {
+            let asset = component.loadAsset(directoryUrl: self.tempDirectoryUrl)
+            let removeTimeRange: CMTimeRange
+
+            if component.timeRange.duration.value > 0 {
+                removeTimeRange = component.timeRange
             } else {
-                atTimeM = totalTime // <-- Use the total time for all the audio so far.
-            }
-            
-            Log.debug("Total Time: \(totalTime)")
-            if let track = asset.tracks(withMediaType: AVMediaType.audio).first {
+                let duration = audioComposition.duration - component.timeRange.start
                 
-                try audioTrack.insertTimeRange(CMTimeRangeMake(kCMTimeZero, asset.duration),
-                                               of: track,
-                                               at: atTimeM) ~> RecorderError.timeRangeInsertFailed
-                totalTime = CMTimeAdd(totalTime, asset.duration)
-                
-            } else {
-                Log.error("Track retrival while merging failed")
+                if duration < asset.duration {
+                    removeTimeRange = CMTimeRange(start: component.timeRange.start, duration: duration)
+                } else {
+                    removeTimeRange = CMTimeRange(start: component.timeRange.start, duration: asset.duration)
+                }
             }
+            audioComposition.removeTimeRange(removeTimeRange)
+            try audioComposition.insertTimeRange(CMTimeRange(start: kCMTimeZero, duration: asset.duration),
+                                                 of: asset,
+                                                 at: component.timeRange.start) ~> RecorderError.timeRangeInsertFailed
         }
-        
-        return composition
+        return audioComposition
     }
     
     private func exportAsset(_ asset: AVAsset) {

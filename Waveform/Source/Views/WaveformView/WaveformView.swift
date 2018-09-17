@@ -110,7 +110,7 @@ class WaveformView: UIView {
 }
 
 extension WaveformView {
-    func setValue(_ value: Float, for timeInterval: TimeInterval) {
+    func setValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
       //  print("1 setValue")
         let section = Int(floor(self.currentTimeInterval))
         let indexOfSample = self.sampleIndex
@@ -121,7 +121,7 @@ extension WaveformView {
 //        print("3 sampleIndex przed zmianą = \(indexOfSample)")
 
         if self.values.count <= section {
-            currentItem = WaveformModel(value: CGFloat(value), recordType: .first, timeStamp: timeInterval)
+            currentItem = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
             self.appendSecond(data: [currentItem]) { [weak self] _ in
                 self!.contentSize = self!.collectionView.contentSize
                 self?.updateLeadingLine(x: offset)
@@ -130,21 +130,13 @@ extension WaveformView {
             let indexOfItem = indexOfSample - (section * self.elementsPerSecond)
             let items = self.values[section]
 
+            currentItem = WaveformModel(value: CGFloat(value),
+                                        mode: mode,
+                                        timeStamp: timeInterval)
+            
             if items.count <= indexOfItem {
-                currentItem = WaveformModel(value: CGFloat(value), recordType: .first, timeStamp: timeInterval)
                 self.values[section] = items + [currentItem]
             } else {
-                let previousItem = self.values[section][indexOfItem]
-
-                if case .override(let turn) = previousItem.recordType {
-                    currentItem = WaveformModel(value: CGFloat(value),
-                                                recordType: .override(turn: turn + 1),
-                                                timeStamp: timeInterval)
-                } else {
-                    currentItem = WaveformModel(value: CGFloat(value),
-                                                recordType: .override(turn: 1),
-                                                timeStamp: timeInterval)
-                }
                 self.values[section][indexOfItem] = currentItem
             }
 
