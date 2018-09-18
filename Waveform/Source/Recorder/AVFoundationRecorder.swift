@@ -11,11 +11,6 @@ class AVFoundationRecorder: NSObject {
     // MARK: - Public properties
 
     weak var delegate: RecorderDelegate?
-
-    var resultsDirectoryURL: URL {
-        return documentsURL.appendingPathComponent(resultDirectoryName)
-    }
-
     var mode: RecordingMode {
         let numberOfComponents = self.components.count
 
@@ -24,27 +19,26 @@ class AVFoundationRecorder: NSObject {
         }
         return .normal
     }
+    var resultsDirectoryURL: URL
+    var recorderState: RecorderState!
 
     // MARK: - Private properties
 
-    private let tempDirectoryName = "temp_audio"
-    private let resultDirectoryName = "results"
-    private let temporaryExportsDirectoryName = "temp_export"
     private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     private let tempDirectoryUrl: URL
-    
+    private let tempExportDirectoryUrl: URL
     private var audioRecorder: AVAudioRecorder!
     private let fileManager = FileManager.default
     private var totalDuration: Float = 0
     private var currentDuration: Float = 0
-    private var resultFileNamePrefix: String = "result"
-    private var recorderState: RecorderState = .notInitialized
     private var components: [AssetComponent] = []
 
     // MARK: - Initialization
 
     override init() {
         self.tempDirectoryUrl = self.documentsURL.appendingPathComponent("temp_audio")
+        self.resultsDirectoryURL = self.documentsURL.appendingPathComponent("results")
+        self.tempExportDirectoryUrl = self.documentsURL.appendingPathComponent("temp_exp")
     }
     
     // MARK: - Setup
@@ -59,23 +53,12 @@ class AVFoundationRecorder: NSObject {
         ]
         audioRecorder = try AVAudioRecorder(url: url, settings: settings)
         audioRecorder.delegate = self
-        recorderState.changeState(with: .initialized)
     }
 }
 
 // MARK: - Dictionaries
 
 extension AVFoundationRecorder {
-    private func removeTemporaryDirectory() {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
-    }
-
-    private func removeResultsDirectory() {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
-    }
-
     private func createTemporaryDirectoryIfNeeded() throws {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: self.tempDirectoryUrl.path) {
@@ -86,32 +69,39 @@ extension AVFoundationRecorder {
         Log.info("Document directory is \(self.tempDirectoryUrl)")
     }
 
+    private func removeTemporaryDirectory() {
+        let fileManager = FileManager.default
+        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
+    }
+
     private func createTemporaryExportsDirectoryIfNeeded() throws {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(temporaryExportsDirectoryName)")
-        if !fileManager.fileExists(atPath: dictPath.path) {
-            try fileManager.createDirectory(atPath: dictPath.path,
+        if !fileManager.fileExists(atPath: self.tempExportDirectoryUrl.path) {
+            try fileManager.createDirectory(atPath: self.tempExportDirectoryUrl.path,
                                             withIntermediateDirectories: true,
                                             attributes: nil) ~> RecorderError.directoryCreationFailed
         }
-        Log.info("Document directory is \(dictPath)")
+        Log.info("Temporary export directory is \(tempExportDirectoryUrl)")
     }
 
     private func removeTemporaryExportsDirectory() {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(temporaryExportsDirectoryName)")
-        try? fileManager.removeItem(at: dictPath) ~> RecorderError.directoryDeletionFailed
+        try? fileManager.removeItem(at: self.tempExportDirectoryUrl) ~> RecorderError.directoryDeletionFailed
     }
 
     private func createResultsDirectoryIfNeeded() throws {
         let fileManager = FileManager.default
-        let dictPath = documentsURL.appendingPathComponent("\(resultDirectoryName)")
-        if !fileManager.fileExists(atPath: dictPath.path) {
-            try fileManager.createDirectory(atPath: dictPath.path,
+        if !fileManager.fileExists(atPath: self.resultsDirectoryURL.path) {
+            try fileManager.createDirectory(atPath: self.resultsDirectoryURL.path,
                                             withIntermediateDirectories: true,
                                             attributes: nil) ~> RecorderError.directoryCreationFailed
         }
-        Log.info("Document directory is \(dictPath)")
+        Log.info("Results directory is \(self.resultsDirectoryURL)")
+    }
+
+    private func removeResultsDirectory() {
+        let fileManager = FileManager.default
+        try? fileManager.removeItem(at: self.resultsDirectoryURL) ~> RecorderError.directoryDeletionFailed
     }
 }
 
@@ -160,6 +150,7 @@ extension AVFoundationRecorder {
 extension AVFoundationRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         Log.debug("audioRecorderDidFinishRecording")
+//        changeRecorderStateWithViewUpdate(with: .stopped)
     }
 }
 
@@ -167,24 +158,24 @@ extension AVFoundationRecorder: AVAudioRecorderDelegate {
 
 extension AVFoundationRecorder {
     func changeRecorderStateWithViewUpdate(with state: RecorderState) {
-        recorderState.changeState(with: state)
+        recorderState = state
         delegate?.recorderStateDidChange(with: state)
     }
 }
 
 extension AVFoundationRecorder: RecorderProtocol {
     var currentTime: TimeInterval {
-        if recorderState == .notInitialized {
+        guard let currentTime = audioRecorder?.currentTime else {
             return 0.0
         }
-        return audioRecorder.currentTime
+        return currentTime
     }
 
     var currentlyRecordedFileURL: URL? {
-        if recorderState == .notInitialized {
+        guard let URL = audioRecorder?.url else {
             return nil
         }
-        return audioRecorder.url
+        return URL
     }
     
     func activateSession(permissionBlock: @escaping (Bool) -> Void) throws {
@@ -201,43 +192,38 @@ extension AVFoundationRecorder: RecorderProtocol {
 
         try createTemporaryDirectoryIfNeeded()
         try createResultsDirectoryIfNeeded()
+        try createTemporaryExportsDirectoryIfNeeded()
 
         let filename = "temp_\(components.count).m4a"
         let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
         try self.setupAudioRecorder(fileName: filename)
 
-        recorderState.changeState(with: .initialized)
-
         components.append(AssetComponent(fileName: filename, timeRange: timeRange))
         audioRecorder.prepareToRecord()
         audioRecorder.record()
         Log.debug("startRecording")
-
         changeRecorderStateWithViewUpdate(with: .isRecording)
     }
 
     func stop() {
-        if recorderState == .notInitialized {
+        guard let recorder = audioRecorder else {
             return
         }
         Log.debug("Stopped")
         changeRecorderStateWithViewUpdate(with: .stopped)
-        audioRecorder.stop()
+        recorder.stop()
         audioRecorder = nil
-        recorderState.changeState(with: .notInitialized)
         Log.debug("Recorded successfully.")
         listFiles()
     }
     
     func resume(from timeRange: CMTimeRange) throws {
-        if recorderState == .notInitialized {
-            return
-        }
-        let currentTime = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
-        let possibleTimeDiffernce = CMTime(seconds: 0.05, preferredTimescale: 100)
+        let currentRecorderTime = audioRecorder?.currentTime ?? 0.0
+        let currentTime = CMTime(seconds: currentRecorderTime, preferredTimescale: 100)
+        let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
 
-        if currentTime - timeRange.start <= possibleTimeDiffernce {
-            audioRecorder.record()
+        if let recorder = audioRecorder, timeRange.start < currentTime {
+            recorder.record()
             Log.debug("Resumed")
         } else {
             let filename = "temp_\(components.count).m4a"
@@ -253,12 +239,12 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func pause() {
-        if recorderState == .notInitialized {
+        guard let recorder = audioRecorder else {
             return
         }
         changeRecorderStateWithViewUpdate(with: .paused)
         Log.debug("Paused")
-        audioRecorder.pause()
+        recorder.pause()
         listFiles()
     }
 
@@ -268,49 +254,49 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func crop(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil) {
-        if recorderState == .notInitialized {
-            return
-        }
-        let asset = AVAsset(url: sourceURL)
-        let length = assetDuration(asset)
-        Log.info("length asset to crop: \(length) seconds")
-
-        if (endTime > Double(length)) {
-            Log.error("Error! endTime > length")
-        }
-        
-        var outputURL = self.tempDirectoryUrl
-        do {
-            try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
-            outputURL = outputURL.appendingPathComponent("\(sourceURL.lastPathComponent)")
-        } catch let error {
-            Log.error(error)
-        }
-        let preferredTimescale = WaveformConfiguration.preferredTimescale
-        let timeRange = CMTimeRange(start: CMTime(seconds: startTime,
-                                                  preferredTimescale: preferredTimescale),
-                                    end: CMTime(seconds: endTime, preferredTimescale: preferredTimescale))
-
-        try? fileManager.removeItem(at: outputURL)
-        guard let exportSession = AVAssetExportSession(asset: asset,
-                                                       presetName: AVAssetExportPresetHighestQuality) else {
-            return
-        }
-        exportSession.outputURL = outputURL
-        exportSession.outputFileType = .mp4
-        exportSession.timeRange = timeRange
-        exportSession.exportAsynchronously {
-            switch exportSession.status {
-                case .completed:
-                    Log.info("CROPPED exported at \(outputURL)")
-                    completion?(outputURL)
-                case .failed:
-                    Log.error("failed \(exportSession.error.debugDescription)")
-                case .cancelled:
-                    Log.warning("cancelled \(exportSession.error.debugDescription)")
-                default: break
-            }
-        }
+//        if recorderState == .notInitialized {
+//            return
+//        }
+//        let asset = AVAsset(url: sourceURL)
+//        let length = assetDuration(asset)
+//        Log.info("length asset to crop: \(length) seconds")
+//
+//        if (endTime > Double(length)) {
+//            Log.error("Error! endTime > length")
+//        }
+//
+//        var outputURL = self.tempDirectoryUrl
+//        do {
+//            try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
+//            outputURL = outputURL.appendingPathComponent("\(sourceURL.lastPathComponent)")
+//        } catch let error {
+//            Log.error(error)
+//        }
+//        let preferredTimescale = WaveformConfiguration.preferredTimescale
+//        let timeRange = CMTimeRange(start: CMTime(seconds: startTime,
+//                                                  preferredTimescale: preferredTimescale),
+//                                    end: CMTime(seconds: endTime, preferredTimescale: preferredTimescale))
+//
+//        try? fileManager.removeItem(at: outputURL)
+//        guard let exportSession = AVAssetExportSession(asset: asset,
+//                                                       presetName: AVAssetExportPresetHighestQuality) else {
+//            return
+//        }
+//        exportSession.outputURL = outputURL
+//        exportSession.outputFileType = .mp4
+//        exportSession.timeRange = timeRange
+//        exportSession.exportAsynchronously {
+//            switch exportSession.status {
+//                case .completed:
+//                    Log.info("CROPPED exported at \(outputURL)")
+//                    completion?(outputURL)
+//                case .failed:
+//                    Log.error("failed \(exportSession.error.debugDescription)")
+//                case .cancelled:
+//                    Log.warning("cancelled \(exportSession.error.debugDescription)")
+//                default: break
+//            }
+//        }
     }
 
     func clearRecordings() throws {
@@ -323,19 +309,15 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws {
-        pause()
-        let assets = try getAllTemporaryAudioParts()
-        var assetToExport: AVAsset
-        if assets.count > 1 {
-            assetToExport = try merge(assets)
-        } else if let asset = assets.first {
-            assetToExport = asset
-        } else {
-            Log.error("No assets to export at \(documentsURL)")
-            throw RecorderError.fileExportFailed
+        if recorderState != .stopped {
+            Log.debug("Stopped")
+            recorderState = .stopped
+            audioRecorder.stop()
+            audioRecorder = nil
         }
 
-        exportAsset(assetToExport, completion: completion)
+        let result = try self.merge(components: self.components)
+        exportAsset(result, completion: completion)
     }
 }
 
@@ -370,9 +352,8 @@ extension AVFoundationRecorder {
     }
 
     private func exportAsset(_ asset: AVAsset) {
-        let resultPathString = documentsURL.appendingPathComponent(resultDirectoryName)
         let resultFileName = generateResultFileName()
-        let finalURL = resultPathString.appendingPathComponent(resultFileName)
+        let finalURL = resultsDirectoryURL.appendingPathComponent(resultFileName)
 
         Log.debug("EXPORTING ....\(finalURL)")
 
@@ -395,9 +376,8 @@ extension AVFoundationRecorder {
     }
 
     private func exportAsset(_ asset: AVAsset, completion: @escaping (_ url: URL?) -> Void) {
-        let resultPathString = documentsURL.appendingPathComponent(temporaryExportsDirectoryName)
         let resultFileName = generateResultFileName()
-        let finalURL = resultPathString.appendingPathComponent(resultFileName)
+        let finalURL = tempExportDirectoryUrl.appendingPathComponent(resultFileName)
 
         Log.debug("EXPORTING ....\(finalURL)")
 

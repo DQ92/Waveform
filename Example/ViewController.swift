@@ -33,9 +33,6 @@ class ViewController: UIViewController {
         return formatter
     }()
 
-
-    private var currentTime: TimeInterval = 0
-
     enum PlayerSource {
         case recorder
         case loader(url: URL)
@@ -88,7 +85,7 @@ extension ViewController {
     }
 
     @IBAction func finishButtonTapped(_ sender: Any) {
-
+        recorder.stop()
         do {
             try recorder.finish()
         } catch RecorderError.directoryContentListingFailed(let error) {
@@ -134,7 +131,6 @@ extension ViewController {
     }
 
     private func playFileInRecording() {
-
         do {
             try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
                 guard let URL = url else {
@@ -143,19 +139,21 @@ extension ViewController {
 
                 DispatchQueue.main.async {
                     do {
-                        try self?.player.playFile(with: URL, at: (self?.currentTime)!)
+                        var time = 0.0
+                        if let timeInterval = self?.waveformPlot.waveformView.currentTimeInterval {
+                            time = timeInterval
+                        }
+                        try self?.player.playFile(with: URL, at: time)
                     } catch AudioPlayerError.openFileFailed(let error) {
                         Log.error(error)
                     } catch {
                         Log.error("Unknown error")
                     }
                 }
-
             }
         } catch {
             Log.error("Error while exporting temporary file")
         }
-
     }
 }
 
@@ -163,6 +161,10 @@ extension ViewController {
 
 extension ViewController {
     func recordOrPause() {
+        if player.state == .isPlaying {
+            player.pause()
+        }
+
         if recorder.recorderState == .isRecording {
             recorder.pause()
             //        } else if (currentlyShownTime < recorder.currentTime) {
@@ -189,17 +191,17 @@ extension ViewController {
     }
 
     func startRecording() {
-        print("startRecording")
+        Log.info("Start recording")
         do {
-            if recorder.currentTime > 0.0 {
-                let time = CMTime(seconds: self.waveformPlot.waveformView.currentTimeInterval, preferredTimescale: 100)
-                let range = CMTimeRange(start: time, duration: kCMTimeZero)
-
-                try recorder.resume(from: range)
-            } else {
+            if recorder.recorderState == .stopped {
                 waveformPlot.waveformView.values = []
                 waveformPlot.waveformView.reload()
                 try recorder.start()
+            } else {
+                let timeInterval = self.waveformPlot.waveformView.currentTimeInterval
+                let time = CMTime(seconds: timeInterval, preferredTimescale: 100)
+                let range = CMTimeRange(start: time, duration: kCMTimeZero)
+                try recorder.resume(from: range)
             }
         } catch RecorderError.directoryDeletionFailed(let error) {
             Log.error(error)
@@ -281,12 +283,11 @@ extension ViewController {
     }
 
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
-        // Liczba próbek na sekundę
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
 
         let waveformSamples = samples.enumerated()
                                      .map { sample in
-                                         WaveformModel(value: CGFloat(sample.element), recordType: .normal, timeStamp:
+                                         WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
                                          TimeInterval(sample.offset / sampleRate))
                                      }
 
@@ -353,9 +354,6 @@ extension ViewController: RecorderDelegate {
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
                 playerSource = .recorder
-
-            case .notInitialized, .initialized:
-                break
         }
     }
 }
@@ -367,7 +365,6 @@ extension ViewController: AudioPlayerDelegate {
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 waveformPlot.waveformView.scrollToTheEnd()
                 playOrPauseButton.setTitle("Pause", for: .normal)
-                recordButton.setTitle("Start", for: .normal)
             case .paused:
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.stopScrolling()

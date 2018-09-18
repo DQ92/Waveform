@@ -49,17 +49,20 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
         player.currentTime = timeInterval
         player.play()
 
+        Log.info("Playing file - url: \(URL), duration: \(player.duration), from: \(timeInterval)")
         changePlayerState(with: .isPlaying)
     }
     
     func pause() {
         player.pause()
+        Log.warning("User player paused")
         changePlayerState(with: .paused)
     }
 }
 
 extension AVFoundationAudioPlayer: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        Log.warning("Delegate player paused")
         changePlayerState(with: .paused)
     }
 }

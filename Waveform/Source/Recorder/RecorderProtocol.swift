@@ -15,7 +15,8 @@ protocol RecorderProtocol {
     var delegate: RecorderDelegate? { get set }
     var currentlyRecordedFileURL: URL? { get }
     var mode: RecordingMode { get }
-    var recorderState: RecorderState { get }
+    var recorderState: RecorderState! { get }
+    var resultsDirectoryURL: URL { get }
 
     func activateSession(permissionBlock: @escaping (Bool) -> Void) throws
     func start() throws

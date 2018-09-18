@@ -9,14 +9,14 @@
 import AVFoundation
 
 struct AssetComponent {
-    
+
     // MARK: - Public properties
-    
+
     let fileName: String
     let timeRange: CMTimeRange
-    
+
     // MARK: - Access methods
-    
+
     func loadAsset(directoryUrl: URL) -> AVAsset {
         let assetUrl = directoryUrl.appendingPathComponent(fileName)
         return AVAsset(url: assetUrl)
