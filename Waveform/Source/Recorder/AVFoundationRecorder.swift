@@ -38,6 +38,7 @@ class AVFoundationRecorder: NSObject {
     private var resultFileNamePrefix: String = "result"
     private var recorderState: RecorderState = .notInitialized
     private var components: [AssetComponent] = []
+    private var duration: CMTime = kCMTimeZero
     
     // MARK: - Initialization
     
@@ -216,10 +217,9 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func resume(from timeRange: CMTimeRange) throws {
-        let currentTime = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
         let possibleTimeDiffernce = CMTime(seconds: 0.05, preferredTimescale: 100)
         
-        if currentTime - timeRange.start <= possibleTimeDiffernce {
+        if self.duration - timeRange.start <= possibleTimeDiffernce {
             audioRecorder.record()
             Log.debug("Resumed")
         } else {
@@ -236,6 +236,19 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func pause() {
+        if let timeRange = self.components.last?.timeRange {
+            let currentAudioDuration = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
+            
+            if timeRange.duration.value > 0 {
+                self.duration = self.duration - timeRange.duration + currentAudioDuration
+            } else {
+                let endTime = timeRange.start + currentAudioDuration
+                
+                if endTime > self.duration {
+                    self.duration = endTime
+                }
+            }
+        }
         changeRecorderStateWithViewUpdate(with: .paused)
         Log.debug("Paused")
         audioRecorder.pause()
