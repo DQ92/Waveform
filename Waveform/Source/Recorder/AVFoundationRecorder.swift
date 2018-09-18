@@ -222,7 +222,7 @@ extension AVFoundationRecorder: RecorderProtocol {
         let currentTime = CMTime(seconds: currentRecorderTime, preferredTimescale: 100)
         let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
 
-        if let recorder = audioRecorder, timeRange.start < currentTime {
+        if let recorder = audioRecorder, currentTime - timeRange.start <= possibleTimeDifference  {
             recorder.record()
             Log.debug("Resumed")
         } else {
