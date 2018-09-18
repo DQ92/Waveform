@@ -119,7 +119,6 @@ extension ViewController {
     func playOrPause() {
         if player.state == .paused && recorder.recorderState != .isRecording {
             switch playerSource {
-
                 case .loader(let url):
                     do {
                         try player.playFile(with: url, at: self.waveformPlot.waveformView.currentTimeInterval)
@@ -305,8 +304,7 @@ extension ViewController: AudioControllerDelegate {
 // MARK: - WaveformViewDelegate
 
 
-
-extension ViewController: LeadingLineTimeUpdaterDelegate {
+extension ViewController: WaveformViewDelegate {
     func currentTimeIntervalDidChange(with timeInterval: TimeInterval) {
         timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
     }
@@ -318,12 +316,9 @@ extension ViewController: RecorderDelegate {
             case .isRecording:
                 AudioController.sharedInstance.start()
                 recordButton.setTitle("Pause", for: .normal)
-                if let currentIndex = self.currentIndex, (currentIndex < sampleIndex) {
-                    CATransaction.begin()
-                    sampleIndex = currentIndex
-                    waveformPlot.waveformView.refresh()
-                    CATransaction.commit()
-                }
+                CATransaction.begin()
+                waveformPlot.waveformView.refresh()
+                CATransaction.commit()
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 self.totalTimeLabel.text = "00:00:00"
                 playerSource = .recorder
@@ -332,14 +327,14 @@ extension ViewController: RecorderDelegate {
                 AudioController.sharedInstance.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+                waveformPlot.waveformView.onPause()
                 playerSource = .recorder
 
             case .paused:
                 AudioController.sharedInstance.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformPlot.waveformView.onPause(sampleIndex: CGFloat(sampleIndex))
+                waveformPlot.waveformView.onPause()
                 playerSource = .recorder
 
             case .notInitialized, .initialized:

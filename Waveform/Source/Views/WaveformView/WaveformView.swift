@@ -155,8 +155,7 @@ extension WaveformView {
         UIView.performWithoutAnimation {
             self.values.append(contentsOf: [data, [], []])
             self.collectionView.performBatchUpdates({
-                
-                self.collectionView.insertSections(IndexSet([self.values.count - 3, self.values.count - 2, self.values.count - 1]))
+            self.collectionView.insertSections(IndexSet([self.values.count - 3, self.values.count - 2, self.values.count - 1]))
             }, completion: completion)
         }
     }
@@ -277,12 +276,6 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
 extension WaveformView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("5 contentOffset = \(scrollView.contentOffset)")
-        print("6 contentSize = \(scrollView.contentSize), contentSize = \(self.contentSize)")
-        
-        if self.contentSize.width != scrollView.contentSize.width {
-            return
-        }
         self.contentOffset = scrollView.contentOffset
     }
 }
