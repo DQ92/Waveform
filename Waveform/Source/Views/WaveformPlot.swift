@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol WaveformPlotDelegate: class {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
+    func contentOffsetDidChange(_ contentOffset: CGPoint)
+}
+
 class WaveformPlot: UIView {
 
     // MARK: - Views
@@ -23,29 +28,35 @@ class WaveformPlot: UIView {
     lazy var waveformView: WaveformView = {
         let waveformView = WaveformView(frame: .zero)
         waveformView.translatesAutoresizingMaskIntoConstraints = false
+        waveformView.delegate = self
         self.addSubview(waveformView)
         
         return waveformView
     }()
     
-    // MARK: - Private properties
+    // MARK: - Public properties
     
-    private var observers = [NSKeyValueObservation]()
+    weak var delegate: WaveformPlotDelegate?
     
     // MARK: - Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.commonInit()
         self.setupConstraints()
-        self.setupObservers()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        self.commonInit()
         self.setupConstraints()
-        self.setupObservers()
+    }
+    
+    private func commonInit() {
+        self.timelineView.contentOffset = self.waveformView.contentOffset
+        self.timelineView.intervalWidth = CGFloat(self.waveformView.elementsPerSecond)
     }
     
     private func setupConstraints() {
@@ -59,15 +70,19 @@ class WaveformPlot: UIView {
         self.waveformView.setupConstraint(attribute: .top, toItem: self.timelineView, attribute: .bottom)
         self.waveformView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
     }
+}
+
+extension WaveformPlot: WaveformViewDelegate {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
+        self.delegate?.currentTimeIntervalDidChange(timeInterval)
+    }
     
-    private func setupObservers() {
-        self.observers = [
-            self.waveformView.observe(\WaveformView.contentOffset, options: [.initial, .new]) { [weak self] waveformView, change in
-                self?.timelineView.contentOffset = change.newValue ?? CGPoint.zero
-            },
-            self.waveformView.observe(\WaveformView.elementsPerSecond, options: [.initial, .new]) { [weak self] waveformView, change in
-                self?.timelineView.intervalWidth = CGFloat(change.newValue ?? 0)
-            }
-        ]
+    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+        self.timelineView.contentOffset = contentOffset
+        self.delegate?.contentOffsetDidChange(contentOffset)
+    }
+    
+    func secondWidthDidChange(_ secondWidth: CGFloat) {
+        self.timelineView.intervalWidth = secondWidth
     }
 }

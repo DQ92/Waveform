@@ -16,6 +16,7 @@
 		66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */; };
 		66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */; };
 		66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1921428FE300C6BCE9 /* WaveformPlot.swift */; };
+		66A5A522214BF8440020E022 /* AssetComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A5A521214BF8440020E022 /* AssetComponent.swift */; };
 		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		705F9BD42141039F00C98859 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705F9BD32141039F00C98859 /* String+Extension.swift */; };
@@ -62,6 +63,7 @@
 		66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIVIew+Extension.swift"; sourceTree = "<group>"; };
 		66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extension.swift"; sourceTree = "<group>"; };
 		66427A1921428FE300C6BCE9 /* WaveformPlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformPlot.swift; sourceTree = "<group>"; };
+		66A5A521214BF8440020E022 /* AssetComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetComponent.swift; sourceTree = "<group>"; };
 		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		705F9BD32141039F00C98859 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				E88939EE21AC6ECE7509AED4 /* RecorderError.swift */,
 				E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */,
 				E889393E8158E41990DB5443 /* RecorderState.swift */,
+				66A5A521214BF8440020E022 /* AssetComponent.swift */,
 			);
 			path = Recorder;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 				7097B15721491981006EE8FB /* AudioPlayerError.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
 				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
+				66A5A522214BF8440020E022 /* AssetComponent.swift in Sources */,
 				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
 				70973B4921493739000C71E0 /* AVFoundationAudioPlayer.swift in Sources */,
 				66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */,

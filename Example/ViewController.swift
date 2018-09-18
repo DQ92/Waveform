@@ -26,10 +26,6 @@ class ViewController: UIViewController {
         }
     }
 
-    private var elementsPerSecond: Int {
-        return WaveformConfiguration.microphoneSamplePerSecond
-    }
-
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "mm:ss:SS"
@@ -71,7 +67,7 @@ class ViewController: UIViewController {
     }
 
     private func setupWaveform() {
-        self.waveformPlot.waveformView.delegate = self
+        self.waveformPlot.delegate = self
     }
 
     private func setupPlayer() {
@@ -172,24 +168,39 @@ extension ViewController {
             //        } else if (currentlyShownTime < recorder.currentTime) {
             //            startRecording(with: true)
         } else {
-            if recorder.currentTime > TimeInterval(0.1) {
-                let time = CMTime(seconds: self.waveformPlot.waveformView.currentTimeInterval, preferredTimescale: 1)
-                let range = CMTimeRange(start: time, duration: kCMTimeZero)
-
-                recorder.resume(from: range)
-            } else {
-                waveformPlot.waveformView.values = []
-                waveformPlot.waveformView.reload()
-                startRecording(with: false)
+            do {
+                try recorder.activateSession() { [weak self] permissionGranted in
+                    DispatchQueue.main.async {
+                        if permissionGranted {
+                            self?.startRecording()
+                        } else {
+                            Log.error("Microphone access not granted.")
+                        }
+                    }
+                }
+            } catch RecorderError.sessionCategoryInvalid(let error) {
+                Log.error(error)
+            } catch RecorderError.sessionActivationFailed(let error) {
+                Log.error(error)
+            } catch {
+                Log.error("Unknown error.")
             }
         }
     }
 
-    private func startRecording(with overwrite: Bool) {
+    func startRecording() {
+        print("startRecording")
         do {
-            try recorder.start(with: overwrite)
-        } catch RecorderError.noMicrophoneAccess {
-            Log.error("Microphone access not granted.")
+            if recorder.currentTime > 0.0 {
+                let time = CMTime(seconds: self.waveformPlot.waveformView.currentTimeInterval, preferredTimescale: 100)
+                let range = CMTimeRange(start: time, duration: kCMTimeZero)
+
+                try recorder.resume(from: range)
+            } else {
+                waveformPlot.waveformView.values = []
+                waveformPlot.waveformView.reload()
+                try recorder.start()
+            }
         } catch RecorderError.directoryDeletionFailed(let error) {
             Log.error(error)
         } catch RecorderError.directoryCreationFailed(let error) {
@@ -266,7 +277,7 @@ extension ViewController {
 
 extension ViewController {
     func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, recordType: .first, timeStamp: timeStamp)
+        return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
     }
 
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
@@ -275,7 +286,8 @@ extension ViewController {
 
         let waveformSamples = samples.enumerated()
                                      .map { sample in
-                                         WaveformModel(value: CGFloat(sample.element), recordType: .first, timeStamp: TimeInterval(sample.offset / sampleRate))
+                                         WaveformModel(value: CGFloat(sample.element), recordType: .normal, timeStamp:
+                                         TimeInterval(sample.offset / sampleRate))
                                      }
 
         let samplesPerCell = sampleRate
@@ -297,16 +309,21 @@ extension ViewController {
 
 extension ViewController: AudioControllerDelegate {
     func processSampleData(_ data: Float) {
-        self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier, for: recorder.currentTime)
+        self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
+                                                for: recorder.currentTime,
+                                                mode: recorder.mode)
     }
 }
 
 // MARK: - WaveformViewDelegate
 
-
-extension ViewController: WaveformViewDelegate {
-    func currentTimeIntervalDidChange(with timeInterval: TimeInterval) {
+extension ViewController: WaveformPlotDelegate {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
         timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
+    }
+
+    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+
     }
 }
 

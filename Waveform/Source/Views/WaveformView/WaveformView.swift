@@ -1,7 +1,9 @@
 import UIKit
 
 protocol WaveformViewDelegate: class {
-    func currentTimeIntervalDidChange(with timeInterval: TimeInterval)
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
+    func contentOffsetDidChange(_ contentOffset: CGPoint)
+    func secondWidthDidChange(_ secondWidth: CGFloat)
 }
 
 class WaveformView: UIView {
@@ -38,13 +40,12 @@ class WaveformView: UIView {
     private(set) var currentTimeInterval: TimeInterval = 0.0
     private(set) var sampleIndex: Int = 0
     
-    @objc dynamic var contentOffset: CGPoint = CGPoint.zero {
+    var contentOffset: CGPoint = CGPoint.zero {
         didSet {
-            self.leadingLineTimeUpdater.changeTime(withX: max(round(contentOffset.x + leadingLine.position.x), 0.0))
             self.collectionView.contentOffset = contentOffset
         }
     }
-    @objc dynamic var elementsPerSecond: Int = 0
+    var elementsPerSecond: Int = 0
     
     weak var delegate: WaveformViewDelegate?
     var values = [[WaveformModel]]()
@@ -90,6 +91,7 @@ class WaveformView: UIView {
         } else {
             self.elementsPerSecond = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: self.collectionView.bounds.width)
         }
+        self.delegate?.secondWidthDidChange(CGFloat(self.elementsPerSecond))
         self.values = values
         self.collectionView.reloadData()
 
@@ -108,7 +110,7 @@ class WaveformView: UIView {
 }
 
 extension WaveformView {
-    func setValue(_ value: Float, for timeInterval: TimeInterval) {
+    func setValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
       //  print("1 setValue")
         let section = Int(floor(self.currentTimeInterval))
         let indexOfSample = self.sampleIndex
@@ -119,7 +121,7 @@ extension WaveformView {
 //        print("3 sampleIndex przed zmianą = \(indexOfSample)")
 
         if self.values.count <= section {
-            currentItem = WaveformModel(value: CGFloat(value), recordType: .first, timeStamp: timeInterval)
+            currentItem = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
             self.appendSecond(data: [currentItem]) { [weak self] _ in
                 self!.contentSize = self!.collectionView.contentSize
                 self?.updateLeadingLine(x: offset)
@@ -128,21 +130,13 @@ extension WaveformView {
             let indexOfItem = indexOfSample - (section * self.elementsPerSecond)
             let items = self.values[section]
 
+            currentItem = WaveformModel(value: CGFloat(value),
+                                        mode: mode,
+                                        timeStamp: timeInterval)
+
             if items.count <= indexOfItem {
-                currentItem = WaveformModel(value: CGFloat(value), recordType: .first, timeStamp: timeInterval)
                 self.values[section] = items + [currentItem]
             } else {
-                let previousItem = self.values[section][indexOfItem]
-
-                if case .override(let turn) = previousItem.recordType {
-                    currentItem = WaveformModel(value: CGFloat(value),
-                                                recordType: .override(turn: turn + 1),
-                                                timeStamp: timeInterval)
-                } else {
-                    currentItem = WaveformModel(value: CGFloat(value),
-                                                recordType: .override(turn: 1),
-                                                timeStamp: timeInterval)
-                }
                 self.values[section][indexOfItem] = currentItem
             }
 
@@ -276,7 +270,9 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
 extension WaveformView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.leadingLineTimeUpdater.changeTime(withX: max(round(scrollView.contentOffset.x + leadingLine.position.x), 0.0))
         self.contentOffset = scrollView.contentOffset
+        self.delegate?.contentOffsetDidChange(scrollView.contentOffset)
     }
 }
 
@@ -289,7 +285,7 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
 //        print("5 sampleIndex po zmianie = \(value), casted = \(self.sampleIndex), round = \(Int(round(value)))")
 
         self.currentTimeInterval = timeInterval
-        self.delegate?.currentTimeIntervalDidChange(with: timeInterval)
+        self.delegate?.currentTimeIntervalDidChange(timeInterval)
     }
 
     func scrollToTheEnd() {
@@ -311,8 +307,8 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
                                        y: point.y,
                                        width: collectionView.bounds.size.width,
                                        height: collectionView.bounds.size.height)
-        leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x)
-        self.contentOffset = point
+        self.leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x)
+        self.delegate?.contentOffsetDidChange(point)
     }
 
     func stopScrolling() {

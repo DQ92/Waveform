@@ -8,7 +8,6 @@ import Foundation
 enum RecorderError: Error {
     case sessionCategoryInvalid(Error)
     case sessionActivationFailed(Error)
-    case noMicrophoneAccess
     case directoryDeletionFailed(Error)
     case directoryCreationFailed(Error)
     case directoryContentListingFailed(Error)
