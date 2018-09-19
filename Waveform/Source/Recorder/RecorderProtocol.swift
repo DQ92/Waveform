@@ -27,5 +27,5 @@ protocol RecorderProtocol {
     func finish() throws
     func clearRecordings() throws
     func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws
-
+    func openFile(with url: URL) throws
 }
