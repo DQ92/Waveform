@@ -35,6 +35,7 @@ class IntervalCollectionViewCell: UICollectionViewCell {
     lazy var intervalView: IntervalView = {
         let view = IntervalView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
         self.contentView.addSubview(view)
         
         return view

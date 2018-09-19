@@ -5,9 +5,6 @@ class AddIllustrationsViewController: UIViewController {
     
     // MARK: - IBOutlets
     
-    @IBOutlet var recordingTimeLabel: UILabel!
-    @IBOutlet var recordButton: UIButton!
-    @IBOutlet weak var clearButton: UIButton!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformWithIllustrationsPlot: WaveformWithIllustrationsPlot!
@@ -21,7 +18,7 @@ class AddIllustrationsViewController: UIViewController {
     private var url: URL!
     private var values = [[WaveformModel]]() {
         didSet {
-            self.waveformWithIllustrationsPlot.waveformPlot.waveformView.values = values
+            waveformWithIllustrationsPlot.waveformPlot.waveformView.values = values
         }
     }
 
@@ -42,7 +39,6 @@ class AddIllustrationsViewController: UIViewController {
         super.viewDidLoad()
 
         setupView()
-        setupRecorder()
         setupWaveform()
         setupPlayer()
         setupAudioController()
@@ -52,13 +48,8 @@ class AddIllustrationsViewController: UIViewController {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
     }
-
-    private func setupRecorder() {
-        recorder.delegate = self
-    }
-
     private func setupWaveform() {
-        self.waveformWithIllustrationsPlot.delegate = self
+        self.waveformWithIllustrationsPlot.waveformPlot.delegate = self
     }
 
     private func setupPlayer() {
@@ -69,73 +60,29 @@ class AddIllustrationsViewController: UIViewController {
         AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
         AudioController.sharedInstance.delegate = self
     }
-}
 
-//extension AddIllustrationsViewController {
-//    func setupScrollView(contentWidth: CGFloat) {
-//        let constraint = NSLayoutConstraint.build(item: scrollContentView,
-//                                                  attribute: .width,
-//                                                  relatedBy: .equal,
-//                                                  toItem: nil,
-//                                                  attribute: .notAnAttribute,
-//                                                  constant: contentWidth)
-//        constraint.isActive = true
-//    }
-//
-//    func addIllustrationMark(xConstraintValue: CGFloat) {
-//        let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: 100, height: scrollContentView.bounds.height))
-//        scrollContentView.insertSubview(view, at: 0)
-//
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.build(item: view,
-//                                 attribute: .top,
-//                                 toItem: scrollContentView,
-//                                 attribute: .top,
-//                                 constant: 5).isActive = true
-//        NSLayoutConstraint.build(item: scrollContentView,
-//                                 attribute: .bottom,
-//                                 toItem: view,
-//                                 attribute: .bottom,
-//                                 constant: 5).isActive = true
-//
-//        NSLayoutConstraint.build(item: view,
-//                                 attribute: .centerX,
-//                                 toItem: scrollContentView,
-//                                 attribute: .centerX,
-//                                 constant: xConstraintValue - 50).isActive = true
-//    }
-//
-//    @IBAction func addIllustration(_ sender: Any) {
-//        addIllustrationMark(xConstraintValue: waveformPlot.waveformView.contentOffset.x)
-//    }
-//}
+    @IBAction func addIllustration(_ sender: Any) {
+        waveformWithIllustrationsPlot.addIllustrationMark()
+    }
+}
 
 // MARK: - Buttons - start/pause/resume
 
 extension AddIllustrationsViewController {
-    @IBAction func startRecording(_ sender: UIButton) {
-        startOrPause()
-    }
-    
-    @IBAction func finishButtonTapped(_ sender: Any) {
-        recorder.stop()
-        do {
-            try recorder.finish()
-        } catch RecorderError.directoryContentListingFailed(let error) {
-            Log.error(error)
-        } catch RecorderError.fileExportFailed {
-            Log.error("Export failed")
-        } catch {
-            Log.error("Unknown error")
-        }
-    }
-
-    @IBAction func clearButtonTapped(_ sender: UIButton) {
-        self.clearRecordings()
-    }
-
     @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
         self.playOrPause()
+    }
+}
+
+// MARK: - WaveformViewDelegate
+
+extension AddIllustrationsViewController: WaveformPlotDelegate {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
+        timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
+    }
+    
+    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+        
     }
 }
 
@@ -163,64 +110,6 @@ extension AddIllustrationsViewController {
 // MARK: - Audio recorder
 
 extension AddIllustrationsViewController {
-    func startOrPause() {
-        if (recorder.isRecording) {
-            recorder.pause()
-        } else {
-            do {
-                try recorder.activateSession() { [weak self] permissionGranted in
-                    DispatchQueue.main.async {
-                        if permissionGranted {
-                            self?.startRecording()
-                        } else {
-                            Log.error("Microphone access not granted.")
-                        }
-                    }
-                }
-            } catch RecorderError.sessionCategoryInvalid(let error) {
-                Log.error(error)
-            } catch RecorderError.sessionActivationFailed(let error) {
-                Log.error(error)
-            } catch {
-                Log.error("Unknown error.")
-            }
-        }
-    }
-    
-    func startRecording() {
-        print("startRecording")
-        do {
-            if recorder.currentTime > 0.0 {
-                let time = CMTime(seconds: self.waveformWithIllustrationsPlot.waveformPlot.waveformView.currentTimeInterval, preferredTimescale: 100)
-                let range = CMTimeRange(start: time, duration: kCMTimeZero)
-                
-                try recorder.resume(from: range)
-            } else {
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.values = []
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.reload()
-                try recorder.start()
-            }
-        } catch RecorderError.directoryDeletionFailed(let error) {
-            Log.error(error)
-        } catch RecorderError.directoryCreationFailed(let error) {
-            Log.error(error)
-        } catch {
-            Log.error("Unknown error.")
-        }
-    }
-    
-    private func clearRecordings() {
-        do {
-            try recorder.clearRecordings()
-        } catch {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Nie można usunąć nagrań",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
-        }
-    }
-
     private func retrieveFileDataAndSet(with url: URL) {
         do {
             loader = try FileDataLoader(fileURL: url)
@@ -235,6 +124,7 @@ extension AddIllustrationsViewController {
                 let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 DispatchQueue.main.async {
                     self?.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: model ?? [])
+                    self?.waveformWithIllustrationsPlot.setupContentViewOfScrollView()
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -304,54 +194,16 @@ extension AddIllustrationsViewController: AudioControllerDelegate {
     }
 }
 
-// MARK: - WaveformViewDelegate
-
-extension AddIllustrationsViewController: WaveformWithIllustrationsPlotDelegate {
-    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
-        timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
-    }
-}
-
-extension AddIllustrationsViewController: RecorderDelegate {
-    func recorderStateDidChange(with state: RecorderState) {
-        switch state {
-        case .isRecording:
-            AudioController.sharedInstance.start()
-            recordButton.setTitle("Pause", for: .normal)
-            CATransaction.begin()
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.refresh()
-            CATransaction.commit()
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.isUserInteractionEnabled = false
-            self.totalTimeLabel.text = "00:00:00"
-        case .stopped:
-            AudioController.sharedInstance.stop()
-            recordButton.setTitle("Start", for: .normal)
-
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.isUserInteractionEnabled = true
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.onPause()
-            
-            //setupScrollView(contentWidth: waveformPlot.waveformView.contentWidth)
-        case .paused:
-            AudioController.sharedInstance.stop()
-            recordButton.setTitle("Resume", for: .normal)
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.isUserInteractionEnabled = true
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.onPause()
-        case .notInitialized, .initialized:
-            break
-        }
-    }
-}
-
 extension AddIllustrationsViewController: AudioPlayerDelegate {
     func playerStateDidChange(with state: AudioPlayerState) {
         switch state {
             case .isPlaying:
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.isUserInteractionEnabled = false
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.scrollToTheEnd()
+                waveformWithIllustrationsPlot.isUserInteractionEnabled = false
+                waveformWithIllustrationsPlot.scrollToTheEnd()
                 playOrPauseButton.setTitle("Pause", for: .normal)
             case .paused:
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.stopScrolling()
+                waveformWithIllustrationsPlot.isUserInteractionEnabled = true
+                waveformWithIllustrationsPlot.stopScrolling()
                 playOrPauseButton.setTitle("Play", for: .normal)
         }
     }

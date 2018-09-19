@@ -45,6 +45,14 @@ class WaveformView: UIView {
             self.collectionView.contentOffset = contentOffset
         }
     }
+    var contentInset: UIEdgeInsets {
+        return collectionView.contentInset
+    }
+    var waveformViewContentSize: CGSize {
+        get {
+            return collectionView.contentSize
+        }
+    }
     var elementsPerSecond: Int = 0
     
     weak var delegate: WaveformViewDelegate?
@@ -105,7 +113,7 @@ class WaveformView: UIView {
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
                                     at: .left,
                                     animated: true)
-        leadingLine.position = CGPoint(x: collectionView.bounds.width / 2, y: leadingLine.position.y)
+        leadingLine.position = CGPoint(x: collectionView.bounds.width / 2, y: leadingLine.position.y)        
     }
 }
 
@@ -161,7 +169,7 @@ extension WaveformView {
 extension WaveformView {
     private func commonInit() {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-        
+        self.collectionView.backgroundColor = .clear
         self.elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
         self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
         self.leadingLineTimeUpdater.delegate = self

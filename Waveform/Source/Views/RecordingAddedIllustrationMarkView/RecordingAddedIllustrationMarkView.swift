@@ -37,31 +37,31 @@ class RecordingAddedIllustrationMarkView: UIView {
         super.init(coder: aDecoder)
         
         loadNib()
-        
-        setupImageViews()
-        setupRemoveIllustrationButton()
-        setupLabel()
+        commonSetup()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         loadNib()
-        
-        setupImageViews()
-        setupRemoveIllustrationButton()
-        setupLabel()
+        commonSetup()
     }
     
     private func loadNib() {
         let _ = Bundle.main.loadNibNamed(nibName, owner: self, options: nil)?.first
         translatesAutoresizingMaskIntoConstraints = false
         
-        view.frame = bounds
+        view.frame = frame
         addSubview(view)
     }
     
     // MARK: - View setup
+    
+    private func commonSetup() {
+        setupImageViews()
+        setupRemoveIllustrationButton()
+        setupLabel()
+    }
     
     private func setupLabel() {
         timeLabel.font = UIFont.systemFont(ofSize: 11)
@@ -73,12 +73,13 @@ class RecordingAddedIllustrationMarkView: UIView {
         
         illustrationImageView.layer.borderWidth = 2.0
         illustrationImageView.layer.borderColor = UIColor.white.cgColor
+        illustrationImageView.image = UIImage(named: "mock_book0")
     }
     
     private func setupRemoveIllustrationButton() {
         removeIllustrationButton.tintColor = .green
-        removeIllustrationButton.backgroundColor = .green
-        //removeIllustrationButton.setImage(Assets.trashImage, for: .normal)
+        removeIllustrationButton.backgroundColor = .clear
+        removeIllustrationButton.setImage(UIImage(named: "Trash"), for: .normal)
     }
     
     // MARK: - Actions

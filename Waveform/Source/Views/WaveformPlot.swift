@@ -57,6 +57,8 @@ class WaveformPlot: UIView {
     private func commonInit() {
         self.timelineView.contentOffset = self.waveformView.contentOffset
         self.timelineView.intervalWidth = CGFloat(self.waveformView.elementsPerSecond)
+        timelineView.backgroundColor = .clear
+        waveformView.backgroundColor = .clear
     }
     
     private func setupConstraints() {
