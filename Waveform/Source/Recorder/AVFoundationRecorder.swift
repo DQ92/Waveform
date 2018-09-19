@@ -20,7 +20,7 @@ class AVFoundationRecorder: NSObject {
         return .normal
     }
     var resultsDirectoryURL: URL
-    var recorderState: RecorderState!
+    var recorderState: RecorderState
 
     // MARK: - Private properties
 
@@ -40,6 +40,7 @@ class AVFoundationRecorder: NSObject {
         self.tempDirectoryUrl = self.documentsURL.appendingPathComponent("temp_audio")
         self.resultsDirectoryURL = self.documentsURL.appendingPathComponent("results")
         self.tempExportDirectoryUrl = self.documentsURL.appendingPathComponent("temp_exp")
+        recorderState = .stopped
     }
     
     // MARK: - Setup
@@ -189,6 +190,7 @@ extension AVFoundationRecorder: RecorderProtocol {
 
     func start() throws {
         removeTemporaryDirectory()
+        removeTemporaryExportsDirectory()
         components.removeAll()
 
         try createTemporaryDirectoryIfNeeded()
@@ -207,12 +209,9 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func stop() {
-        guard let recorder = audioRecorder else {
-            return
-        }
         Log.debug("Stopped")
         changeRecorderStateWithViewUpdate(with: .stopped)
-        recorder.stop()
+        audioRecorder?.stop()
         audioRecorder = nil
         Log.debug("Recorded successfully.")
         listFiles()
