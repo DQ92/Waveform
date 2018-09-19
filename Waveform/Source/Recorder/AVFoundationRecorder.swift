@@ -219,10 +219,10 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func resume(from timeRange: CMTimeRange) throws {
-        let possibleTimeDiffernce = CMTime(seconds: 0.05, preferredTimescale: 100)
+        let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
 
-        if self.duration - timeRange.start <= possibleTimeDiffernce {
-            audioRecorder.record()
+        if let recorder = audioRecorder, self.duration - timeRange.start <= possibleTimeDifference {
+            recorder.record()
             Log.debug("Resumed")
         } else {
             let filename = "temp_\(components.count).m4a"
