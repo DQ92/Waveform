@@ -55,14 +55,14 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
     
     func pause() {
         player.pause()
-        Log.warning("User player paused")
+        Log.info("Player paused by user")
         changePlayerState(with: .paused)
     }
 }
 
 extension AVFoundationAudioPlayer: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        Log.warning("Delegate player paused")
+        Log.warning("Player paused by delegate")
         changePlayerState(with: .paused)
     }
 }

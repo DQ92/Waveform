@@ -228,6 +228,20 @@ extension ViewController {
 // MARK: - Loader
 
 extension ViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let viewController = segue.destination as? AudioFilesListViewController {
+            if recorder.recorderState == .isRecording {
+                recorder.pause()
+            }
+            viewController.directoryUrl = recorder.resultsDirectoryURL
+            viewController.didSelectFileBlock = { [weak self] url in
+                self?.retrieveFileDataAndSet(with: url)
+                self?.navigationController?
+                     .popViewController(animated: true)
+            }
+        }
+    }
+
     private func retrieveFileDataAndSet(with url: URL) {
         do {
             if recorder.recorderState == .isRecording {
@@ -259,20 +273,6 @@ extension ViewController {
                                                     preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
-        }
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? AudioFilesListViewController {
-            if recorder.recorderState == .isRecording {
-                recorder.pause()
-            }
-            viewController.directoryUrl = recorder.resultsDirectoryURL
-            viewController.didSelectFileBlock = { [weak self] url in
-                self?.retrieveFileDataAndSet(with: url)
-                self?.navigationController?
-                     .popViewController(animated: true)
-            }
         }
     }
 }
