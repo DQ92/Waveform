@@ -32,6 +32,7 @@ class AVFoundationRecorder: NSObject {
     private var totalDuration: Float = 0
     private var currentDuration: Float = 0
     private var components: [AssetComponent] = []
+    private var duration: CMTime = kCMTimeZero
 
     // MARK: - Initialization
 
@@ -218,12 +219,10 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
     
     func resume(from timeRange: CMTimeRange) throws {
-        let currentRecorderTime = audioRecorder?.currentTime ?? 0.0
-        let currentTime = CMTime(seconds: currentRecorderTime, preferredTimescale: 100)
-        let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
+        let possibleTimeDiffernce = CMTime(seconds: 0.05, preferredTimescale: 100)
 
-        if let recorder = audioRecorder, currentTime - timeRange.start <= possibleTimeDifference  {
-            recorder.record()
+        if self.duration - timeRange.start <= possibleTimeDiffernce {
+            audioRecorder.record()
             Log.debug("Resumed")
         } else {
             let filename = "temp_\(components.count).m4a"
@@ -239,12 +238,22 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func pause() {
-        guard let recorder = audioRecorder else {
-            return
+        if let timeRange = self.components.last?.timeRange {
+            let currentAudioDuration = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
+
+            if timeRange.duration.value > 0 {
+                self.duration = self.duration - timeRange.duration + currentAudioDuration
+            } else {
+                let endTime = timeRange.start + currentAudioDuration
+
+                if endTime > self.duration {
+                    self.duration = endTime
+                }
+            }
         }
         changeRecorderStateWithViewUpdate(with: .paused)
         Log.debug("Paused")
-        recorder.pause()
+        audioRecorder.pause()
         listFiles()
     }
 
