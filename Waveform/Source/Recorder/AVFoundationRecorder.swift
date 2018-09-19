@@ -309,10 +309,10 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws {
-        if recorderState != .stopped {
-            Log.debug("Stopped")
-            recorderState = .stopped
-            audioRecorder.stop()
+        if let recorder = audioRecorder, recorderState != .stopped {
+            Log.debug("Recorder paused")
+            recorderState = .paused
+            recorder.stop()
             audioRecorder = nil
         }
 
