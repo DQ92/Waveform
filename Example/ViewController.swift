@@ -72,7 +72,7 @@ class ViewController: UIViewController {
     }
 
     private func setupMicrophoneController() {
-        AVFoundationMicrophoneController.shared.delegate = self
+        AudioToolboxMicrophoneController.shared.delegate = self
     }
 }
 
@@ -331,7 +331,7 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
             case .isRecording:
-                AVFoundationMicrophoneController.shared.start()
+                AudioToolboxMicrophoneController.shared.start()
                 recordButton.setTitle("Pause", for: .normal)
                 CATransaction.begin()
                 waveformPlot.waveformView.refresh()
@@ -341,14 +341,14 @@ extension ViewController: RecorderDelegate {
                 playerSource = .recorder
 
             case .stopped:
-                AVFoundationMicrophoneController.shared.stop()
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
                 playerSource = .recorder
 
             case .paused:
-                AVFoundationMicrophoneController.shared.stop()
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()

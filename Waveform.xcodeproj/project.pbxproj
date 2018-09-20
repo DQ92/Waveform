@@ -46,7 +46,7 @@
 		E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */; };
 		E88939FBDCF1003F3B2CCE04 /* RecorderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893423F0FE312759A629FB /* RecorderProtocol.swift */; };
 		E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */; };
-		E8893AD1ADDB1D431828609F /* AVFoundationMicrophoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893795C73B5D4AE442487C /* AVFoundationMicrophoneController.swift */; };
+		E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */; };
 		E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893D805570A16F976C1699 /* RecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889393E8158E41990DB5443 /* RecorderState.swift */; };
@@ -97,7 +97,7 @@
 		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
-		E8893795C73B5D4AE442487C /* AVFoundationMicrophoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVFoundationMicrophoneController.swift; sourceTree = "<group>"; };
+		E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioToolboxMicrophoneController.swift; sourceTree = "<group>"; };
 		E88937F5B28C8770A8CE26C8 /* FileDataLoaderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoaderError.swift; sourceTree = "<group>"; };
 		E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E889393E8158E41990DB5443 /* RecorderState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderState.swift; sourceTree = "<group>"; };
@@ -248,7 +248,7 @@
 		E88936FF4A42C142FFCD7E68 /* Microphone */ = {
 			isa = PBXGroup;
 			children = (
-				E8893795C73B5D4AE442487C /* AVFoundationMicrophoneController.swift */,
+				E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */,
 				E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */,
 				E889395C8B72E113DB911D58 /* MicrophoneControllerDelegate.swift */,
 				E8893549B61B999208FD341E /* MicrophoneError.swift */,
@@ -417,7 +417,7 @@
 				B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */,
 				B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */,
 				E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */,
-				E8893AD1ADDB1D431828609F /* AVFoundationMicrophoneController.swift in Sources */,
+				E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */,
 				E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */,
 				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
 				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,

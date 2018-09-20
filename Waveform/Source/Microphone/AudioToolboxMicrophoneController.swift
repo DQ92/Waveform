@@ -1,19 +1,20 @@
 
 
 import Foundation
-import AVFoundation
+import AudioToolbox
 
-class AVFoundationMicrophoneController {
+class AudioToolboxMicrophoneController {
 
     // MARK: - Private properties
+
+
 
     // MARK: - Public properties
 
     var delegate: MicrophoneControllerDelegate!
-    static let shared = AVFoundationMicrophoneController()
+    static let shared = AudioToolboxMicrophoneController()
     // Optional is needed for inout parameter
     var remoteIOUnit: AudioComponentInstance?
-
 
     // MARK: - Initialization
 
@@ -57,9 +58,9 @@ class AVFoundationMicrophoneController {
             assertionFailure("Initialization failed")
         }
 
-        let sampleRate: Double = AVAudioSession.sharedInstance().sampleRate
-        let channels: UInt32 = 1
-        var audioFormat = AudioUtils.floatFormat(with: channels, and: sampleRate)
+        let sampleRate: Double = AudioUtils.defaultSampleRate
+        let channelCount: UInt32 = 2
+        var audioFormat = AudioUtils.floatFormat(with: channelCount, and: sampleRate)
 
         status = AudioUnitSetProperty(remoteIOUnit!,
                                       kAudioUnitProperty_StreamFormat,
@@ -105,7 +106,7 @@ class AVFoundationMicrophoneController {
     func stop() {
         let status = AudioOutputUnitStop(remoteIOUnit!)
         if status != noErr {
-            assertionFailure("Microphone data retrieving start failed")
+            assertionFailure("Microphone data retrieving stop failed")
         }
     }
 }
@@ -119,9 +120,7 @@ func recordingCallback(
         ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
 
     var status = noErr
-
-    let channelCount: UInt32 = 1
-
+    let channelCount: UInt32 = 2
     var bufferList = AudioBufferList()
     bufferList.mNumberBuffers = channelCount
     let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &bufferList.mBuffers,
@@ -131,7 +130,7 @@ func recordingCallback(
     buffers[0].mData = nil
 
     // get the recorded samples
-    status = AudioUnitRender(AVFoundationMicrophoneController.shared.remoteIOUnit!,
+    status = AudioUnitRender(AudioToolboxMicrophoneController.shared.remoteIOUnit!,
             ioActionFlags,
             inTimeStamp,
             inBusNumber,
@@ -148,7 +147,7 @@ func recordingCallback(
     let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: 512)
 
     DispatchQueue.main.async {
-        AVFoundationMicrophoneController.shared.delegate.processSampleData(rms)
+        AudioToolboxMicrophoneController.shared.delegate.processSampleData(rms)
     }
 
     return noErr
