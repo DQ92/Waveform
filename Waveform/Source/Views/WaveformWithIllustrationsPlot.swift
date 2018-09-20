@@ -94,16 +94,16 @@ class WaveformWithIllustrationsPlot: UIView {
     }
 
     func addIllustrationMark() {
-        let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
-        scrollContentView.insertSubview(view, at: 0)
-        view.translatesAutoresizingMaskIntoConstraints = false
         let halfOfScrollContentViewWidth = -(scrollContentView.bounds.width / 2)
         let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth * 0.75
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         illustrationMarkDataList.append(IllustrationMarkModel(timeInterval: currentTimeInterval,
                                                               centerXConstraintValue: centerXConstraintValue))
+        let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
+        scrollContentView.insertSubview(view, at: 0)
+        view.translatesAutoresizingMaskIntoConstraints = false
         setupIllustrationMarkConstraints(with: centerXConstraintValue, view: view)
-        
+
         view.setupTimeLabel(with: waveformPlot.waveformView.currentTimeInterval)
         view.removeMarkBlock = { [weak self] in
             if let index = self?.illustrationMarkDataList.firstIndex(where: { $0.timeInterval == currentTimeInterval }) {

@@ -41,7 +41,6 @@ class AddIllustrationsViewController: UIViewController {
         setupView()
         setupWaveform()
         setupPlayer()
-        setupAudioController()
     }
 
     private func setupView() {
@@ -54,11 +53,6 @@ class AddIllustrationsViewController: UIViewController {
 
     private func setupPlayer() {
         self.player.delegate = self
-    }
-
-    private func setupAudioController() {
-        AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
-        AudioController.sharedInstance.delegate = self
     }
 
     @IBAction func addIllustration(_ sender: Any) {
@@ -183,14 +177,6 @@ extension AddIllustrationsViewController {
             result.append(cellSamples)
         }
         return result
-    }
-}
-
-extension AddIllustrationsViewController: AudioControllerDelegate {
-    func processSampleData(_ data: Float) {
-        self.waveformWithIllustrationsPlot.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
-                                                for: recorder.currentTime,
-                                                mode: recorder.mode)
     }
 }
 

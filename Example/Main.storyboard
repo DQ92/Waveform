@@ -84,7 +84,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="It8-W6-559">
-                                <rect key="frame" x="267" y="348" width="42" height="42"/>
+                                <rect key="frame" x="267" y="299" width="42" height="42"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="+"/>
                                 <connections>
@@ -92,7 +92,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7n-zq-sLk">
-                                <rect key="frame" x="317" y="348" width="42" height="42"/>
+                                <rect key="frame" x="317" y="299" width="42" height="42"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="height" multiplier="1:1" id="bTW-nU-99I"/>
                                 </constraints>

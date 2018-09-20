@@ -37,7 +37,6 @@
 		AEF5343C214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */; };
 		AEF5343D214FDCD6003C0539 /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53439214FDCD6003C0539 /* TimeLineView.swift */; };
 		AEF5343E214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF5343A214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift */; };
-		B02F1663B291D21802C8E919 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1757D608EF13DD455EBE /* Waveform.swift */; };
 		B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */; };
 		B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */; };
 		E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939EE21AC6ECE7509AED4 /* RecorderError.swift */; };
@@ -144,7 +143,6 @@
 				E88934B7BCB14371999176E0 /* LeadingLine */,
 				E8893411928FDEF318F420BF /* Model */,
 				E889308EE57AC8A701D89201 /* Views */,
-				B02F1757D608EF13DD455EBE /* Waveform.swift */,
 				E8893EBDDFB53AAA95147015 /* Loader */,
 				E88936FF4A42C142FFCD7E68 /* Microphone */,
 				E88937E8F39CD144E58ECED8 /* Zoom */,
@@ -585,11 +583,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5L93VD7C68;
+				DEVELOPMENT_TEAM = 42TZBS6YJV;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.piotr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
