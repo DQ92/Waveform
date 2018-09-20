@@ -11,11 +11,34 @@ class AudioUtils {
     // MARK: - Constants
     
     static let defaultWaveformFloatModifier: Float = 500
-    static let defualtSampleRate: Double = 44100
+    static let defaultSampleRate: Double = 44100
 
-    // MARK: - AudioStreamBasicDescription creation
+    // MARK: - Rms evaluating
 
-    static func floatFormat(with channels: UInt32, with sampleRate: Double) -> AudioStreamBasicDescription {
+    static func toRMS(buffer: [Float], bufferSize: Int) -> Float {
+        var sum: Float = 0.0
+        for index in 0..<bufferSize {
+            sum += buffer[index] * buffer[index]
+        }
+        return sqrtf(sum / Float(bufferSize))
+    }
+    
+    static func time(from interval: TimeInterval) -> Time {
+        let seconds = Int(interval.truncatingRemainder(dividingBy: 3600)
+                            .truncatingRemainder(dividingBy: 60))
+        let minutes = Int(interval.truncatingRemainder(dividingBy: 3600) / 60)
+        let hours = Int(interval / 3600)
+        let milliSeconds = Int((interval - TimeInterval(Int(interval))) * 100)
+        let time = Time(hours: hours, minutes: minutes, seconds: seconds, milliSeconds: milliSeconds, interval: interval)
+        
+        return time
+    }
+}
+
+// MARK: - AudioStreamBasicDescription
+
+extension AudioUtils {
+    static func floatFormat(with channels: UInt32, and sampleRate: Double) -> AudioStreamBasicDescription {
         var audioFormat = AudioStreamBasicDescription()
         let floatByteSize: UInt32 = 4
         audioFormat.mBitsPerChannel = 8 * floatByteSize
@@ -42,7 +65,7 @@ class AudioUtils {
         audioFormat.mSampleRate = sampleRate;
         return audioFormat;
     }
-    
+
     static func monoFloatNonInterleavedFormat(with sampleRate: Double) -> AudioStreamBasicDescription {
         var audioFormat = AudioStreamBasicDescription()
         let floatByteSize: UInt32 = 4
@@ -56,25 +79,18 @@ class AudioUtils {
         audioFormat.mSampleRate = sampleRate;
         return audioFormat;
     }
+}
 
-    // MARK: - Rms evaluating
+// MARK: - AudioComponentDescription
 
-    static func toRMS(buffer: [Float], bufferSize: Int) -> Float {
-        var sum: Float = 0.0
-        for index in 0..<bufferSize {
-            sum += buffer[index] * buffer[index]
-        }
-        return sqrtf(sum / Float(bufferSize))
-    }
-    
-    static func time(from interval: TimeInterval) -> Time {
-        let seconds = Int(interval.truncatingRemainder(dividingBy: 3600)
-                            .truncatingRemainder(dividingBy: 60))
-        let minutes = Int(interval.truncatingRemainder(dividingBy: 3600) / 60)
-        let hours = Int(interval / 3600)
-        let milliSeconds = Int((interval - TimeInterval(Int(interval))) * 100)
-        let time = Time(hours: hours, minutes: minutes, seconds: seconds, milliSeconds: milliSeconds, interval: interval)
-        
-        return time
+extension AudioUtils {
+    static func basicMicrophoneComponentDescription() -> AudioComponentDescription {
+        var audioComponentDescription = AudioComponentDescription()
+        audioComponentDescription.componentType = kAudioUnitType_Output
+        audioComponentDescription.componentSubType = kAudioUnitSubType_RemoteIO
+        audioComponentDescription.componentManufacturer = kAudioUnitManufacturer_Apple
+        audioComponentDescription.componentFlags = 0
+        audioComponentDescription.componentFlagsMask = 0
+        return audioComponentDescription
     }
 }

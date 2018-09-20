@@ -33,14 +33,6 @@ class ViewController: UIViewController {
         return formatter
     }()
 
-    enum PlayerSource {
-        case recorder
-        case loader(url: URL)
-        case none
-    }
-
-    private var playerSource: PlayerSource = .none
-
     // MARK: - Life cycle
 
     override func viewDidLoad() {
@@ -50,7 +42,7 @@ class ViewController: UIViewController {
         setupRecorder()
         setupWaveform()
         setupPlayer()
-        setupAudioController()
+        setupMicrophoneController()
     }
 
     private func setupView() {
@@ -71,9 +63,8 @@ class ViewController: UIViewController {
         self.player.delegate = self
     }
 
-    private func setupAudioController() {
-        AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
-        AudioController.sharedInstance.delegate = self
+    private func setupMicrophoneController() {
+        AudioToolboxMicrophoneController.shared.delegate = self
     }
 }
 
@@ -111,20 +102,7 @@ extension ViewController {
 extension ViewController {
     func playOrPause() {
         if player.state == .paused && recorder.recorderState != .isRecording {
-            switch playerSource {
-                case .loader(let url):
-                    do {
-                        try player.playFile(with: url, at: self.waveformPlot.waveformView.currentTimeInterval)
-                    } catch AudioPlayerError.openFileFailed(let error) {
-                        Log.error(error)
-                    } catch {
-                        Log.error("Unknown error")
-                    }
-                case .recorder:
-                    playFileInRecording()
-                case .none:
-                    break
-            }
+            playFileInRecording()
         } else if player.state == .isPlaying {
             player.pause()
         }
@@ -248,13 +226,13 @@ extension ViewController {
                 recorder.stop()
             }
             loader = try FileDataLoader(fileURL: url)
-            playerSource = .loader(url: url)
             let time = AudioUtils.time(from: (loader.fileDuration)!)
             let totalTimeString = String(format: "%02d:%02d:%02d",
                                          time.minutes,
                                          time.seconds,
                                          time.milliSeconds)
             totalTimeLabel.text = totalTimeString
+            try recorder.openFile(with: url)
             try loader.loadFile(completion: { [weak self] (array) in
                 let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 DispatchQueue.main.async {
@@ -308,7 +286,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: AudioControllerDelegate {
+extension ViewController: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
         self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
                                                 for: recorder.currentTime,
@@ -332,28 +310,25 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
             case .isRecording:
-                AudioController.sharedInstance.start()
+                AudioToolboxMicrophoneController.shared.start()
                 recordButton.setTitle("Pause", for: .normal)
                 CATransaction.begin()
                 waveformPlot.waveformView.refresh()
                 CATransaction.commit()
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 self.totalTimeLabel.text = "00:00:00"
-                playerSource = .recorder
 
             case .stopped:
-                AudioController.sharedInstance.stop()
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
-                playerSource = .recorder
 
-            case .paused:
-                AudioController.sharedInstance.stop()
+            case .paused, .fileLoaded:
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
-                playerSource = .recorder
         }
     }
 }

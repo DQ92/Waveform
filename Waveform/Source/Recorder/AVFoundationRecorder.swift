@@ -20,7 +20,7 @@ class AVFoundationRecorder: NSObject {
         return .normal
     }
     var resultsDirectoryURL: URL
-    var recorderState: RecorderState
+    var recorderState: RecorderState = .stopped
 
     // MARK: - Private properties
 
@@ -40,12 +40,11 @@ class AVFoundationRecorder: NSObject {
         self.tempDirectoryUrl = self.documentsURL.appendingPathComponent("temp_audio")
         self.resultsDirectoryURL = self.documentsURL.appendingPathComponent("results")
         self.tempExportDirectoryUrl = self.documentsURL.appendingPathComponent("temp_exp")
-        recorderState = .stopped
     }
     
     // MARK: - Setup
     
-    func setupAudioRecorder(fileName: String) throws {
+    private func setupAudioRecorder(fileName: String) throws {
         let url = self.tempDirectoryUrl.appendingPathComponent(fileName)
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -56,54 +55,34 @@ class AVFoundationRecorder: NSObject {
         audioRecorder = try AVAudioRecorder(url: url, settings: settings)
         audioRecorder.delegate = self
     }
+    
+    private func resetDirectories() throws {
+        let directoriesToRemove = [self.tempDirectoryUrl, self.tempExportDirectoryUrl]
+        
+        for url in directoriesToRemove {
+            try self.removeDirectory(url: url)
+        }
+        let directoriesToCreate = [self.tempDirectoryUrl, self.tempExportDirectoryUrl, self.resultsDirectoryURL]
+        
+        for url in directoriesToCreate {
+            try self.createDirectoryIfNeeded(url: url)
+        }
+    }
 }
 
 // MARK: - Dictionaries
 
 extension AVFoundationRecorder {
-    private func createTemporaryDirectoryIfNeeded() throws {
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.tempDirectoryUrl.path) {
-            try fileManager.createDirectory(atPath: self.tempDirectoryUrl.path,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil) ~> RecorderError.directoryCreationFailed
+    private func removeDirectory(url: URL) throws {
+        try? FileManager.default.removeItem(at: url) ~> RecorderError.directoryDeletionFailed
+    }
+    
+    private func createDirectoryIfNeeded(url: URL) throws {
+        if !FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.createDirectory(atPath: url.path,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil) ~> RecorderError.directoryCreationFailed
         }
-        Log.info("Document directory is \(self.tempDirectoryUrl)")
-    }
-
-    private func removeTemporaryDirectory() {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: self.tempDirectoryUrl) ~> RecorderError.directoryDeletionFailed
-    }
-
-    private func createTemporaryExportsDirectoryIfNeeded() throws {
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.tempExportDirectoryUrl.path) {
-            try fileManager.createDirectory(atPath: self.tempExportDirectoryUrl.path,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil) ~> RecorderError.directoryCreationFailed
-        }
-        Log.info("Temporary export directory is \(tempExportDirectoryUrl)")
-    }
-
-    private func removeTemporaryExportsDirectory() {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: self.tempExportDirectoryUrl) ~> RecorderError.directoryDeletionFailed
-    }
-
-    private func createResultsDirectoryIfNeeded() throws {
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.resultsDirectoryURL.path) {
-            try fileManager.createDirectory(atPath: self.resultsDirectoryURL.path,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil) ~> RecorderError.directoryCreationFailed
-        }
-        Log.info("Results directory is \(self.resultsDirectoryURL)")
-    }
-
-    private func removeResultsDirectory() {
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: self.resultsDirectoryURL) ~> RecorderError.directoryDeletionFailed
     }
 }
 
@@ -189,13 +168,8 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func start() throws {
-        removeTemporaryDirectory()
-        removeTemporaryExportsDirectory()
-        components.removeAll()
-
-        try createTemporaryDirectoryIfNeeded()
-        try createResultsDirectoryIfNeeded()
-        try createTemporaryExportsDirectoryIfNeeded()
+        try self.resetDirectories()
+        self.components.removeAll()
 
         let filename = "temp_\(components.count).m4a"
         let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
@@ -308,8 +282,8 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func clearRecordings() throws {
-        removeResultsDirectory()
-        try createResultsDirectoryIfNeeded()
+        try self.removeDirectory(url: self.resultsDirectoryURL)
+        try self.createDirectoryIfNeeded(url: self.resultsDirectoryURL)
     }
 
     func crop(startTime: Double, endTime: Double) {
@@ -326,6 +300,21 @@ extension AVFoundationRecorder: RecorderProtocol {
 
         let result = try self.merge(components: self.components)
         exportAsset(result, completion: completion)
+    }
+    
+    func openFile(with url: URL) throws {
+        try resetDirectories()
+        self.components.removeAll()
+        
+        let filename = "temp_\(components.count).m4a"
+
+        try FileManager.default.copyItem(at: url, to: self.tempDirectoryUrl.appendingPathComponent(filename))
+        let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
+        
+        components.append(AssetComponent(fileName: filename, timeRange: timeRange))
+        Log.debug("openFile")
+        
+        changeRecorderStateWithViewUpdate(with: .fileLoaded)
     }
 }
 

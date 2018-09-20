@@ -33,17 +33,20 @@
 		70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C6CFD121414BDE0059E174 /* FileDataLoader.swift */; };
 		B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */; };
 		B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */; };
-		E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889314B1F48E2283EA51887 /* AudioController.swift */; };
 		E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939EE21AC6ECE7509AED4 /* RecorderError.swift */; };
 		E88934EC1C50C2ED38614386 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889324ECFA632E33ECBA121 /* Logger.swift */; };
 		E88936392F81CD966EEB8544 /* AVFoundationRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889316FC43DCA7105BE9F29 /* AVFoundationRecorder.swift */; };
+		E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893549B61B999208FD341E /* MicrophoneError.swift */; };
 		E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88937F5B28C8770A8CE26C8 /* FileDataLoaderError.swift */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
+		E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889395C8B72E113DB911D58 /* MicrophoneControllerDelegate.swift */; };
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
 		E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */; };
 		E88939FBDCF1003F3B2CCE04 /* RecorderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893423F0FE312759A629FB /* RecorderProtocol.swift */; };
 		E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */; };
+		E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */; };
+		E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */; };
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893D805570A16F976C1699 /* RecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889393E8158E41990DB5443 /* RecorderState.swift */; };
 		E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */; };
@@ -80,7 +83,6 @@
 		B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
-		E889314B1F48E2283EA51887 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		E889316FC43DCA7105BE9F29 /* AVFoundationRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVFoundationRecorder.swift; sourceTree = "<group>"; };
 		E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -90,16 +92,20 @@
 		E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E8893423F0FE312759A629FB /* RecorderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderProtocol.swift; sourceTree = "<group>"; };
+		E8893549B61B999208FD341E /* MicrophoneError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneError.swift; sourceTree = "<group>"; };
 		E8893605E36346DF677F0556 /* WaveformCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionView.swift; sourceTree = "<group>"; };
 		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
+		E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioToolboxMicrophoneController.swift; sourceTree = "<group>"; };
 		E88937F5B28C8770A8CE26C8 /* FileDataLoaderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoaderError.swift; sourceTree = "<group>"; };
 		E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E889393E8158E41990DB5443 /* RecorderState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderState.swift; sourceTree = "<group>"; };
+		E889395C8B72E113DB911D58 /* MicrophoneControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerDelegate.swift; sourceTree = "<group>"; };
 		E88939EE21AC6ECE7509AED4 /* RecorderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderError.swift; sourceTree = "<group>"; };
 		E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderDelegate.swift; sourceTree = "<group>"; };
+		E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerProtocol.swift; sourceTree = "<group>"; };
 		E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
 		E8893F6E3FD2FDD1DF41E510 /* LeadingLineTimeUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineTimeUpdater.swift; sourceTree = "<group>"; };
 		E8893F77695D0196AD278505 /* README.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.MD; sourceTree = "<group>"; };
@@ -125,8 +131,9 @@
 				E88934B7BCB14371999176E0 /* LeadingLine */,
 				E8893411928FDEF318F420BF /* Model */,
 				E889308EE57AC8A701D89201 /* Views */,
-				E889314B1F48E2283EA51887 /* AudioController.swift */,
+				B02F1757D608EF13DD455EBE /* Waveform.swift */,
 				E8893EBDDFB53AAA95147015 /* Loader */,
+				E88936FF4A42C142FFCD7E68 /* Microphone */,
 				E88937E8F39CD144E58ECED8 /* Zoom */,
 			);
 			path = Source;
@@ -237,6 +244,17 @@
 				E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */,
 			);
 			path = LeadingLine;
+			sourceTree = "<group>";
+		};
+		E88936FF4A42C142FFCD7E68 /* Microphone */ = {
+			isa = PBXGroup;
+			children = (
+				E8893795C73B5D4AE442487C /* AudioToolboxMicrophoneController.swift */,
+				E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */,
+				E889395C8B72E113DB911D58 /* MicrophoneControllerDelegate.swift */,
+				E8893549B61B999208FD341E /* MicrophoneError.swift */,
+			);
+			path = Microphone;
 			sourceTree = "<group>";
 		};
 		E88937264D551A08536C86C5 /* Example */ = {
@@ -393,7 +411,6 @@
 				E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */,
 				705F9BD42141039F00C98859 /* String+Extension.swift in Sources */,
 				E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */,
-				E88930C6E7D6FCF74D2D4E21 /* AudioController.swift in Sources */,
 				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
 				65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */,
 				65481FFD21400AAA00BFA378 /* Assert.swift in Sources */,
@@ -409,6 +426,10 @@
 				B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */,
 				E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */,
 				E8893E22950C9C8F47884D66 /* ZoomType.swift in Sources */,
+				E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */,
+				E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */,
+				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
+				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
