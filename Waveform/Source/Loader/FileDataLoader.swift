@@ -12,7 +12,7 @@ class FileDataLoader {
 
     private let fileURL: URL
     private var fileReference: ExtAudioFileRef?
-    private var audioFormat = AudioUtils.monoFloatNonInterleavedFormat(with: AudioUtils.defualtSampleRate)
+    private var audioFormat = AudioUtils.monoFloatNonInterleavedFormat(with: AudioUtils.defaultSampleRate)
     private var fileLengthInFrames: Int?
     
     // MARK: - Public properties

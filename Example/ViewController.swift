@@ -42,7 +42,7 @@ class ViewController: UIViewController {
         setupRecorder()
         setupWaveform()
         setupPlayer()
-        setupAudioController()
+        setupMicrophoneController()
     }
 
     private func setupView() {
@@ -63,9 +63,8 @@ class ViewController: UIViewController {
         self.player.delegate = self
     }
 
-    private func setupAudioController() {
-        AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
-        AudioController.sharedInstance.delegate = self
+    private func setupMicrophoneController() {
+        AudioToolboxMicrophoneController.shared.delegate = self
     }
 }
 
@@ -287,7 +286,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: AudioControllerDelegate {
+extension ViewController: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
         self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
                                                 for: recorder.currentTime,
@@ -311,7 +310,7 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
             case .isRecording:
-                AudioController.sharedInstance.start()
+                AudioToolboxMicrophoneController.shared.start()
                 recordButton.setTitle("Pause", for: .normal)
                 CATransaction.begin()
                 waveformPlot.waveformView.refresh()
@@ -320,13 +319,13 @@ extension ViewController: RecorderDelegate {
                 self.totalTimeLabel.text = "00:00:00"
 
             case .stopped:
-                AudioController.sharedInstance.stop()
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
 
             case .paused, .fileLoaded:
-                AudioController.sharedInstance.stop()
+                AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
