@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
     @IBOutlet weak var finishButton: UIButton!
+    @IBOutlet weak var zoomWrapperView: UIView!
+    @IBOutlet weak var zoomValueLabel: UILabel!
     @IBOutlet weak var zoomInButton: UIButton!
     @IBOutlet weak var zoomOutButton: UIButton!
     
@@ -317,6 +319,20 @@ extension ViewController: WaveformPlotDelegate {
     }
 }
 
+// MARK: - Zoom
+
+extension ViewController {
+    private func enableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = true
+        zoomWrapperView.alpha = 1.0
+    }
+    
+    private func disableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = false
+        zoomWrapperView.alpha = 0.3
+    }
+}
+
 extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
@@ -327,19 +343,22 @@ extension ViewController: RecorderDelegate {
                 waveformPlot.waveformView.refresh()
                 CATransaction.commit()
                 waveformPlot.waveformView.isUserInteractionEnabled = false
-                self.totalTimeLabel.text = "00:00:00"
+                totalTimeLabel.text = "00:00:00"
+                disableZoomAction()
 
             case .stopped:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
+                enableZoomAction()
 
             case .paused, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
+                enableZoomAction()
         }
     }
 }
@@ -351,10 +370,12 @@ extension ViewController: AudioPlayerDelegate {
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 waveformPlot.waveformView.scrollToTheEnd()
                 playOrPauseButton.setTitle("Pause", for: .normal)
+                disableZoomAction()
             case .paused:
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.stopScrolling()
                 playOrPauseButton.setTitle("Play", for: .normal)
+                enableZoomAction()
         }
     }
 }
