@@ -9,7 +9,7 @@ enum FileDataLoaderError: Error {
     case pathOrFormatProvidedInvalid
     case openUrlFailed
     case setFormatFailed
-    case retriveFileLenghtFailed
+    case retrieveFileLengthFailed
     case fileReadFailed
     case providedURLNotAcceptable
 }

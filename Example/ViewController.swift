@@ -13,7 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
     @IBOutlet weak var finishButton: UIButton!
-
+    @IBOutlet weak var zoomInButton: UIButton!
+    @IBOutlet weak var zoomOutButton: UIButton!
+    
     // MARK: - Private Properties
 
     private var recorder: RecorderProtocol = AVFoundationRecorder()
@@ -66,6 +68,7 @@ class ViewController: UIViewController {
     private func setupMicrophoneController() {
         AudioToolboxMicrophoneController.shared.delegate = self
     }
+    
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -94,6 +97,14 @@ extension ViewController {
 
     @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
         self.playOrPause()
+    }
+    
+    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
+    
+    }
+    
+    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
+    
     }
 }
 

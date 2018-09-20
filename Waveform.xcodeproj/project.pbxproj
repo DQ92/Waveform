@@ -31,7 +31,6 @@
 		709E2EC32146547000BC0DE5 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E2EC22146547000BC0DE5 /* Operators.swift */; };
 		70B52CB02142549F000D4989 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B52CAF2142549F000D4989 /* Time.swift */; };
 		70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C6CFD121414BDE0059E174 /* FileDataLoader.swift */; };
-		B02F1663B291D21802C8E919 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1757D608EF13DD455EBE /* Waveform.swift */; };
 		B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */; };
 		B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */; };
 		E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939EE21AC6ECE7509AED4 /* RecorderError.swift */; };
@@ -51,6 +50,7 @@
 		E8893D3883A8E47FFDA0BA30 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */; };
 		E8893D805570A16F976C1699 /* RecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889393E8158E41990DB5443 /* RecorderState.swift */; };
 		E8893DA30698948F33404B99 /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */; };
+		E8893E22950C9C8F47884D66 /* ZoomType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893238FD8B04A7A9CFFC33 /* ZoomType.swift */; };
 		E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88936352B1611E5D825383D /* AudioUtils.swift */; };
 		E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889367CB6423F4B57B69FE1 /* ViewController.swift */; };
 		E8893F943644D1F1347D4F49 /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */; };
@@ -80,7 +80,6 @@
 		70B52CAF2142549F000D4989 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		70C6CFD121414BDE0059E174 /* FileDataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoader.swift; sourceTree = "<group>"; };
 		B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDelegateFlowLayout.swift; sourceTree = "<group>"; };
-		B02F1757D608EF13DD455EBE /* Waveform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waveform.swift; sourceTree = "<group>"; };
 		B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88930D698705E7F475F1D2D /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
@@ -88,6 +87,7 @@
 		E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		E88931CB919E34C35F258DAC /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
 		E889321E20374C0C8FD33AD5 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		E8893238FD8B04A7A9CFFC33 /* ZoomType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomType.swift; sourceTree = "<group>"; };
 		E889324ECFA632E33ECBA121 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -134,6 +134,7 @@
 				B02F1757D608EF13DD455EBE /* Waveform.swift */,
 				E8893EBDDFB53AAA95147015 /* Loader */,
 				E88936FF4A42C142FFCD7E68 /* Microphone */,
+				E88937E8F39CD144E58ECED8 /* Zoom */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -282,6 +283,14 @@
 			path = Recorder;
 			sourceTree = "<group>";
 		};
+		E88937E8F39CD144E58ECED8 /* Zoom */ = {
+			isa = PBXGroup;
+			children = (
+				E8893238FD8B04A7A9CFFC33 /* ZoomType.swift */,
+			);
+			path = Zoom;
+			sourceTree = "<group>";
+		};
 		E8893976D6167E37EF11A033 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -413,10 +422,10 @@
 				E8893D805570A16F976C1699 /* RecorderState.swift in Sources */,
 				66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */,
 				7097B15921492573006EE8FB /* AudioPlayerDelegate.swift in Sources */,
-				B02F1663B291D21802C8E919 /* Waveform.swift in Sources */,
 				B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */,
 				B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */,
 				E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */,
+				E8893E22950C9C8F47884D66 /* ZoomType.swift in Sources */,
 				E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */,
 				E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */,
 				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
@@ -543,11 +552,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = F6YSVD36L6;
+				DEVELOPMENT_TEAM = 5L93VD7C68;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.robert;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -559,10 +568,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = F6YSVD36L6;
+				DEVELOPMENT_TEAM = 5L93VD7C68;
 				INFOPLIST_FILE = "$(SRCROOT)/Waveform/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.robert;
+				PRODUCT_BUNDLE_IDENTIFIER = waveform.test.michal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
