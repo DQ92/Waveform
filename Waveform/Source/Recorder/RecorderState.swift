@@ -9,4 +9,5 @@ enum RecorderState {
     case isRecording
     case stopped
     case paused
+    case fileLoaded
 }
