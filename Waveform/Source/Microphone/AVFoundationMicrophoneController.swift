@@ -3,15 +3,13 @@
 import Foundation
 import AVFoundation
 
-protocol AudioControllerDelegate {
-    func processSampleData(_ data: Float) -> Void
-}
+class AVFoundationMicrophoneController {
+    // Optional is needed for inout parameter
+    var remoteIOUnit: AudioComponentInstance?
 
-class AudioController { // TODO: przerobic
-    var remoteIOUnit: AudioComponentInstance? // optional to allow it to be an inout argument
-    var delegate: AudioControllerDelegate!
+    var delegate: MicrophoneControllerDelegate!
 
-    static var sharedInstance = AudioController()
+    static var sharedInstance = AVFoundationMicrophoneController()
 
     deinit {
         AudioComponentInstanceDispose(remoteIOUnit!);
@@ -110,7 +108,7 @@ func recordingCallback(
     buffers[0].mData = nil
 
     // get the recorded samples
-    status = AudioUnitRender(AudioController.sharedInstance.remoteIOUnit!,
+    status = AudioUnitRender(AVFoundationMicrophoneController.sharedInstance.remoteIOUnit!,
             ioActionFlags,
             inTimeStamp,
             inBusNumber,
@@ -128,7 +126,7 @@ func recordingCallback(
     
     
     DispatchQueue.main.async {
-        AudioController.sharedInstance.delegate.processSampleData(rms)
+        AVFoundationMicrophoneController.sharedInstance.delegate.processSampleData(rms)
     }
 
     return noErr

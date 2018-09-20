@@ -72,8 +72,8 @@ class ViewController: UIViewController {
     }
 
     private func setupAudioController() {
-        AudioController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
-        AudioController.sharedInstance.delegate = self
+        AVFoundationMicrophoneController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
+        AVFoundationMicrophoneController.sharedInstance.delegate = self
     }
 }
 
@@ -308,7 +308,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: AudioControllerDelegate {
+extension ViewController: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
         self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
                                                 for: recorder.currentTime,
@@ -332,7 +332,7 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
             case .isRecording:
-                AudioController.sharedInstance.start()
+                AVFoundationMicrophoneController.sharedInstance.start()
                 recordButton.setTitle("Pause", for: .normal)
                 CATransaction.begin()
                 waveformPlot.waveformView.refresh()
@@ -342,14 +342,14 @@ extension ViewController: RecorderDelegate {
                 playerSource = .recorder
 
             case .stopped:
-                AudioController.sharedInstance.stop()
+                AVFoundationMicrophoneController.sharedInstance.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
                 playerSource = .recorder
 
             case .paused:
-                AudioController.sharedInstance.stop()
+                AVFoundationMicrophoneController.sharedInstance.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
