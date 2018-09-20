@@ -41,21 +41,28 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
         if player?.url == nil || player?.url != URL {
             try preparePlayer(with: URL)
         }
+        
+        if timeInterval > player.duration {
+            return
+        }
 
         player.currentTime = timeInterval
         player.play()
 
+        Log.info("Playing file - url: \(URL), duration: \(player.duration), from: \(timeInterval)")
         changePlayerState(with: .isPlaying)
     }
     
     func pause() {
         player.pause()
+        Log.info("Player paused by user")
         changePlayerState(with: .paused)
     }
 }
 
 extension AVFoundationAudioPlayer: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        delegate?.playerStateDidChange(with: .paused)
+        Log.warning("Player paused by delegate")
+        changePlayerState(with: .paused)
     }
 }

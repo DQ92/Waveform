@@ -21,17 +21,19 @@ class AudioFilesListViewController: UIViewController {
     
     // MARK: - Private attributes
     
-    private var fileUrls: [URL] = [] {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
-    
+    private var fileUrls: [URL] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         do {
-            self.fileUrls = try FileManager.default.contentsOfDirectory(at: self.directoryUrl, includingPropertiesForKeys: nil)
+            var fileUrls = try FileManager.default.contentsOfDirectory(at: self.directoryUrl,
+                                                                       includingPropertiesForKeys: nil)
+            fileUrls.sort {
+                $0.path < $1.path
+            }
+            self.fileUrls = fileUrls
+            self.tableView.reloadData()
+
         } catch {
             let alertController = UIAlertController(title: "Błąd",
                                                     message: "Nie udało się odczytać listy plików",

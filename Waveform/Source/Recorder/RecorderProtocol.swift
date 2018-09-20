@@ -12,12 +12,12 @@ enum RecordingMode {
 
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
-    var isRecording: Bool { get }
-    var resultsDirectoryURL: URL { get }
     var delegate: RecorderDelegate? { get set }
     var currentlyRecordedFileURL: URL? { get }
     var mode: RecordingMode { get }
-    
+    var recorderState: RecorderState { get }
+    var resultsDirectoryURL: URL { get }
+
     func activateSession(permissionBlock: @escaping (Bool) -> Void) throws
     func start() throws
     func stop()
@@ -26,4 +26,6 @@ protocol RecorderProtocol {
     func crop(startTime: Double, endTime: Double)
     func finish() throws
     func clearRecordings() throws
+    func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws
+    func openFile(with url: URL) throws
 }

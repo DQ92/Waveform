@@ -83,10 +83,31 @@
                                     <action selector="playOrPauseButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qs5-Iz-xUd"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="It8-W6-559">
+                                <rect key="frame" x="267" y="348" width="42" height="42"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="+"/>
+                                <connections>
+                                    <action selector="zoomInButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="347-38-XJB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7n-zq-sLk">
+                                <rect key="frame" x="317" y="348" width="42" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="height" multiplier="1:1" id="bTW-nU-99I"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="-"/>
+                                <connections>
+                                    <action selector="zoomOutButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1BK-HH-axv"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="U7n-zq-sLk" firstAttribute="leading" secondItem="It8-W6-559" secondAttribute="trailing" constant="8" id="1Q3-YP-VRl"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="gUe-QH-dQa" secondAttribute="trailing" id="2za-ji-bZe"/>
+                            <constraint firstItem="It8-W6-559" firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="width" id="4ED-Ib-AMf"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="Dbq-f3-CZs"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="EBY-pu-kn4"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Fag-hP-cH1"/>
@@ -94,11 +115,14 @@
                             <constraint firstItem="pCv-uH-TiH" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="20" id="P2w-c7-IUy"/>
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="top" secondItem="pCv-uH-TiH" secondAttribute="bottom" constant="8" id="R03-fd-epd"/>
+                            <constraint firstItem="It8-W6-559" firstAttribute="bottom" secondItem="U7n-zq-sLk" secondAttribute="bottom" id="RJm-3P-qDV"/>
+                            <constraint firstItem="qI7-tB-YBO" firstAttribute="top" secondItem="U7n-zq-sLk" secondAttribute="bottom" constant="8" id="Ufr-Aj-vWl"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="trailing" secondItem="pCv-uH-TiH" secondAttribute="trailing" id="Wvf-vj-x4b"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="20" id="Y8K-ys-VZt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="leading" secondItem="pCv-uH-TiH" secondAttribute="leading" id="hId-sa-YqD"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="U7n-zq-sLk" secondAttribute="trailing" constant="16" id="mFx-zH-wBB"/>
                             <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
@@ -117,11 +141,14 @@
                     <navigationItem key="navigationItem" id="GIG-i6-rs0"/>
                     <connections>
                         <outlet property="clearButton" destination="pCv-uH-TiH" id="6ef-ff-Q5q"/>
+                        <outlet property="finishButton" destination="gUe-QH-dQa" id="9Gk-6D-Rlu"/>
                         <outlet property="playOrPauseButton" destination="wdD-mk-kQB" id="pSy-VY-Oby"/>
                         <outlet property="recordButton" destination="ufi-fB-fAa" id="Oig-YJ-kNM"/>
                         <outlet property="timeLabel" destination="O19-fk-XHQ" id="lL1-MX-JNj"/>
                         <outlet property="totalTimeLabel" destination="qI7-tB-YBO" id="YWu-fT-OEf"/>
                         <outlet property="waveformPlot" destination="YA8-B8-5Ec" id="bqn-QM-8LD"/>
+                        <outlet property="zoomInButton" destination="It8-W6-559" id="4ka-Fv-r06"/>
+                        <outlet property="zoomOutButton" destination="U7n-zq-sLk" id="fr9-a0-aOm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

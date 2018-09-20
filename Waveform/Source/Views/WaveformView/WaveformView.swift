@@ -141,7 +141,7 @@ extension WaveformView {
             currentItem = WaveformModel(value: CGFloat(value),
                                         mode: mode,
                                         timeStamp: timeInterval)
-            
+
             if items.count <= indexOfItem {
                 self.values[section] = items + [currentItem]
             } else {
@@ -157,8 +157,7 @@ extension WaveformView {
         UIView.performWithoutAnimation {
             self.values.append(contentsOf: [data, [], []])
             self.collectionView.performBatchUpdates({
-                
-                self.collectionView.insertSections(IndexSet([self.values.count - 3, self.values.count - 2, self.values.count - 1]))
+            self.collectionView.insertSections(IndexSet([self.values.count - 3, self.values.count - 2, self.values.count - 1]))
             }, completion: completion)
         }
     }
@@ -193,7 +192,9 @@ extension WaveformView {
     func updateSampleLayer(model: WaveformModel, section: Int, sampleIndex: Int) {
         let indexPath = IndexPath(row: 0, section: section)
         if let cell = collectionView.cellForItem(at: indexPath) as? WaveformCollectionViewCell {
-            let sample = Sample(value: model.value, color: WaveformColor.color(model: model), width: self.configurator.oneLayerWidth())
+            let sample = Sample(value: model.value, color: WaveformColor.color(for: model.mode), width: self
+                    .configurator
+                    .oneLayerWidth())
 
             cell.setupSample(sample: sample, at: sampleIndex)
         } else {
@@ -267,7 +268,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
         let samples: [Sample] = self.values[indexPath.section].map { [weak self] in
             Sample(value: $0.value,
-                   color: WaveformColor.color(model: $0),
+                   color: WaveformColor.color(for: $0.mode),
                    width: self?.configurator.oneLayerWidth() ?? 0.0)
         }
         cell.setupSamples(samples: samples)
@@ -287,12 +288,9 @@ extension WaveformView: UIScrollViewDelegate {
 
 extension WaveformView: LeadingLineTimeUpdaterDelegate {
     func timeIntervalDidChange(with timeInterval: TimeInterval) {
-//        print("4 timeIntervalDidChange = \(timeInterval)")
         let value = Double(self.elementsPerSecond) * timeInterval
 
         self.sampleIndex = Int(round(value))
-//        print("5 sampleIndex po zmianie = \(value), casted = \(self.sampleIndex), round = \(Int(round(value)))")
-
         self.currentTimeInterval = timeInterval
         self.delegate?.currentTimeIntervalDidChange(timeInterval)
     }

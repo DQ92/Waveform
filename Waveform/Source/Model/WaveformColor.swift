@@ -3,17 +3,20 @@ import Foundation
 import UIKit
 
 class WaveformColor {
-    static func color(model: WaveformModel) -> UIColor {
-        var part: CGFloat
-        switch model.mode {
+    static func color(for mode: RecordingMode) -> UIColor {
+        var red: CGFloat = 200/255
+        var green: CGFloat = 200/255
+        var blue: CGFloat = 200/255
+        switch mode {
         case .normal:
-            part = 0
+            break
         case .override(let turn):
-            part = CGFloat(turn)
+            red = 240 / 255
+            green = 0
+            blue = 0
         }
 
-        let rand: CGFloat = part * 25
-        let color = UIColor(red: rand / 255, green: 0.3 + rand, blue: 0.5, alpha: 1)
+        let color = UIColor(red: red, green: green, blue: blue, alpha: 1)
         return color
     }
 }
