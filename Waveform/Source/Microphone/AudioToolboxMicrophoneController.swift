@@ -1,5 +1,3 @@
-
-
 import Foundation
 import AudioToolbox
 
@@ -7,14 +5,13 @@ class AudioToolboxMicrophoneController {
 
     // MARK: - Private properties
 
-
+    // Optional is needed for inout parameter
+    fileprivate var remoteIOUnit: AudioComponentInstance?
 
     // MARK: - Public properties
 
     var delegate: MicrophoneControllerDelegate!
     static let shared = AudioToolboxMicrophoneController()
-    // Optional is needed for inout parameter
-    var remoteIOUnit: AudioComponentInstance?
 
     // MARK: - Initialization
 
@@ -31,13 +28,7 @@ class AudioToolboxMicrophoneController {
     // MARK: - Setup
 
     private func setup() {
-        var audioComponentDescription = AudioComponentDescription()
-        audioComponentDescription.componentType = kAudioUnitType_Output;
-        audioComponentDescription.componentSubType = kAudioUnitSubType_RemoteIO;
-        audioComponentDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
-        audioComponentDescription.componentFlags = 0;
-        audioComponentDescription.componentFlagsMask = 0;
-
+        var audioComponentDescription = AudioUtils.basicMicrophoneComponentDescription()
         let remoteIOComponent = AudioComponentFindNext(nil, &audioComponentDescription)
         var status = AudioComponentInstanceNew(remoteIOComponent!, &remoteIOUnit)
         if (status != noErr) {
@@ -111,31 +102,30 @@ class AudioToolboxMicrophoneController {
     }
 }
 
-func recordingCallback(
-        inRefCon: UnsafeMutableRawPointer,
-        ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,
-        inTimeStamp: UnsafePointer<AudioTimeStamp>,
-        inBusNumber: UInt32,
-        inNumberFrames: UInt32,
-        ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
+func recordingCallback(inRefCon: UnsafeMutableRawPointer,
+                       ioActionFlags: UnsafeMutablePointer<AudioUnitRenderActionFlags>,
+                       inTimeStamp: UnsafePointer<AudioTimeStamp>,
+                       inBusNumber: UInt32,
+                       inNumberFrames: UInt32,
+                       ioData: UnsafeMutablePointer<AudioBufferList>?) -> OSStatus {
 
     var status = noErr
     let channelCount: UInt32 = 2
     var bufferList = AudioBufferList()
     bufferList.mNumberBuffers = channelCount
     let buffers = UnsafeMutableBufferPointer<AudioBuffer>(start: &bufferList.mBuffers,
-            count: Int(bufferList.mNumberBuffers))
+                                                          count: Int(bufferList.mNumberBuffers))
     buffers[0].mNumberChannels = channelCount
     buffers[0].mDataByteSize = inNumberFrames * 2
     buffers[0].mData = nil
 
     // get the recorded samples
     status = AudioUnitRender(AudioToolboxMicrophoneController.shared.remoteIOUnit!,
-            ioActionFlags,
-            inTimeStamp,
-            inBusNumber,
-            inNumberFrames,
-            UnsafeMutablePointer<AudioBufferList>(&bufferList))
+                             ioActionFlags,
+                             inTimeStamp,
+                             inBusNumber,
+                             inNumberFrames,
+                             UnsafeMutablePointer<AudioBufferList>(&bufferList))
     if (status != noErr) {
         return status;
     }

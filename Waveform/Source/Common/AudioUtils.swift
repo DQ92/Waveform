@@ -80,3 +80,17 @@ extension AudioUtils {
         return audioFormat;
     }
 }
+
+// MARK: - AudioComponentDescription
+
+extension AudioUtils {
+    static func basicMicrophoneComponentDescription() -> AudioComponentDescription {
+        var audioComponentDescription = AudioComponentDescription()
+        audioComponentDescription.componentType = kAudioUnitType_Output
+        audioComponentDescription.componentSubType = kAudioUnitSubType_RemoteIO
+        audioComponentDescription.componentManufacturer = kAudioUnitManufacturer_Apple
+        audioComponentDescription.componentFlags = 0
+        audioComponentDescription.componentFlagsMask = 0
+        return audioComponentDescription
+    }
+}
