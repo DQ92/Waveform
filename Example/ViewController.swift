@@ -50,7 +50,7 @@ class ViewController: UIViewController {
         setupRecorder()
         setupWaveform()
         setupPlayer()
-        setupAudioController()
+        setupMicrophoneController()
     }
 
     private func setupView() {
@@ -71,9 +71,8 @@ class ViewController: UIViewController {
         self.player.delegate = self
     }
 
-    private func setupAudioController() {
-        AVFoundationMicrophoneController.sharedInstance.prepare(with: AudioUtils.defualtSampleRate)
-        AVFoundationMicrophoneController.sharedInstance.delegate = self
+    private func setupMicrophoneController() {
+        AVFoundationMicrophoneController.shared.delegate = self
     }
 }
 
@@ -332,7 +331,7 @@ extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
             case .isRecording:
-                AVFoundationMicrophoneController.sharedInstance.start()
+                AVFoundationMicrophoneController.shared.start()
                 recordButton.setTitle("Pause", for: .normal)
                 CATransaction.begin()
                 waveformPlot.waveformView.refresh()
@@ -342,14 +341,14 @@ extension ViewController: RecorderDelegate {
                 playerSource = .recorder
 
             case .stopped:
-                AVFoundationMicrophoneController.sharedInstance.stop()
+                AVFoundationMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
                 playerSource = .recorder
 
             case .paused:
-                AVFoundationMicrophoneController.sharedInstance.stop()
+                AVFoundationMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
