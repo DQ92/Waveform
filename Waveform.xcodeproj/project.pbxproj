@@ -10,7 +10,7 @@
 		65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FF82140012D00BFA378 /* WaveformConfiguration.swift */; };
 		65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
 		65481FFD21400AAA00BFA378 /* Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFC21400AAA00BFA378 /* Assert.swift */; };
-		663BE7762153973100CB6234 /* Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663BE7752153973100CB6234 /* Zoom.swift */; };
+		663BE7782153A71E00CB6234 /* Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663BE7772153A71E00CB6234 /* Zoom.swift */; };
 		66427A1221428B9300C6BCE9 /* IntervalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */; };
 		66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1021428B9300C6BCE9 /* IntervalView.swift */; };
 		66427A1421428B9300C6BCE9 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1121428B9300C6BCE9 /* TimelineView.swift */; };
@@ -61,7 +61,7 @@
 		65481FF82140012D00BFA378 /* WaveformConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformConfiguration.swift; sourceTree = "<group>"; };
 		65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
 		65481FFC21400AAA00BFA378 /* Assert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assert.swift; sourceTree = "<group>"; };
-		663BE7752153973100CB6234 /* Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zoom.swift; sourceTree = "<group>"; };
+		663BE7772153A71E00CB6234 /* Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zoom.swift; sourceTree = "<group>"; };
 		66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalCollectionViewCell.swift; sourceTree = "<group>"; };
 		66427A1021428B9300C6BCE9 /* IntervalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalView.swift; sourceTree = "<group>"; };
 		66427A1121428B9300C6BCE9 /* TimelineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
@@ -288,7 +288,7 @@
 			isa = PBXGroup;
 			children = (
 				E8893238FD8B04A7A9CFFC33 /* ZoomType.swift */,
-				663BE7752153973100CB6234 /* Zoom.swift */,
+				663BE7772153A71E00CB6234 /* Zoom.swift */,
 			);
 			path = Zoom;
 			sourceTree = "<group>";
@@ -387,7 +387,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				663BE7762153973100CB6234 /* Zoom.swift in Sources */,
 				709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */,
 				66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */,
 				7097B15321491772006EE8FB /* AudioPlayerProtocol.swift in Sources */,
@@ -420,6 +419,7 @@
 				E88936392F81CD966EEB8544 /* AVFoundationRecorder.swift in Sources */,
 				E88939FBDCF1003F3B2CCE04 /* RecorderProtocol.swift in Sources */,
 				E88934EC1C50C2ED38614386 /* Logger.swift in Sources */,
+				663BE7782153A71E00CB6234 /* Zoom.swift in Sources */,
 				E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */,
 				E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */,
 				E8893D805570A16F976C1699 /* RecorderState.swift in Sources */,

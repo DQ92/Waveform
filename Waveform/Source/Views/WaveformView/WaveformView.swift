@@ -47,8 +47,14 @@ class WaveformView: UIView {
     }
     var elementsPerSecond: Int = 0
     
+    var zoom: Zoom = Zoom() {
+        didSet {
+            self.collectionView.reloadData()
+        }
+    }
+    
     weak var delegate: WaveformViewDelegate?
-    var values = [[WaveformModel]]()
+    var values: [WaveformModel] = []
 
     // MARK: - Private properties
 
@@ -58,7 +64,6 @@ class WaveformView: UIView {
     private var autoScrollTimer: Timer!
 
     private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
-    private var contentSize: CGSize = CGSize.zero
 
     // MARK: - Initialization
 
@@ -85,22 +90,16 @@ class WaveformView: UIView {
     
     // MARK: - Access methods
     
-    func load(values: [[WaveformModel]]) {
-        if let numberOfElements = values.first?.count {
-            self.elementsPerSecond = numberOfElements
-        } else {
-            self.elementsPerSecond = WaveformConfiguration.numberOfSamplesPerSecond(inViewWithWidth: self.collectionView.bounds.width)
-        }
-        self.delegate?.secondWidthDidChange(CGFloat(self.elementsPerSecond))
+    func load(values: [WaveformModel]) {
         self.values = values
         self.collectionView.reloadData()
 
-        let halfOfCollectionViewWidth = self.collectionView.bounds.width / 2
-        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
-        collectionView.contentInset = UIEdgeInsetsMake(0,
-                                                       halfOfCollectionViewWidth,
-                                                       0,
-                                                       halfOfCollectionViewWidth - numberOfElementsInLastSection)
+//        let halfOfCollectionViewWidth = self.collectionView.bounds.width / 2
+//        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
+//        collectionView.contentInset = UIEdgeInsetsMake(0,
+//                                                       halfOfCollectionViewWidth,
+//                                                       0,
+//                                                       halfOfCollectionViewWidth - numberOfElementsInLastSection)
        
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
                                     at: .left,
@@ -111,45 +110,36 @@ class WaveformView: UIView {
 
 extension WaveformView {
     func setValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
-      //  print("1 setValue")
         let section = Int(floor(self.currentTimeInterval))
         let indexOfSample = self.sampleIndex
-        let offset =  CGFloat(self.sampleIndex) + 1.0
+        let offset =  CGFloat(self.sampleIndex) + 1.0 * self.zoom.percent
         let currentItem: WaveformModel
 
 //        print("2 currentTimeInterval = \(currentTimeInterval)")
 //        print("3 sampleIndex przed zmianą = \(indexOfSample)")
 
-        if self.values.count <= section {
+        if self.values.count / elementsPerSecond <= section {
             currentItem = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
-            self.appendSecond(data: [currentItem]) { [weak self] _ in
-                self!.contentSize = self!.collectionView.contentSize
+            self.appendSecond(data: currentItem) { [weak self] _ in
                 self?.updateLeadingLine(x: offset)
             }
         } else {
-            let indexOfItem = indexOfSample - (section * self.elementsPerSecond)
-            let items = self.values[section]
-
             currentItem = WaveformModel(value: CGFloat(value),
                                         mode: mode,
                                         timeStamp: timeInterval)
 
-            if items.count <= indexOfItem {
-                self.values[section] = items + [currentItem]
-            } else {
-                self.values[section][indexOfItem] = currentItem
-            }
+            self.values[indexOfSample] = currentItem
 
-            self.updateSampleLayer(model: currentItem, section: section, sampleIndex: indexOfItem)
+            self.collectionView.reloadItems(at: [IndexPath(row: indexOfSample, section: 0)])
             self.updateLeadingLine(x: offset)
         }
     }
 
-    private func appendSecond(data: [WaveformModel], completion: ((Bool) -> Void)? = nil) {
+    private func appendSecond(data: WaveformModel, completion: ((Bool) -> Void)? = nil) {
         UIView.performWithoutAnimation {
-            self.values.append(contentsOf: [data, [], []])
+            self.values.append(data)
             self.collectionView.performBatchUpdates({
-            self.collectionView.insertSections(IndexSet([self.values.count - 3, self.values.count - 2, self.values.count - 1]))
+                self.collectionView.insertItems(at: [IndexPath(row: self.values.count - 1, section: 0)])
             }, completion: completion)
         }
     }
@@ -181,18 +171,18 @@ extension WaveformView {
         collectionView.reloadData()
     }
 
-    func updateSampleLayer(model: WaveformModel, section: Int, sampleIndex: Int) {
-        let indexPath = IndexPath(row: 0, section: section)
-        if let cell = collectionView.cellForItem(at: indexPath) as? WaveformCollectionViewCell {
-            let sample = Sample(value: model.value, color: WaveformColor.color(for: model.mode), width: self
-                    .configurator
-                    .oneLayerWidth())
-
-            cell.setupSample(sample: sample, at: sampleIndex)
-        } else {
-            Assert.checkRepresentation(true, "ERROR! lastCell is NIL!")
-        }
-    }
+//    func updateSampleLayer(model: WaveformModel, section: Int, sampleIndex: Int) {
+//        let indexPath = IndexPath(row: 0, section: section)
+//        if let cell = collectionView.cellForItem(at: indexPath) as? WaveformCollectionViewCell {
+//            let sample = Sample(value: model.value, color: WaveformColor.color(for: model.mode), width: self
+//                    .configurator
+//                    .oneLayerWidth())
+//
+//            cell.setupSample(sample: sample, at: sampleIndex)
+//        } else {
+//            Assert.checkRepresentation(true, "ERROR! lastCell is NIL!")
+//        }
+//    }
 
     func updateLeadingLine(x: CGFloat) {
         let scrollStartPosition = self.collectionView.bounds.width * 0.5
@@ -210,17 +200,17 @@ extension WaveformView {
     }
 
     func onPause() { // TODO: Zmienić nazwe
-        let numberOfItems = self.values.map { $0.count }.reduce(0, +)
-
-        let minimumRightInsets = self.collectionView.bounds.width * 0.5
-        let currentRightInsets = self.collectionView.bounds.width - CGFloat(numberOfItems)
-
-        let rightInsets = max(currentRightInsets, minimumRightInsets)
-        let leftInsets = self.collectionView.bounds.width - rightInsets
-
-        print("rightInsets = \(rightInsets), leftInsets = \(leftInsets)")
-        
-        self.collectionView.contentInset = UIEdgeInsets(top: 0.0, left: leftInsets, bottom: 0.0, right: rightInsets)
+//        let numberOfItems = self.values.map { $0.count }.reduce(0, +)
+//
+//        let minimumRightInsets = self.collectionView.bounds.width * 0.5
+//        let currentRightInsets = self.collectionView.bounds.width - CGFloat(numberOfItems)
+//
+//        let rightInsets = max(currentRightInsets, minimumRightInsets)
+//        let leftInsets = self.collectionView.bounds.width - rightInsets
+//
+//        print("rightInsets = \(rightInsets), leftInsets = \(leftInsets)")
+//
+//        self.collectionView.contentInset = UIEdgeInsets(top: 0.0, left: leftInsets, bottom: 0.0, right: rightInsets)
 
 //        let halfOfCollectionViewWidth = round(width / 2)
 //        let currentX = CGFloat(self.sampleIndex)
@@ -239,12 +229,13 @@ extension WaveformView {
 // MARK: - Delegate & DataSource
 
 extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return values.count
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let numberOfValues = CGFloat(values.count) / CGFloat(zoom.value)
+        return Int(ceil(numberOfValues / CGFloat(elementsPerSecond)))
     }
 
     public func collectionView(_ collectionView: UICollectionView,
@@ -258,9 +249,27 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.itemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
 
-        let samples: [Sample] = self.values[indexPath.section].map { [weak self] in
-            Sample(value: $0.value,
-                   color: WaveformColor.color(for: $0.mode),
+        //print("densityOfSamplesPerPoint = \(zoom.value)")
+        let densityOfSamplesPerPoint = zoom.value
+        let startIndex = min(indexPath.row * elementsPerSecond * densityOfSamplesPerPoint, self.values.count - 1)
+        let endIndex = min(startIndex + elementsPerSecond * densityOfSamplesPerPoint, self.values.count - 1)
+        
+        let subarray = Array(self.values[startIndex...endIndex])
+        var result = [CGFloat]()
+        var i = 0
+        while i < subarray.count {
+            var range = i...(min(i + densityOfSamplesPerPoint, subarray.count - 1))
+            var sum = subarray[range].map { $0.value }.reduce(0.0, +)
+            var average = sum / CGFloat(densityOfSamplesPerPoint)
+            result.append(average)
+            
+            i += densityOfSamplesPerPoint
+        }
+
+
+        let samples: [Sample] = result.map { [weak self] in
+            Sample(value: $0,
+                   color: UIColor.blue,
                    width: self?.configurator.oneLayerWidth() ?? 0.0)
         }
         cell.setupSamples(samples: samples)

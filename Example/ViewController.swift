@@ -24,11 +24,6 @@ class ViewController: UIViewController {
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
     private var url: URL!
-    private var values = [[WaveformModel]]() {
-        didSet {
-            self.waveformPlot.waveformView.values = values
-        }
-    }
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -41,7 +36,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupView()
         setupRecorder()
         setupWaveform()
@@ -102,11 +97,11 @@ extension ViewController {
     }
     
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-    
+        self.waveformPlot.zoom.in()
     }
     
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-    
+        self.waveformPlot.zoom.out()
     }
 }
 
@@ -247,9 +242,14 @@ extension ViewController {
             totalTimeLabel.text = totalTimeString
             try recorder.openFile(with: url)
             try loader.loadFile(completion: { [weak self] (array) in
-                let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                guard let caller = self else {
+                    return
+                }
+                let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
                 DispatchQueue.main.async {
-                    self?.waveformPlot.waveformView.load(values: model ?? [])
+                    caller.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
+                    caller.waveformPlot.waveformView.load(values: values)
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -273,29 +273,13 @@ extension ViewController {
         return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
     }
 
-    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
+    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-
-        let waveformSamples = samples.enumerated()
-                                     .map { sample in
-                                         WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
-                                         TimeInterval(sample.offset / sampleRate))
-                                     }
-
-        let samplesPerCell = sampleRate
-        var result = [[WaveformModel]]()
-
-        for cellIndex in 0..<Int(ceil(numberOfSeconds)) {
-            let beginIndex = cellIndex * samplesPerCell
-            let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
-            var cellSamples = [WaveformModel]()
-
-            for index in beginIndex..<endIndex {
-                cellSamples.append(waveformSamples[index])
-            }
-            result.append(cellSamples)
+        
+        return samples.enumerated().map { sample in
+            WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
+                TimeInterval(sample.offset / sampleRate))
         }
-        return result
     }
 }
 
