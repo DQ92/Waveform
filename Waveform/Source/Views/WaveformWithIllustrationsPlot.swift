@@ -44,7 +44,10 @@ class WaveformWithIllustrationsPlot: UIView {
     // MARK: - Private properties
 
     private var autoScrollTimer: Timer!
-    private let illustrationMarkViewWidth: CGFloat = 100
+    private var illustrationMarkViewWidth: CGFloat {
+        return UIScreen.main.bounds.width * 0.18
+    }
+    private var illustrationMarkDataList: [IllustrationMarkModel] = []
 
     // MARK: - Public properties
     
@@ -78,8 +81,8 @@ class WaveformWithIllustrationsPlot: UIView {
         scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
         scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
 
-        scrollContentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading)
-        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing)
+        scrollContentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth))
+        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: -(illustrationMarkViewWidth))
         scrollContentView.setupConstraint(attribute: .top, toItem: scrollView, attribute: .top)
         scrollContentView.setupConstraint(attribute: .bottom, toItem: scrollView, attribute: .bottom)
         scrollContentView.setupConstraint(attribute: .centerY, toItem: scrollView, attribute: .centerY)
@@ -93,8 +96,34 @@ class WaveformWithIllustrationsPlot: UIView {
     func addIllustrationMark() {
         let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
         scrollContentView.insertSubview(view, at: 0)
-
         view.translatesAutoresizingMaskIntoConstraints = false
+        let halfOfScrollContentViewWidth = -(scrollContentView.bounds.width / 2)
+        let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth * 0.75
+        let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
+        illustrationMarkDataList.append(IllustrationMarkModel(timeInterval: currentTimeInterval,
+                                                              centerXConstraintValue: centerXConstraintValue))
+        setupIllustrationMarkConstraints(with: centerXConstraintValue, view: view)
+        
+        view.setupTimeLabel(with: waveformPlot.waveformView.currentTimeInterval)
+        view.removeMarkBlock = { [weak self] in
+            if let index = self?.illustrationMarkDataList.firstIndex(where: { $0.timeInterval == currentTimeInterval }) {
+                self?.illustrationMarkDataList.remove(at: index)
+                view.removeFromSuperview()
+            }
+        }
+        view.bringMarkViewToFrontBlock = { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.scrollContentView.subviews.forEach {
+                if let subview = $0 as? RecordingAddedIllustrationMarkView {
+                    subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
+                }
+            }
+            strongSelf.scrollContentView.bringSubview(toFront: view)
+            view.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
+        }
+    }
+    
+    private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
         NSLayoutConstraint.build(item: view,
                                  attribute: .top,
                                  toItem: scrollContentView,
@@ -111,13 +140,12 @@ class WaveformWithIllustrationsPlot: UIView {
                                  toItem: nil,
                                  attribute: .notAnAttribute,
                                  constant: illustrationMarkViewWidth).isActive = true
-
-        let value = -(scrollContentView.bounds.width / 2) + scrollView.contentInset.left + scrollView.contentOffset.x
+        
         NSLayoutConstraint.build(item: view,
                                  attribute: .centerX,
                                  toItem: scrollContentView,
                                  attribute: .centerX,
-                                 constant: value).isActive = true
+                                 constant: centerXConstraintValue).isActive = true
     }
     
     func setupContentViewOfScrollView() {

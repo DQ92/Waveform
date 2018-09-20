@@ -31,6 +31,7 @@
 		709E2EC32146547000BC0DE5 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E2EC22146547000BC0DE5 /* Operators.swift */; };
 		70B52CB02142549F000D4989 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B52CAF2142549F000D4989 /* Time.swift */; };
 		70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C6CFD121414BDE0059E174 /* FileDataLoader.swift */; };
+		AEE3AD5E2153684D00BACDC7 /* IllustrationMarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */; };
 		AEF53435214FDC76003C0539 /* AddIllustrationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */; };
 		AEF5343B214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53437214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift */; };
 		AEF5343C214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */; };
@@ -81,6 +82,7 @@
 		709E2EC22146547000BC0DE5 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		70B52CAF2142549F000D4989 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		70C6CFD121414BDE0059E174 /* FileDataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoader.swift; sourceTree = "<group>"; };
+		AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllustrationMarkModel.swift; sourceTree = "<group>"; };
 		AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddIllustrationsViewController.swift; sourceTree = "<group>"; };
 		AEF53437214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingAddedIllustrationMarkView.swift; sourceTree = "<group>"; };
 		AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordingAddedIllustrationMarkView.xib; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 				E88930D698705E7F475F1D2D /* WaveformModel.swift */,
 				E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */,
 				70B52CAF2142549F000D4989 /* Time.swift */,
+				AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				66A5A522214BF8440020E022 /* AssetComponent.swift in Sources */,
 				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
 				70973B4921493739000C71E0 /* AVFoundationAudioPlayer.swift in Sources */,
+				AEE3AD5E2153684D00BACDC7 /* IllustrationMarkModel.swift in Sources */,
 				66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */,
 				65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */,
 				66427A1421428B9300C6BCE9 /* TimelineView.swift in Sources */,

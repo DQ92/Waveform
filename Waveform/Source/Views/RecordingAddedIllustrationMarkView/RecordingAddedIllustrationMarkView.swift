@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol RecordingAddedIllustrationMarkViewDelegate {
-    func removeIllustrationMark()
-}
-
 class RecordingAddedIllustrationMarkView: UIView {
     
     // MARK: - IBOutlets
@@ -27,9 +23,17 @@ class RecordingAddedIllustrationMarkView: UIView {
     
     private let nibName = "RecordingAddedIllustrationMarkView"
     
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss:SS"
+        
+        return formatter
+    }()
+    
     // MARK: - Public properties
     
-    var delegate: RecordingAddedIllustrationMarkViewDelegate?
+    var removeMarkBlock: (() -> Void)?
+    var bringMarkViewToFrontBlock: (() -> Void)?
     
     // MARK: - Init
     
@@ -61,11 +65,12 @@ class RecordingAddedIllustrationMarkView: UIView {
         setupImageViews()
         setupRemoveIllustrationButton()
         setupLabel()
+        setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
     }
     
     private func setupLabel() {
         timeLabel.font = UIFont.systemFont(ofSize: 11)
-        timeLabel.textColor = .green
+        timeLabel.textColor = .black
     }
     
     private func setupImageViews() {
@@ -74,6 +79,11 @@ class RecordingAddedIllustrationMarkView: UIView {
         illustrationImageView.layer.borderWidth = 2.0
         illustrationImageView.layer.borderColor = UIColor.white.cgColor
         illustrationImageView.image = UIImage(named: "mock_book0")
+        
+        let gestureRecognizer = UITapGestureRecognizer(target: self,
+                                                       action: #selector(bringIllustrationMarkViewToFront))
+        illustrationImageView.addGestureRecognizer(gestureRecognizer)
+        illustrationImageView.isUserInteractionEnabled = true
     }
     
     private func setupRemoveIllustrationButton() {
@@ -82,9 +92,22 @@ class RecordingAddedIllustrationMarkView: UIView {
         removeIllustrationButton.setImage(UIImage(named: "Trash"), for: .normal)
     }
     
+    func setupTimeLabel(with timeInterval: TimeInterval) {
+        timeLabel.text = dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
+    }
+    
+    func setupTimeLabelAndRemoveButtonVisibility(isHidden: Bool) {
+        removeIllustrationButton.isHidden = isHidden
+        timeLabel.isHidden = isHidden
+    }
+    
     // MARK: - Actions
     
     @IBAction func removeIllustrationClicked(_ sender: Any) {
-        delegate?.removeIllustrationMark()
+       removeMarkBlock?()
+    }
+    
+    @objc private func bringIllustrationMarkViewToFront() {
+        bringMarkViewToFrontBlock?()
     }
 }
