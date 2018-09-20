@@ -99,12 +99,19 @@ class WaveformWithIllustrationsPlot: UIView {
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         illustrationMarkDataList.append(IllustrationMarkModel(timeInterval: currentTimeInterval,
                                                               centerXConstraintValue: centerXConstraintValue))
+        
+        hideScrollContentViewSubviews()
+        
+        setupNewIllustrationMarkView(with: currentTimeInterval, centerXConstraintValue: centerXConstraintValue)
+    }
+    
+    private func setupNewIllustrationMarkView(with currentTimeInterval: TimeInterval, centerXConstraintValue: CGFloat) {
         let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
-        scrollContentView.insertSubview(view, at: 0)
+        scrollContentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         setupIllustrationMarkConstraints(with: centerXConstraintValue, view: view)
-
-        view.setupTimeLabel(with: waveformPlot.waveformView.currentTimeInterval)
+        
+        view.setupTimeLabel(with: currentTimeInterval)
         view.removeMarkBlock = { [weak self] in
             if let index = self?.illustrationMarkDataList.firstIndex(where: { $0.timeInterval == currentTimeInterval }) {
                 self?.illustrationMarkDataList.remove(at: index)
@@ -113,13 +120,17 @@ class WaveformWithIllustrationsPlot: UIView {
         }
         view.bringMarkViewToFrontBlock = { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.scrollContentView.subviews.forEach {
-                if let subview = $0 as? RecordingAddedIllustrationMarkView {
-                    subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
-                }
-            }
+            strongSelf.hideScrollContentViewSubviews()
             strongSelf.scrollContentView.bringSubview(toFront: view)
             view.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
+        }
+    }
+    
+    private func hideScrollContentViewSubviews() {
+        scrollContentView.subviews.forEach {
+            if let subview = $0 as? RecordingAddedIllustrationMarkView {
+                subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
+            }
         }
     }
     
@@ -159,6 +170,25 @@ class WaveformWithIllustrationsPlot: UIView {
                                                   attribute: .notAnAttribute,
                                                   constant: width)
         constraint.isActive = true
+    }
+    
+    func initIllustrationMarksViews() {
+        illustrationMarkDataList = [
+            IllustrationMarkModel(timeInterval: 0.0,
+                                  centerXConstraintValue: -288.11),
+            IllustrationMarkModel(timeInterval: 1.8372093023255813,
+                                  centerXConstraintValue: -129.77666666666664),
+            IllustrationMarkModel(timeInterval: 3.383720930232558,
+                                  centerXConstraintValue: 2.556666666666672),
+            IllustrationMarkModel(timeInterval: 5.906976744186046,
+                                  centerXConstraintValue: 219.55666666666667)
+        ]
+        
+        illustrationMarkDataList.forEach { data in
+            setupNewIllustrationMarkView(with: data.timeInterval, centerXConstraintValue: data.centerXConstraintValue)
+        }
+        
+        hideScrollContentViewSubviews()
     }
 }
 

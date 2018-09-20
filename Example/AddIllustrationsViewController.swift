@@ -119,6 +119,7 @@ extension AddIllustrationsViewController {
                 DispatchQueue.main.async {
                     self?.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: model ?? [])
                     self?.waveformWithIllustrationsPlot.setupContentViewOfScrollView()
+                    self?.waveformWithIllustrationsPlot.initIllustrationMarksViews()
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {

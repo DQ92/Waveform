@@ -65,7 +65,6 @@ class RecordingAddedIllustrationMarkView: UIView {
         setupImageViews()
         setupRemoveIllustrationButton()
         setupLabel()
-        setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
     }
     
     private func setupLabel() {
