@@ -32,6 +32,10 @@ struct Zoom {
         return self.levels[self.currentLevel].multiplier
     }
 
+    var percent: String {
+        return self.levels[self.currentLevel].percent
+    }
+
     // MARK: - Private properties
 
     private var levels: [ZoomLevel] = []
@@ -113,7 +117,7 @@ struct ZoomLevel: Equatable {
     let multiplier: Double
 
     var percent: String {
-        return "\(multiplier * 100)%"
+        return "\(Int(multiplier * 100))%"
     }
 }
 
