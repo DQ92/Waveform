@@ -94,12 +94,11 @@ class WaveformView: UIView {
         self.values = values
         self.collectionView.reloadData()
 
-//        let halfOfCollectionViewWidth = self.collectionView.bounds.width / 2
-//        let numberOfElementsInLastSection = CGFloat(elementsPerSecond - values[values.count - 1].count)
-//        collectionView.contentInset = UIEdgeInsetsMake(0,
-//                                                       halfOfCollectionViewWidth,
-//                                                       0,
-//                                                       halfOfCollectionViewWidth - numberOfElementsInLastSection)
+        let halfOfCollectionViewWidth = self.collectionView.bounds.width / 2
+        collectionView.contentInset = UIEdgeInsetsMake(0,
+                                                       halfOfCollectionViewWidth,
+                                                       0,
+                                                       halfOfCollectionViewWidth)
        
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0),
                                     at: .left,
@@ -112,7 +111,7 @@ extension WaveformView {
     func setValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
         let section = Int(floor(self.currentTimeInterval))
         let indexOfSample = self.sampleIndex
-        let offset =  CGFloat(self.sampleIndex) + 1.0 * self.zoom.percent
+        let offset =  CGFloat(self.sampleIndex) + 1.0 * CGFloat(self.zoom.multiplier)
         let currentItem: WaveformModel
 
 //        print("2 currentTimeInterval = \(currentTimeInterval)")
@@ -258,14 +257,13 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         var result = [CGFloat]()
         var i = 0
         while i < subarray.count {
-            var range = i...(min(i + densityOfSamplesPerPoint, subarray.count - 1))
-            var sum = subarray[range].map { $0.value }.reduce(0.0, +)
-            var average = sum / CGFloat(densityOfSamplesPerPoint)
+            let range = i...(min(i + densityOfSamplesPerPoint, subarray.count - 1))
+            let sum = subarray[range].map { $0.value }.reduce(0.0, +)
+            let average = sum / CGFloat(densityOfSamplesPerPoint)
             result.append(average)
             
             i += densityOfSamplesPerPoint
         }
-
 
         let samples: [Sample] = result.map { [weak self] in
             Sample(value: $0,
@@ -308,7 +306,8 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
     }
 
     @objc func scrollContentOffset() {
-        let difference: CGFloat = CGFloat(WaveformConfiguration.microphoneSamplePerSecond) / 100
+        let numberOfSamplesPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
+        let difference: CGFloat = numberOfSamplesPerSecond / 100 * CGFloat(zoom.multiplier)
         let finalPosition: CGFloat = self.collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
         collectionView.bounds = CGRect(x: point.x,
