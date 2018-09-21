@@ -307,7 +307,7 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
 
     @objc func scrollContentOffset() {
         let numberOfSamplesPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
-        let difference: CGFloat = numberOfSamplesPerSecond / 100 * CGFloat(zoom.multiplier)
+        let difference: CGFloat = (numberOfSamplesPerSecond / 100) * CGFloat(zoom.multiplier)
         let finalPosition: CGFloat = self.collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
         collectionView.bounds = CGRect(x: point.x,
