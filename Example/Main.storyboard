@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="XJJ-bd-kgR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="XJJ-bd-kgR">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -83,46 +84,69 @@
                                     <action selector="playOrPauseButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qs5-Iz-xUd"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="It8-W6-559">
-                                <rect key="frame" x="267" y="348" width="42" height="42"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <state key="normal" title="+"/>
-                                <connections>
-                                    <action selector="zoomInButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="347-38-XJB"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7n-zq-sLk">
-                                <rect key="frame" x="317" y="348" width="42" height="42"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PlV-Ew-aSA">
+                                <rect key="frame" x="164.5" y="341" width="195.5" height="42"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="It8-W6-559">
+                                        <rect key="frame" x="103.5" y="0.0" width="42" height="42"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <state key="normal" title="+"/>
+                                        <connections>
+                                            <action selector="zoomInButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="347-38-XJB"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7n-zq-sLk">
+                                        <rect key="frame" x="153.5" y="0.0" width="42" height="42"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="height" multiplier="1:1" id="bTW-nU-99I"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <state key="normal" title="-"/>
+                                        <connections>
+                                            <action selector="zoomOutButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1BK-HH-axv"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Zoom: 100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SRb-FH-Efa">
+                                        <rect key="frame" x="0.0" y="0.0" width="95.5" height="42"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="height" multiplier="1:1" id="bTW-nU-99I"/>
+                                    <constraint firstItem="It8-W6-559" firstAttribute="leading" secondItem="SRb-FH-Efa" secondAttribute="trailing" constant="8" id="8Ls-fF-VfD"/>
+                                    <constraint firstAttribute="bottom" secondItem="SRb-FH-Efa" secondAttribute="bottom" id="9y6-I3-hmK"/>
+                                    <constraint firstAttribute="trailing" secondItem="U7n-zq-sLk" secondAttribute="trailing" id="OQ5-fA-5jU"/>
+                                    <constraint firstItem="It8-W6-559" firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="width" id="POr-lx-3eH"/>
+                                    <constraint firstItem="SRb-FH-Efa" firstAttribute="top" secondItem="PlV-Ew-aSA" secondAttribute="top" id="XdT-f5-FMj"/>
+                                    <constraint firstAttribute="bottom" secondItem="U7n-zq-sLk" secondAttribute="bottom" id="ake-4m-2U0"/>
+                                    <constraint firstAttribute="bottom" secondItem="It8-W6-559" secondAttribute="bottom" id="cij-BE-LfM"/>
+                                    <constraint firstItem="It8-W6-559" firstAttribute="bottom" secondItem="U7n-zq-sLk" secondAttribute="bottom" id="dvT-0T-rTz"/>
+                                    <constraint firstItem="It8-W6-559" firstAttribute="top" secondItem="PlV-Ew-aSA" secondAttribute="top" id="g1B-9n-KTH"/>
+                                    <constraint firstItem="U7n-zq-sLk" firstAttribute="leading" secondItem="It8-W6-559" secondAttribute="trailing" constant="8" id="kbz-Wa-UAC"/>
+                                    <constraint firstItem="SRb-FH-Efa" firstAttribute="leading" secondItem="PlV-Ew-aSA" secondAttribute="leading" id="sHG-98-Zu4"/>
+                                    <constraint firstItem="U7n-zq-sLk" firstAttribute="top" secondItem="PlV-Ew-aSA" secondAttribute="top" id="sjb-kc-CZA"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <state key="normal" title="-"/>
-                                <connections>
-                                    <action selector="zoomOutButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1BK-HH-axv"/>
-                                </connections>
-                            </button>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="U7n-zq-sLk" firstAttribute="leading" secondItem="It8-W6-559" secondAttribute="trailing" constant="8" id="1Q3-YP-VRl"/>
                             <constraint firstItem="11k-c7-ooL" firstAttribute="trailing" secondItem="gUe-QH-dQa" secondAttribute="trailing" id="2za-ji-bZe"/>
-                            <constraint firstItem="It8-W6-559" firstAttribute="width" secondItem="U7n-zq-sLk" secondAttribute="width" id="4ED-Ib-AMf"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="top" secondItem="ufi-fB-fAa" secondAttribute="bottom" constant="12" id="Dbq-f3-CZs"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="4" id="EBY-pu-kn4"/>
                             <constraint firstItem="gUe-QH-dQa" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Fag-hP-cH1"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PlV-Ew-aSA" secondAttribute="trailing" constant="15" id="Itd-bq-FkQ"/>
                             <constraint firstItem="ufi-fB-fAa" firstAttribute="leading" secondItem="gUe-QH-dQa" secondAttribute="leading" id="KCw-pX-Qp4"/>
                             <constraint firstItem="pCv-uH-TiH" firstAttribute="top" secondItem="gUe-QH-dQa" secondAttribute="bottom" constant="20" id="P2w-c7-IUy"/>
                             <constraint firstItem="O19-fk-XHQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PxS-W7-mmi"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="top" secondItem="pCv-uH-TiH" secondAttribute="bottom" constant="8" id="R03-fd-epd"/>
-                            <constraint firstItem="It8-W6-559" firstAttribute="bottom" secondItem="U7n-zq-sLk" secondAttribute="bottom" id="RJm-3P-qDV"/>
-                            <constraint firstItem="qI7-tB-YBO" firstAttribute="top" secondItem="U7n-zq-sLk" secondAttribute="bottom" constant="8" id="Ufr-Aj-vWl"/>
+                            <constraint firstItem="O19-fk-XHQ" firstAttribute="top" secondItem="PlV-Ew-aSA" secondAttribute="bottom" constant="15" id="T0h-xw-K73"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="trailing" secondItem="pCv-uH-TiH" secondAttribute="trailing" id="Wvf-vj-x4b"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="YA8-B8-5Ec" secondAttribute="bottom" constant="20" id="Y8K-ys-VZt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YA8-B8-5Ec" secondAttribute="trailing" id="bVC-aS-avL"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="qI7-tB-YBO" secondAttribute="trailing" constant="16" id="d7k-wM-tCS"/>
                             <constraint firstItem="wdD-mk-kQB" firstAttribute="leading" secondItem="pCv-uH-TiH" secondAttribute="leading" id="hId-sa-YqD"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="U7n-zq-sLk" secondAttribute="trailing" constant="16" id="mFx-zH-wBB"/>
                             <constraint firstAttribute="top" secondItem="HKB-nu-VKR" secondAttribute="bottom" constant="8" id="maC-ye-T1q"/>
                             <constraint firstItem="YA8-B8-5Ec" firstAttribute="top" secondItem="O19-fk-XHQ" secondAttribute="bottom" constant="8" id="oS7-Tb-40s"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="HKB-nu-VKR" secondAttribute="trailing" constant="16" id="pN1-kI-27a"/>
@@ -148,6 +172,8 @@
                         <outlet property="waveformPlot" destination="YA8-B8-5Ec" id="bqn-QM-8LD"/>
                         <outlet property="zoomInButton" destination="It8-W6-559" id="4ka-Fv-r06"/>
                         <outlet property="zoomOutButton" destination="U7n-zq-sLk" id="fr9-a0-aOm"/>
+                        <outlet property="zoomValueLabel" destination="SRb-FH-Efa" id="FrX-5k-rhS"/>
+                        <outlet property="zoomWrapperView" destination="PlV-Ew-aSA" id="nmZ-Mw-6Qf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

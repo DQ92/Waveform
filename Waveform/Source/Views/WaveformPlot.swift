@@ -37,6 +37,12 @@ class WaveformPlot: UIView {
     // MARK: - Public properties
     
     weak var delegate: WaveformPlotDelegate?
+    var zoom: Zoom = Zoom() {
+        didSet {
+            self.waveformView.zoom = zoom
+            self.timelineView.timeInterval = TimeInterval(zoom.samplePerLayer)
+        }
+    }
     
     // MARK: - Initialization
     

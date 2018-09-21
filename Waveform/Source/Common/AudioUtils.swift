@@ -12,6 +12,7 @@ class AudioUtils {
     
     static let defaultWaveformFloatModifier: Float = 500
     static let defaultSampleRate: Double = 44100
+    static let defaultZoomMultipliers: [Double] = [0, 0.25, 0.5, 0.75, 1]
 
     // MARK: - Rms evaluating
 

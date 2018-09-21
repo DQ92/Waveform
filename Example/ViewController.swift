@@ -13,20 +13,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var waveformPlot: WaveformPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
     @IBOutlet weak var finishButton: UIButton!
+    @IBOutlet weak var zoomWrapperView: UIView!
+    @IBOutlet weak var zoomValueLabel: UILabel!
     @IBOutlet weak var zoomInButton: UIButton!
     @IBOutlet weak var zoomOutButton: UIButton!
-    
+
     // MARK: - Private Properties
 
     private var recorder: RecorderProtocol = AVFoundationRecorder()
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
     private var url: URL!
-    private var values = [[WaveformModel]]() {
-        didSet {
-            self.waveformPlot.waveformView.values = values
-        }
-    }
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -68,7 +65,6 @@ class ViewController: UIViewController {
     private func setupMicrophoneController() {
         AudioToolboxMicrophoneController.shared.delegate = self
     }
-    
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -98,13 +94,15 @@ extension ViewController {
     @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
         self.playOrPause()
     }
-    
+
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-    
+        self.waveformPlot.zoom.in()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
     }
-    
+
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-    
+        self.waveformPlot.zoom.out()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
     }
 }
 
@@ -245,9 +243,14 @@ extension ViewController {
             totalTimeLabel.text = totalTimeString
             try recorder.openFile(with: url)
             try loader.loadFile(completion: { [weak self] (array) in
-                let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                guard let caller = self else {
+                    return
+                }
+                let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
                 DispatchQueue.main.async {
-                    self?.waveformPlot.waveformView.load(values: model ?? [])
+                    caller.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
+                    caller.waveformPlot.waveformView.load(values: values)
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -271,29 +274,13 @@ extension ViewController {
         return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
     }
 
-    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
+    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
 
-        let waveformSamples = samples.enumerated()
-                                     .map { sample in
-                                         WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
-                                         TimeInterval(sample.offset / sampleRate))
-                                     }
-
-        let samplesPerCell = sampleRate
-        var result = [[WaveformModel]]()
-
-        for cellIndex in 0..<Int(ceil(numberOfSeconds)) {
-            let beginIndex = cellIndex * samplesPerCell
-            let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
-            var cellSamples = [WaveformModel]()
-
-            for index in beginIndex..<endIndex {
-                cellSamples.append(waveformSamples[index])
-            }
-            result.append(cellSamples)
+        return samples.enumerated().map { sample in
+            WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
+            TimeInterval(sample.offset / sampleRate))
         }
-        return result
     }
 }
 
@@ -317,6 +304,20 @@ extension ViewController: WaveformPlotDelegate {
     }
 }
 
+// MARK: - Zoom
+
+extension ViewController {
+    private func enableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = true
+        zoomWrapperView.alpha = 1.0
+    }
+
+    private func disableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = false
+        zoomWrapperView.alpha = 0.3
+    }
+}
+
 extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
@@ -327,19 +328,22 @@ extension ViewController: RecorderDelegate {
                 waveformPlot.waveformView.refresh()
                 CATransaction.commit()
                 waveformPlot.waveformView.isUserInteractionEnabled = false
-                self.totalTimeLabel.text = "00:00:00"
+                totalTimeLabel.text = "00:00:00"
+                disableZoomAction()
 
             case .stopped:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
+                enableZoomAction()
 
             case .paused, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.onPause()
+                enableZoomAction()
         }
     }
 }
@@ -351,10 +355,12 @@ extension ViewController: AudioPlayerDelegate {
                 waveformPlot.waveformView.isUserInteractionEnabled = false
                 waveformPlot.waveformView.scrollToTheEnd()
                 playOrPauseButton.setTitle("Pause", for: .normal)
+                disableZoomAction()
             case .paused:
                 waveformPlot.waveformView.isUserInteractionEnabled = true
                 waveformPlot.waveformView.stopScrolling()
                 playOrPauseButton.setTitle("Play", for: .normal)
+                enableZoomAction()
         }
     }
 }
