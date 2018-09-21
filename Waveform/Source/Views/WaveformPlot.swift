@@ -40,7 +40,7 @@ class WaveformPlot: UIView {
     var zoom: Zoom = Zoom() {
         didSet {
             self.waveformView.zoom = zoom
-            self.timelineView.timeInterval = TimeInterval(zoom.value)
+            self.timelineView.timeInterval = TimeInterval(zoom.samplePerLayer)
         }
     }
     

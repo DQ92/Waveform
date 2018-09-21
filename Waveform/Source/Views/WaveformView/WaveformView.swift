@@ -233,7 +233,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numberOfValues = CGFloat(values.count) / CGFloat(zoom.value)
+        let numberOfValues = CGFloat(values.count) / CGFloat(zoom.samplePerLayer)
         return Int(ceil(numberOfValues / CGFloat(elementsPerSecond)))
     }
 
@@ -249,7 +249,7 @@ extension WaveformView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.itemReuseIdentifier, for: indexPath) as! WaveformCollectionViewCell
 
         //print("densityOfSamplesPerPoint = \(zoom.value)")
-        let densityOfSamplesPerPoint = zoom.value
+        let densityOfSamplesPerPoint = zoom.samplePerLayer
         let startIndex = min(indexPath.row * elementsPerSecond * densityOfSamplesPerPoint, self.values.count - 1)
         let endIndex = min(startIndex + elementsPerSecond * densityOfSamplesPerPoint, self.values.count - 1)
         
