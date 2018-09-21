@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol WaveformWithIllustrationsPlotDelegate: class {
-    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
-}
-
 class WaveformWithIllustrationsPlot: UIView {
     
     // MARK: - Views
@@ -47,11 +43,12 @@ class WaveformWithIllustrationsPlot: UIView {
     private var illustrationMarkViewWidth: CGFloat {
         return UIScreen.main.bounds.width * 0.08
     }
-    private var illustrationMarkDictionary: [UIView: IllustrationMarkModel] = [:]
-
-    // MARK: - Public properties
+    private var illustrationMarkDictionary: [RecordingAddedIllustrationMarkView: IllustrationMarkModel] = [:]
     
-    weak var delegate: WaveformWithIllustrationsPlotDelegate?
+    // MARK: - Private constants
+    
+    private let leftMarkViewVisibilityMargin = UIScreen.main.bounds.width * 0.5
+    private let rightMarkViewVisibilityMargin = 2 * UIScreen.main.bounds.width
     
     // MARK: - Initialization
     
@@ -82,7 +79,7 @@ class WaveformWithIllustrationsPlot: UIView {
         scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
 
         scrollContentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth))
-        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: -(illustrationMarkViewWidth - 20))
+        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: -(illustrationMarkViewWidth))
         scrollContentView.setupConstraint(attribute: .top, toItem: scrollView, attribute: .top)
         scrollContentView.setupConstraint(attribute: .bottom, toItem: scrollView, attribute: .bottom)
         scrollContentView.setupConstraint(attribute: .centerY, toItem: scrollView, attribute: .centerY)
@@ -98,14 +95,14 @@ class WaveformWithIllustrationsPlot: UIView {
         let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         
-        hideScrollContentViewSubviews()
+        setAllIllustrationMarksInactive()
         let view = setupNewIllustrationMarkView(with: currentTimeInterval, centerXConstraintValue: centerXConstraintValue)
         illustrationMarkDictionary[view] = (IllustrationMarkModel(timeInterval: currentTimeInterval,
-                                                                centerXConstraintValue: centerXConstraintValue))
+                                                                  centerXConstraintValue: centerXConstraintValue))
         
     }
     
-    private func setupNewIllustrationMarkView(with currentTimeInterval: TimeInterval, centerXConstraintValue: CGFloat) -> UIView {
+    private func setupNewIllustrationMarkView(with currentTimeInterval: TimeInterval, centerXConstraintValue: CGFloat) -> RecordingAddedIllustrationMarkView {
         let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
         scrollContentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -120,7 +117,7 @@ class WaveformWithIllustrationsPlot: UIView {
         }
         view.bringMarkViewToFrontBlock = { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.hideScrollContentViewSubviews()
+            strongSelf.setAllIllustrationMarksInactive()
             strongSelf.scrollContentView.bringSubview(toFront: view)
             view.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
         }
@@ -128,12 +125,8 @@ class WaveformWithIllustrationsPlot: UIView {
         return view
     }
     
-    private func hideScrollContentViewSubviews() {
-        scrollContentView.subviews.forEach {
-            if let subview = $0 as? RecordingAddedIllustrationMarkView {
-                subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
-            }
-        }
+    private func setAllIllustrationMarksInactive() {
+        illustrationMarkDictionary.keys.forEach { $0.setupTimeLabelAndRemoveButtonVisibility(isHidden: true) }
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
@@ -163,7 +156,7 @@ class WaveformWithIllustrationsPlot: UIView {
     
     func setupContentViewOfScrollView() {
         waveformPlot.waveformView.layoutIfNeeded() // TODO: updating view in different way
-        let width = waveformPlot.waveformView.waveformViewContentSize.width + 20
+        let width = waveformPlot.waveformView.waveformViewContentSize.width
         scrollView.contentInset = waveformPlot.waveformView.contentInset
         let constraint = NSLayoutConstraint.build(item: scrollContentView,
                                                   attribute: .width,
@@ -173,14 +166,6 @@ class WaveformWithIllustrationsPlot: UIView {
                                                   constant: width)
         constraint.isActive = true
     }
-    
-    func initIllustrationMarksViews() {
-        illustrationMarkDictionary.forEach { item in
-            setupNewIllustrationMarkView(with: item.value.timeInterval, centerXConstraintValue: item.value.centerXConstraintValue)
-        }
-        
-        hideScrollContentViewSubviews()
-    }
 }
 
 extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
@@ -189,16 +174,15 @@ extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
         
         illustrationMarkDictionary.forEach { element in
             let leftOffset = element.value.centerXConstraintValue + (scrollContentView.bounds.width / 2) - (scrollView.contentOffset.x - scrollView.contentInset.left)
-            let halfOfScreenWidth = UIScreen.main.bounds.width * 0.5
             
-            //print("leftOffset: \(leftOffset)       constraint: \(element.value.centerXConstraintValue)")
-            if leftOffset < halfOfScreenWidth && scrollContentView.subviews.contains(element.key) {
+           // print("leftOffset: \(leftOffset)       constraint: \(element.value.centerXConstraintValue)")
+            if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && scrollContentView.subviews.contains(element.key) {
                 scrollContentView.willRemoveSubview(element.key)
                 element.key.removeFromSuperview()
                 print("removed mark view")
             }
 
-            if leftOffset > halfOfScreenWidth && !scrollContentView.subviews.contains(element.key) {
+            if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && !scrollContentView.subviews.contains(element.key) {
                 scrollContentView.addSubview(element.key)
                 setupIllustrationMarkConstraints(with: element.value.centerXConstraintValue, view: element.key)
                 print("added mark view")
