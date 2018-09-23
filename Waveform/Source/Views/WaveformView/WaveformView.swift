@@ -39,21 +39,21 @@ class WaveformView: UIView {
 
     private(set) var currentTimeInterval: TimeInterval = 0.0
     private(set) var sampleIndex: Int = 0
-    
+
     var contentOffset: CGPoint = CGPoint.zero {
         didSet {
             self.collectionView.contentOffset = contentOffset
         }
     }
     var elementsPerSecond: Int = 0
-    
+
     var zoom: Zoom = Zoom() {
         didSet {
             self.coordinator.samplePerLayer = zoom.samplePerLayer
             self.collectionView.reloadData()
         }
     }
-    
+
     var recordingModeEnabled: Bool = false {
         didSet {
             if recordingModeEnabled {
@@ -63,7 +63,7 @@ class WaveformView: UIView {
             }
         }
     }
-    
+
     weak var delegate: WaveformViewDelegate?
 
     // MARK: - Private properties
@@ -73,12 +73,12 @@ class WaveformView: UIView {
     private var autoScrollTimer: Timer!
 
     private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
-    
+
     private lazy var coordinator: WaveformCoordinator = {
         let coordinator = WaveformCoordinator(cellIdentifier: self.collectionViewCellIdentifier, endlessScrollingEnabled: false)
         coordinator.contentOffsetDidChangeBlock = { [weak self] contentOffset in
             guard let caller = self else { return }
-            
+
             caller.leadingLineTimeUpdater.changeTime(withX: max(round(contentOffset.x + caller.leadingLine.position.x), 0.0))
             caller.contentOffset = contentOffset
             caller.delegate?.contentOffsetDidChange(contentOffset)
@@ -108,34 +108,34 @@ class WaveformView: UIView {
         leadingLine.position = CGPoint(x: 0, y: leadingLine.position.y)
         collectionView.reloadData()
     }
-    
+
     // MARK: - Access methods
-    
+
     func load(values: [WaveformModel]) {
         self.coordinator.values = values
         self.collectionView.reloadData()
     }
-    
+
     private func enableRecordingMode() {
         self.coordinator.endlessScrollingEnabled = true
         self.collectionView.reloadData()
     }
-    
+
     private func disableRecordingMode() {
         self.collectionView.contentInset = self.calculateContentInset()
         self.coordinator.endlessScrollingEnabled = false
         self.collectionView.reloadData()
     }
-    
+
     private func calculateContentInset() -> UIEdgeInsets {
         let contentWidth = CGFloat(self.coordinator.values.count) * self.coordinator.configurator.sampleLayerWidth
-        
+
         let minimumRightInsets = self.collectionView.bounds.width * 0.5
         let currentRightInsets = self.collectionView.bounds.width - contentWidth
-        
+
         let rightInsets = max(currentRightInsets, minimumRightInsets)
         let leftInsets = self.collectionView.bounds.width - rightInsets
-        
+
         return UIEdgeInsets(top: 0.0, left: leftInsets, bottom: 0.0, right: rightInsets)
     }
 }
@@ -144,10 +144,10 @@ extension WaveformView {
     func setValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
         let currentRow = self.sampleIndex / self.coordinator.configurator.layersPerSecond
         let offset =  CGFloat(self.sampleIndex) + 1.0 * CGFloat(self.zoom.multiplier)
-        
+
         let indexPath = IndexPath(row: currentRow, section: 0)
         let model = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
-        
+
         if self.coordinator.shouldLoadMoreItems(forIndexPath: indexPath) {
             self.coordinator.values.append(model)
             self.coordinator.appendItems(atSection: indexPath.section,
@@ -160,7 +160,7 @@ extension WaveformView {
             } else {
                 self.coordinator.values[self.sampleIndex] = model
             }
-            
+
 //            self.collectionView.reloadItems(at: [indexPath])
             self.collectionView.reloadData()
             self.updateLeadingLine(x: offset)
@@ -173,7 +173,7 @@ extension WaveformView {
 extension WaveformView {
     private func commonInit() {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-        
+
         self.elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
         self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
         self.leadingLineTimeUpdater.delegate = self
@@ -231,15 +231,15 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
     }
 
     @objc func scrollContentOffset() {
-        let numberOfSamplesPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
-        let difference: CGFloat = numberOfSamplesPerSecond / 100 * CGFloat(zoom.multiplier)
+        let numberOfLayersPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
+        let difference: CGFloat = CGFloat(numberOfLayersPerSecond) / CGFloat((100 * zoom.samplePerLayer))
         let finalPosition: CGFloat = self.collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
         collectionView.bounds = CGRect(x: point.x,
                                        y: point.y,
                                        width: collectionView.bounds.size.width,
                                        height: collectionView.bounds.size.height)
-        self.leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x)
+        self.leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x, and: zoom.samplePerLayer)
         self.delegate?.contentOffsetDidChange(point)
     }
 

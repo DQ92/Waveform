@@ -32,6 +32,10 @@ struct Zoom {
         return self.levels[self.currentLevel].multiplier
     }
 
+    var percent: String {
+        return self.levels[self.currentLevel].percent
+    }
+
     // MARK: - Private properties
 
     private var levels: [ZoomLevel] = []
@@ -67,29 +71,44 @@ struct Zoom {
     }
 
     private func calculateZoomLevels(from max: Int, and multipliers: [Double]) -> [ZoomLevel] {
+        let temporaryZoomLevels: [ZoomLevel] = multipliers.map {
+                                                              return self.createZoomLevel(with: max, and: $0)
+                                                          }
+                                                          .filter {
+                                                              $0.samplePerLayer >= 1
+                                                          }
+                                                          .sorted {
+                                                              $0.multiplier > $1.multiplier
+                                                          }
 
-        var intermediateZoomLevels: [ZoomLevel] = multipliers.map {
-                                                                 return self.createZoomLevel(with: max, and: $0)
-                                                             }
-                                                             .filter {
-                                                                 $0.samplePerLayer >= 1
-                                                             }
-                                                             .sorted {
-                                                                 $0.multiplier < $1.multiplier
-                                                             }
-        intermediateZoomLevels.removeDuplicates()
-        return intermediateZoomLevels
+        return retrieveValidZoomLevels(from: temporaryZoomLevels)
+    }
+
+    private func retrieveValidZoomLevels(from zoomLevels: [ZoomLevel]) -> [ZoomLevel] {
+        let validZoomLevels = zoomLevels.enumerated()
+                                        .filter {
+                                            let case1 = $0.offset == zoomLevels.startIndex
+                                            let case2 = $0.element != zoomLevels.first && $0.element != zoomLevels.last
+                                            let case3 = $0.offset == zoomLevels.endIndex - 1 && $0.element !=
+                                                    zoomLevels.first
+                                            return case1 || case2 || case3
+                                        }
+                                        .map {
+                                            $0.element
+                                        }
+
+        return validZoomLevels
     }
 
     private func createZoomLevel(with maxSamplePerLayer: Int, and multiplier: Double) -> ZoomLevel {
-        var multiplier = multiplier
-        if multiplier == 0.0 {
-            multiplier = 1.0
-        } else if multiplier == 1.0 {
-            multiplier = 1 / multiplier
+        var countingMultiplier: Double = 1.0 - multiplier
+        var multiplierToDisplay = multiplier
+        if countingMultiplier == 0.0 {
+            countingMultiplier = 1.0 / Double(maxSamplePerLayer)
+            multiplierToDisplay = 1.0
         }
-        return ZoomLevel(samplePerLayer: Int(multiplier * Double(maxSamplePerLayer)),
-                         multiplier: multiplier)
+        return ZoomLevel(samplePerLayer: Int(ceil(countingMultiplier * Double(maxSamplePerLayer))),
+                         multiplier: multiplierToDisplay)
     }
 }
 
@@ -98,7 +117,7 @@ struct ZoomLevel: Equatable {
     let multiplier: Double
 
     var percent: String {
-        return "\(multiplier * 100)%"
+        return "\(Int(multiplier * 100))%"
     }
 }
 

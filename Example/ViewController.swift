@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var zoomValueLabel: UILabel!
     @IBOutlet weak var zoomInButton: UIButton!
     @IBOutlet weak var zoomOutButton: UIButton!
-    
+
     // MARK: - Private Properties
 
     private var recorder: RecorderProtocol = AVFoundationRecorder()
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupView()
         setupRecorder()
         setupWaveform()
@@ -65,7 +65,6 @@ class ViewController: UIViewController {
     private func setupMicrophoneController() {
         AudioToolboxMicrophoneController.shared.delegate = self
     }
-    
 }
 
 // MARK: - Buttons - start/pause/resume
@@ -95,13 +94,15 @@ extension ViewController {
     @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
         self.playOrPause()
     }
-    
+
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
         self.waveformPlot.zoom.in()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
     }
-    
+
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
         self.waveformPlot.zoom.out()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
     }
 }
 
@@ -274,10 +275,10 @@ extension ViewController {
 
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-        
+
         return samples.enumerated().map { sample in
             WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
-                TimeInterval(sample.offset / sampleRate))
+            TimeInterval(sample.offset / sampleRate))
         }
     }
 }
@@ -309,7 +310,7 @@ extension ViewController {
         zoomWrapperView.isUserInteractionEnabled = true
         zoomWrapperView.alpha = 1.0
     }
-    
+
     private func disableZoomAction() {
         zoomWrapperView.isUserInteractionEnabled = false
         zoomWrapperView.alpha = 0.3
