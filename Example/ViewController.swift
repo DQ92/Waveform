@@ -180,8 +180,7 @@ extension ViewController {
         Log.info("Start recording")
         do {
             if recorder.recorderState == .stopped {
-                waveformPlot.waveformView.values = []
-                waveformPlot.waveformView.reload()
+                waveformPlot.clear()
                 try recorder.start()
             } else {
                 let timeInterval = self.waveformPlot.waveformView.currentTimeInterval
@@ -323,25 +322,23 @@ extension ViewController: RecorderDelegate {
             case .isRecording:
                 AudioToolboxMicrophoneController.shared.start()
                 recordButton.setTitle("Pause", for: .normal)
-                CATransaction.begin()
-                waveformPlot.waveformView.refresh()
-                CATransaction.commit()
-                waveformPlot.waveformView.isUserInteractionEnabled = false
+                waveformPlot.recordingModeEnabled = true
                 totalTimeLabel.text = "00:00:00"
                 disableZoomAction()
 
             case .stopped:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Start", for: .normal)
-                waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformPlot.waveformView.onPause()
+                waveformPlot.recordingModeEnabled = false
                 enableZoomAction()
+                
+//                let samplesPerPoint = CGFloat(self.waveformPlot.waveformView.values.count) / self.waveformPlot.waveformView.bounds.width
+//                self.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
 
             case .paused, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
                 recordButton.setTitle("Resume", for: .normal)
-                waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformPlot.waveformView.onPause()
+                waveformPlot.recordingModeEnabled = false
                 enableZoomAction()
         }
     }
