@@ -78,8 +78,9 @@ class WaveformView: UIView {
         let coordinator = WaveformCoordinator(cellIdentifier: self.collectionViewCellIdentifier, endlessScrollingEnabled: false)
         coordinator.contentOffsetDidChangeBlock = { [weak self] contentOffset in
             guard let caller = self else { return }
-
-            caller.leadingLineTimeUpdater.changeTime(withX: max(round(contentOffset.x + caller.leadingLine.position.x), 0.0))
+            
+            let currentX = max(round(contentOffset.x + caller.leadingLine.position.x), 0.0)
+            caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.zoom.samplePerLayer)
             caller.contentOffset = contentOffset
             caller.delegate?.contentOffsetDidChange(contentOffset)
         }
@@ -203,7 +204,7 @@ extension WaveformView {
         } else {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
-            self.leadingLineTimeUpdater.changeTime(withX: x)
+            self.leadingLineTimeUpdater.changeTime(withX: x, and: self.zoom.samplePerLayer)
             self.leadingLine.position.x = abs(self.collectionView.contentOffset.x) + x
             CATransaction.commit()
         }
