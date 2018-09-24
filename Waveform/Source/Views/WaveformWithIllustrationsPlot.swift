@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol WaveformWithIllustrationsPlotDelegate: class {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
+}
+
 class WaveformWithIllustrationsPlot: UIView {
     
     // MARK: - Views
@@ -31,6 +35,7 @@ class WaveformWithIllustrationsPlot: UIView {
     
     lazy var waveformPlot: WaveformPlot = {
         let waveformPlotView = WaveformPlot(frame: .zero)
+        waveformPlotView.delegate = self
         waveformPlotView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(waveformPlotView)
         
@@ -39,7 +44,6 @@ class WaveformWithIllustrationsPlot: UIView {
     
     // MARK: - Private properties
     
-    private var autoScrollTimer: Timer!
     private var illustrationMarkViewWidth: CGFloat {
         return UIScreen.main.bounds.width * 0.08
     }
@@ -50,25 +54,31 @@ class WaveformWithIllustrationsPlot: UIView {
     private let leftMarkViewVisibilityMargin = UIScreen.main.bounds.width * 0.5
     private let rightMarkViewVisibilityMargin = 2 * UIScreen.main.bounds.width
     
+    // MARK: - Public properties
+    
+    weak var delegate: WaveformWithIllustrationsPlotDelegate?
+    
     // MARK: - Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupConstraints()
-        waveformPlot.isUserInteractionEnabled = false
-        waveformPlot.backgroundColor = .clear
-        waveformPlot.waveformView.backgroundColor = .clear
-        waveformPlot.timelineView.backgroundColor = .clear
+        commonInit()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         setupConstraints()
+        commonInit()
+    }
+    
+    private func commonInit() {
         waveformPlot.isUserInteractionEnabled = false
         waveformPlot.backgroundColor = .clear
         waveformPlot.waveformView.backgroundColor = .clear
+        waveformPlot.waveformView.isUserInteractionEnabled = false
         waveformPlot.timelineView.backgroundColor = .clear
     }
     
@@ -79,7 +89,7 @@ class WaveformWithIllustrationsPlot: UIView {
         scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
         
         scrollContentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth))
-        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: -(illustrationMarkViewWidth))
+        scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: illustrationMarkViewWidth)
         scrollContentView.setupConstraint(attribute: .top, toItem: scrollView, attribute: .top)
         scrollContentView.setupConstraint(attribute: .bottom, toItem: scrollView, attribute: .bottom)
         scrollContentView.setupConstraint(attribute: .centerY, toItem: scrollView, attribute: .centerY)
@@ -96,6 +106,7 @@ class WaveformWithIllustrationsPlot: UIView {
         centerXConstraintValue = round(centerXConstraintValue * 10) / 10.0
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         
+        hideScrollContentViewSubviews()
         setAllIllustrationMarksInactive()
         let data = IllustrationMarkModel(timeInterval: currentTimeInterval,
                                          centerXConstraintValue: centerXConstraintValue,
@@ -121,6 +132,7 @@ class WaveformWithIllustrationsPlot: UIView {
         }
         view.bringMarkViewToFrontBlock = { [weak self, weak view] in
             guard let strongSelf = self, let strongView = view else { return }
+            strongSelf.hideScrollContentViewSubviews()
             strongSelf.setAllIllustrationMarksInactive()
             strongSelf.scrollContentView.bringSubview(toFront: strongView)
             strongView.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
@@ -135,6 +147,14 @@ class WaveformWithIllustrationsPlot: UIView {
         }
 
         illustrationMarkDataList = dataList
+    }
+    
+    private func hideScrollContentViewSubviews() {
+        scrollContentView.subviews.forEach {
+            if let subview = $0 as? RecordingAddedIllustrationMarkView {
+                subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
+            }
+        }
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
@@ -164,7 +184,7 @@ class WaveformWithIllustrationsPlot: UIView {
     
     func setupContentViewOfScrollView() {
         waveformPlot.waveformView.layoutIfNeeded() // TODO: updating view in different way
-        let width = waveformPlot.waveformView.waveformViewContentSize.width
+        let width = waveformPlot.waveformView.waveformViewContentSize.width + (2 * illustrationMarkViewWidth)
         scrollView.contentInset = waveformPlot.waveformView.contentInset
         let constraint = NSLayoutConstraint.build(item: scrollContentView,
                                                   attribute: .width,
@@ -198,44 +218,18 @@ extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
             }
         }
     }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        
-    }
 }
 
-extension WaveformWithIllustrationsPlot: LeadingLineTimeUpdaterDelegate {
-    func timeIntervalDidChange(with timeInterval: TimeInterval) {
-        waveformPlot.waveformView.timeIntervalDidChange(with: timeInterval)
+extension WaveformWithIllustrationsPlot: WaveformPlotDelegate {
+    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
+        delegate?.currentTimeIntervalDidChange(timeInterval)
     }
     
-    func scrollToTheEnd() {
-        let point = scrollView.contentOffset
-        scrollView.setContentOffset(point, animated: false)
-        waveformPlot.waveformView.contentOffset = point
-        
-        autoScrollTimer?.invalidate()
-        autoScrollTimer = Timer.scheduledTimer(timeInterval: 0.01,
-                                               target: self,
-                                               selector: #selector(scrollContentOffset),
-                                               userInfo: nil,
-                                               repeats: true)
-    }
-    
-    @objc func scrollContentOffset() {
-        let difference: CGFloat = CGFloat(WaveformConfiguration.microphoneSamplePerSecond) / 100
-        let finalPosition: CGFloat = scrollView.contentOffset.x + difference
-        let point = CGPoint(x: finalPosition, y: 0.0)
-        scrollView.bounds = CGRect(x: point.x,
-                                   y: point.y,
+    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+        scrollView.bounds = CGRect(x: contentOffset.x,
+                                   y: contentOffset.y,
                                    width: scrollView.bounds.size.width,
                                    height: scrollView.bounds.size.height)
-        
-        waveformPlot.waveformView.contentOffset = scrollView.contentOffset
-        waveformPlot.waveformView.scrollContentOffset()
-    }
-    
-    func stopScrolling() {
-        autoScrollTimer.invalidate()
+        scrollView.contentOffset = contentOffset
     }
 }

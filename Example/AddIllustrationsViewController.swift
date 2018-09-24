@@ -9,6 +9,10 @@ class AddIllustrationsViewController: UIViewController {
     @IBOutlet weak var totalTimeLabel: UILabel!
     @IBOutlet weak var waveformWithIllustrationsPlot: WaveformWithIllustrationsPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
+    @IBOutlet weak var zoomWrapperView: UIView!
+    @IBOutlet weak var zoomValueLabel: UILabel!
+    @IBOutlet weak var zoomInButton: UIButton!
+    @IBOutlet weak var zoomOutButton: UIButton!
     
     // MARK: - Private Properties
 
@@ -16,10 +20,6 @@ class AddIllustrationsViewController: UIViewController {
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
     private var url: URL!
-
-    private var elementsPerSecond: Int {
-        return WaveformConfiguration.microphoneSamplePerSecond
-    }
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -41,9 +41,11 @@ class AddIllustrationsViewController: UIViewController {
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
+        zoomValueLabel.text = "Zoom: \(waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
+        disableZoomAction()
     }
     private func setupWaveform() {
-        self.waveformWithIllustrationsPlot.waveformPlot.delegate = self
+        waveformWithIllustrationsPlot.delegate = self
     }
 
     private func setupPlayer() {
@@ -52,6 +54,16 @@ class AddIllustrationsViewController: UIViewController {
 
     @IBAction func addIllustration(_ sender: Any) {
         waveformWithIllustrationsPlot.addIllustrationMark()
+    }
+    
+    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
+        self.waveformWithIllustrationsPlot.waveformPlot.zoomIn()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
+    }
+    
+    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
+        self.waveformWithIllustrationsPlot.waveformPlot.zoomOut()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
     }
 }
 
@@ -65,13 +77,9 @@ extension AddIllustrationsViewController {
 
 // MARK: - WaveformViewDelegate
 
-extension AddIllustrationsViewController: WaveformPlotDelegate {
+extension AddIllustrationsViewController: WaveformWithIllustrationsPlotDelegate {
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
         timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
-    }
-    
-    func contentOffsetDidChange(_ contentOffset: CGPoint) {
-        
     }
 }
 
@@ -80,18 +88,35 @@ extension AddIllustrationsViewController: WaveformPlotDelegate {
 extension AddIllustrationsViewController {
     func playOrPause() {
         if player.state == .paused {
-            guard let URL = self.url else {
-                return
-            }
-            do {
-                try player.playFile(with: URL, at: self.waveformWithIllustrationsPlot.waveformPlot.waveformView.currentTimeInterval)
-            } catch AudioPlayerError.openFileFailed(let error) {
-                Log.error(error)
-            } catch {
-                Log.error("Unknown error")
-            }
+            playFileInRecording()
         } else if player.state == .isPlaying {
             player.pause()
+        }
+    }
+    
+    private func playFileInRecording() {
+        do {
+            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
+                guard let URL = url else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    do {
+                        var time = 0.0
+                        if let timeInterval = self?.waveformWithIllustrationsPlot.waveformPlot.waveformView.currentTimeInterval {
+                            time = timeInterval
+                        }
+                        try self?.player.playFile(with: URL, at: time)
+                    } catch AudioPlayerError.openFileFailed(let error) {
+                        Log.error(error)
+                    } catch {
+                        Log.error("Unknown error")
+                    }
+                }
+            }
+        } catch {
+            Log.error("Error while exporting temporary file")
         }
     }
 }
@@ -119,8 +144,9 @@ extension AddIllustrationsViewController {
                 let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 let samplesPerPoint = CGFloat(values.count) / caller.waveformWithIllustrationsPlot.bounds.width
                 DispatchQueue.main.async {
-                    caller.waveformWithIllustrationsPlot.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
                     caller.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: values)
+                    caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
+                    caller.waveformWithIllustrationsPlot.setupContentViewOfScrollView()
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -136,8 +162,13 @@ extension AddIllustrationsViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
-
-
+    }
+    
+    private func changeZoomSamplesPerPointForNewFile(_ samplesPerPoint: CGFloat) {
+        waveformWithIllustrationsPlot.waveformPlot.changeSamplesPerPoint(samplesPerPoint)
+        waveformWithIllustrationsPlot.waveformPlot.resetZoom()
+        zoomValueLabel.text = "Zoom: \(waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
+        enableZoomAction()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -149,6 +180,20 @@ extension AddIllustrationsViewController {
                     .popViewController(animated: true)
             }
         }
+    }
+}
+
+// MARK: - Zoom
+
+extension AddIllustrationsViewController {
+    private func enableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = true
+        zoomWrapperView.alpha = 1.0
+    }
+    
+    private func disableZoomAction() {
+        zoomWrapperView.isUserInteractionEnabled = false
+        zoomWrapperView.alpha = 0.3
     }
 }
 
@@ -172,12 +217,14 @@ extension AddIllustrationsViewController: AudioPlayerDelegate {
         switch state {
             case .isPlaying:
                 waveformWithIllustrationsPlot.isUserInteractionEnabled = false
-                waveformWithIllustrationsPlot.scrollToTheEnd()
+                waveformWithIllustrationsPlot.waveformPlot.waveformView.scrollToTheEndOfFile()
                 playOrPauseButton.setTitle("Pause", for: .normal)
+                disableZoomAction()
             case .paused:
                 waveformWithIllustrationsPlot.isUserInteractionEnabled = true
-                waveformWithIllustrationsPlot.stopScrolling()
+                waveformWithIllustrationsPlot.waveformPlot.waveformView.stopScrolling()
                 playOrPauseButton.setTitle("Play", for: .normal)
+                enableZoomAction()
         }
     }
 }
