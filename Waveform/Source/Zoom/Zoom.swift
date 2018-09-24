@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct Zoom {
+class Zoom {
 
     // MARK: - Public properties
 
@@ -24,16 +24,8 @@ struct Zoom {
         return self.levels.count
     }
 
-    var samplePerLayer: Int {
-        return self.levels[self.currentLevel].samplePerLayer
-    }
-
-    var multiplier: Double {
-        return self.levels[self.currentLevel].multiplier
-    }
-
-    var percent: String {
-        return self.levels[self.currentLevel].percent
+    var level: ZoomLevel {
+        return self.levels[currentLevel]
     }
 
     // MARK: - Private properties
@@ -49,16 +41,25 @@ struct Zoom {
 
     // Access methods
 
-    mutating func `in`() {
+    func `in`() {
         if !self.isMaximum {
             self.currentLevel -= 1
         }
     }
 
-    mutating func out() {
+    func out() {
         if !self.isMinimum {
             self.currentLevel += 1
         }
+    }
+
+    func reset() {
+        self.currentLevel = 0
+    }
+
+    func changeSamplesPerPoint(_ samplesPerPoint: CGFloat, multipliers: [Double] = AudioUtils
+            .defaultZoomMultipliers) {
+        self.levels = generateZoomLevels(for: samplesPerPoint, and: multipliers)
     }
 
     // MARK: - Helper methods
@@ -66,7 +67,6 @@ struct Zoom {
     private func generateZoomLevels(for density: CGFloat, and multipliers: [Double]) -> [ZoomLevel] {
         let maxZoomValue = Int(ceil(density))
         let zoomLevels = calculateZoomLevels(from: maxZoomValue, and: multipliers)
-
         return zoomLevels
     }
 
@@ -75,12 +75,11 @@ struct Zoom {
                                                               return self.createZoomLevel(with: max, and: $0)
                                                           }
                                                           .filter {
-                                                              $0.samplePerLayer >= 1
+                                                              $0.samplesPerLayer >= 1
                                                           }
                                                           .sorted {
                                                               $0.multiplier > $1.multiplier
                                                           }
-
         return retrieveValidZoomLevels(from: temporaryZoomLevels)
     }
 
@@ -96,7 +95,6 @@ struct Zoom {
                                         .map {
                                             $0.element
                                         }
-
         return validZoomLevels
     }
 
@@ -107,32 +105,7 @@ struct Zoom {
             countingMultiplier = 1.0 / Double(maxSamplePerLayer)
             multiplierToDisplay = 1.0
         }
-        return ZoomLevel(samplePerLayer: Int(ceil(countingMultiplier * Double(maxSamplePerLayer))),
+        return ZoomLevel(samplesPerLayer: Int(ceil(countingMultiplier * Double(maxSamplePerLayer))),
                          multiplier: multiplierToDisplay)
-    }
-}
-
-struct ZoomLevel: Equatable {
-    let samplePerLayer: Int
-    let multiplier: Double
-
-    var percent: String {
-        return "\(Int(multiplier * 100))%"
-    }
-}
-
-func ==(lhs: ZoomLevel, rhs: ZoomLevel) -> Bool {
-    return lhs.samplePerLayer == rhs.samplePerLayer
-}
-
-extension Array where Element: Equatable {
-    mutating func removeDuplicates() {
-        var result = [Element]()
-        for value in self {
-            if !result.contains(value) {
-                result.append(value)
-            }
-        }
-        self = result
     }
 }

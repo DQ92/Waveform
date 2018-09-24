@@ -16,7 +16,7 @@ protocol WaveformPlotDelegate: class {
 class WaveformPlot: UIView {
 
     // MARK: - Views
-    
+
     lazy var timelineView: TimelineView = {
         let timelineView = TimelineView(frame: .zero)
         timelineView.translatesAutoresizingMaskIntoConstraints = false
@@ -37,14 +37,7 @@ class WaveformPlot: UIView {
     // MARK: - Public properties
     
     weak var delegate: WaveformPlotDelegate?
-    
-    var zoom: Zoom = Zoom() {
-        didSet {
-            self.waveformView.zoom = zoom
-            self.timelineView.timeInterval = TimeInterval(zoom.samplePerLayer)
-        }
-    }
-    
+
     var recordingModeEnabled: Bool = false {
         didSet {
             self.isUserInteractionEnabled = !recordingModeEnabled
@@ -60,9 +53,11 @@ class WaveformPlot: UIView {
             return waveformView.contentOffset
         }
     }
-    
+
+    private var zoom: Zoom = Zoom()
+
     // MARK: - Initialization
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -95,15 +90,17 @@ class WaveformPlot: UIView {
     }
     
     // MARK: - Access methods
-    
+
     func reloadData() {
-        
+
     }
-    
+
     func clear() {
         self.waveformView.reload()
     }
 }
+
+// MARK: - Waveform delegate
 
 extension WaveformPlot: WaveformViewDelegate {
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
@@ -118,9 +115,41 @@ extension WaveformPlot: WaveformViewDelegate {
     func secondWidthDidChange(_ secondWidth: CGFloat) {
         self.timelineView.intervalWidth = secondWidth
     }
-    
+
     func valuesDidChange(_ values: [WaveformModel]) {
 //        let samplesPerPoint = CGFloat(values.count) / self.waveformView.bounds.width
 //        self.zoom = Zoom(samplesPerPoint: samplesPerPoint)
+    }
+}
+
+// MARK: - Zoom
+
+extension WaveformPlot {
+    func zoomIn() {
+        zoom.in()
+        zoomLevelDidChange()
+    }
+
+    func zoomOut() {
+        zoom.out()
+        zoomLevelDidChange()
+    }
+
+    func resetZoom() {
+        zoom.reset()
+        zoomLevelDidChange()
+    }
+
+    private func zoomLevelDidChange() {
+        waveformView.zoomLevelDidChange(with: zoom.level)
+        timelineView.timeInterval = TimeInterval(zoom.level.samplesPerLayer)
+    }
+
+    func currentZoomPercent() -> String {
+        return zoom.level.percent
+    }
+
+    func changeSamplesPerPoint(_ samplesPerPoint: CGFloat) {
+        zoom.changeSamplesPerPoint(samplesPerPoint)
     }
 }

@@ -41,9 +41,9 @@ class AVFoundationRecorder: NSObject {
         self.resultsDirectoryURL = self.documentsURL.appendingPathComponent("results")
         self.tempExportDirectoryUrl = self.documentsURL.appendingPathComponent("temp_exp")
     }
-    
+
     // MARK: - Setup
-    
+
     private func setupAudioRecorder(fileName: String) throws {
         let url = self.tempDirectoryUrl.appendingPathComponent(fileName)
         let settings = [
@@ -55,15 +55,15 @@ class AVFoundationRecorder: NSObject {
         audioRecorder = try AVAudioRecorder(url: url, settings: settings)
         audioRecorder.delegate = self
     }
-    
+
     private func resetDirectories() throws {
         let directoriesToRemove = [self.tempDirectoryUrl, self.tempExportDirectoryUrl]
-        
+
         for url in directoriesToRemove {
             try self.removeDirectory(url: url)
         }
         let directoriesToCreate = [self.tempDirectoryUrl, self.tempExportDirectoryUrl, self.resultsDirectoryURL]
-        
+
         for url in directoriesToCreate {
             try self.createDirectoryIfNeeded(url: url)
         }
@@ -76,7 +76,7 @@ extension AVFoundationRecorder {
     private func removeDirectory(url: URL) throws {
         try? FileManager.default.removeItem(at: url) ~> RecorderError.directoryDeletionFailed
     }
-    
+
     private func createDirectoryIfNeeded(url: URL) throws {
         if !FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.createDirectory(atPath: url.path,
@@ -158,7 +158,7 @@ extension AVFoundationRecorder: RecorderProtocol {
         }
         return URL
     }
-    
+
     func activateSession(permissionBlock: @escaping (Bool) -> Void) throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
@@ -190,7 +190,7 @@ extension AVFoundationRecorder: RecorderProtocol {
         Log.debug("Recorded successfully.")
         listFiles()
     }
-    
+
     func resume(from timeRange: CMTimeRange) throws {
         let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
 
@@ -231,8 +231,12 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func finish() throws {
+        if components.isEmpty {
+            return
+        }
         let result = try self.merge(components: self.components)
-        self.exportAsset(result)
+
+        self.exportAsset(result, destinationDictionaryURL: resultsDirectoryURL)
     }
 
     func crop(sourceURL: URL, startTime: Double, endTime: Double, completion: ((_ outputUrl: URL) -> Void)? = nil) {
@@ -298,22 +302,27 @@ extension AVFoundationRecorder: RecorderProtocol {
             audioRecorder = nil
         }
 
+        if components.isEmpty {
+            completion(nil)
+            return
+        }
+
         let result = try self.merge(components: self.components)
-        exportAsset(result, completion: completion)
+        exportAsset(result, destinationDictionaryURL: tempExportDirectoryUrl, completion: completion)
     }
-    
+
     func openFile(with url: URL) throws {
         try resetDirectories()
         self.components.removeAll()
-        
+
         let filename = "temp_\(components.count).m4a"
 
         try FileManager.default.copyItem(at: url, to: self.tempDirectoryUrl.appendingPathComponent(filename))
         let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
-        
+
         components.append(AssetComponent(fileName: filename, timeRange: timeRange))
         Log.debug("openFile")
-        
+
         changeRecorderStateWithViewUpdate(with: .fileLoaded)
     }
 }
@@ -348,9 +357,9 @@ extension AVFoundationRecorder {
         return audioComposition
     }
 
-    private func exportAsset(_ asset: AVAsset) {
+    private func exportAsset(_ asset: AVAsset, destinationDictionaryURL: URL, completion: @escaping (_ url: URL?) -> Void = { _ in }) {
         let resultFileName = generateResultFileName()
-        let finalURL = resultsDirectoryURL.appendingPathComponent(resultFileName)
+        let finalURL = destinationDictionaryURL.appendingPathComponent(resultFileName)
 
         Log.debug("EXPORTING ....\(finalURL)")
 
@@ -362,33 +371,12 @@ extension AVFoundationRecorder {
                 switch exportSession.status {
                     case .completed:
                         Log.info("exported at \(finalURL)")
-                    case .failed:
-                        Log.error("failed \(exportSession.error.debugDescription)")
-                    case .cancelled:
-                        Log.warning("cancelled \(exportSession.error.debugDescription)")
-                    default: break
-                }
-            }
-        }
-    }
-
-    private func exportAsset(_ asset: AVAsset, completion: @escaping (_ url: URL?) -> Void) {
-        let resultFileName = generateResultFileName()
-        let finalURL = tempExportDirectoryUrl.appendingPathComponent(resultFileName)
-
-        Log.debug("EXPORTING ....\(finalURL)")
-
-        if let exportSession = AVAssetExportSession(asset: asset,
-                                                    presetName: AVAssetExportPresetHighestQuality) {
-            exportSession.outputURL = finalURL
-            exportSession.outputFileType = .mp4
-            exportSession.exportAsynchronously {
-                switch exportSession.status {
-                    case .completed:
                         completion(finalURL)
                     case .failed:
+                        Log.error("failed \(exportSession.error.debugDescription)")
                         completion(nil)
                     case .cancelled:
+                        Log.warning("cancelled \(exportSession.error.debugDescription)")
                         completion(nil)
                     default: break
                 }

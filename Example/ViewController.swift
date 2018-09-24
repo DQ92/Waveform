@@ -47,6 +47,8 @@ class ViewController: UIViewController {
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
+        zoomValueLabel.text = "Zoom: \(waveformPlot.currentZoomPercent())"
+        disableZoomAction()
     }
 
     private func setupRecorder() {
@@ -95,13 +97,13 @@ extension ViewController {
     }
 
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-        self.waveformPlot.zoom.in()
-        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
+        self.waveformPlot.zoomIn()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.currentZoomPercent())"
     }
 
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-        self.waveformPlot.zoom.out()
-        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.zoom.percent)"
+        self.waveformPlot.zoomOut()
+        self.zoomValueLabel.text = "Zoom: \(self.waveformPlot.currentZoomPercent())"
     }
 }
 
@@ -245,8 +247,8 @@ extension ViewController {
                 let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
                 DispatchQueue.main.async {
-                    caller.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
                     caller.waveformPlot.waveformView.load(values: values)
+                    caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -263,6 +265,13 @@ extension ViewController {
             present(alertController, animated: true)
         }
     }
+
+    private func changeZoomSamplesPerPointForNewFile(_ samplesPerPoint: CGFloat) {
+        waveformPlot.changeSamplesPerPoint(samplesPerPoint)
+        waveformPlot.resetZoom()
+        zoomValueLabel.text = "Zoom: \(waveformPlot.currentZoomPercent())"
+        enableZoomAction()
+    }
 }
 
 extension ViewController {
@@ -278,7 +287,7 @@ extension ViewController {
 
 extension ViewController: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
-        self.waveformPlot.waveformView.setValue(data * AudioUtils.defaultWaveformFloatModifier,
+        self.waveformPlot.waveformView.setCurrentValue(data * AudioUtils.defaultWaveformFloatModifier,
                                                 for: recorder.currentTime,
                                                 mode: recorder.mode)
     }
@@ -340,7 +349,7 @@ extension ViewController: AudioPlayerDelegate {
         switch state {
             case .isPlaying:
                 waveformPlot.waveformView.isUserInteractionEnabled = false
-                waveformPlot.waveformView.scrollToTheEnd()
+                waveformPlot.waveformView.scrollToTheEndOfFile()
                 playOrPauseButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
             case .paused:
