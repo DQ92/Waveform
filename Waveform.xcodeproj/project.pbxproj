@@ -39,6 +39,7 @@
 		E88934EC1C50C2ED38614386 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889324ECFA632E33ECBA121 /* Logger.swift */; };
 		E88936392F81CD966EEB8544 /* AVFoundationRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889316FC43DCA7105BE9F29 /* AVFoundationRecorder.swift */; };
 		E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893549B61B999208FD341E /* MicrophoneError.swift */; };
+		E889368C9934AFEE8D9F123E /* ZoomLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C5CBAF5E4485182080B /* ZoomLevel.swift */; };
 		E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88937F5B28C8770A8CE26C8 /* FileDataLoaderError.swift */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938A400FDDC0FB2CF5493 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88930D698705E7F475F1D2D /* WaveformModel.swift */; };
@@ -107,6 +108,7 @@
 		E889395C8B72E113DB911D58 /* MicrophoneControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerDelegate.swift; sourceTree = "<group>"; };
 		E88939EE21AC6ECE7509AED4 /* RecorderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderError.swift; sourceTree = "<group>"; };
 		E8893B0D90E3F73DD79BE5B2 /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		E8893C5CBAF5E4485182080B /* ZoomLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomLevel.swift; sourceTree = "<group>"; };
 		E8893D3C62B872E9DEC7D185 /* RecorderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderDelegate.swift; sourceTree = "<group>"; };
 		E8893E6698D8763ADA9E71B1 /* MicrophoneControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerProtocol.swift; sourceTree = "<group>"; };
 		E8893F5EECF79E4DBD77C89C /* LeadingLineLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 			children = (
 				E8893238FD8B04A7A9CFFC33 /* ZoomType.swift */,
 				663BE7772153A71E00CB6234 /* Zoom.swift */,
+				E8893C5CBAF5E4485182080B /* ZoomLevel.swift */,
 			);
 			path = Zoom;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
 				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,
 				661175BC21550468003F7C4C /* TimelineCoordinator.swift in Sources */,
+				E889368C9934AFEE8D9F123E /* ZoomLevel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
