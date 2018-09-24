@@ -4,6 +4,7 @@ protocol WaveformViewDelegate: class {
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
     func contentOffsetDidChange(_ contentOffset: CGPoint)
     func secondWidthDidChange(_ secondWidth: CGFloat)
+    func valuesDidChange(_ values: [WaveformModel])
 }
 
 class WaveformView: UIView {
@@ -45,7 +46,10 @@ class WaveformView: UIView {
             self.collectionView.contentOffset = contentOffset
         }
     }
-    var elementsPerSecond: Int = 0
+
+    var intervalWidth: CGFloat {
+        return self.coordinator.configurator.intervalWidth
+    }
 
     var zoom: Zoom = Zoom() {
         didSet {
@@ -103,6 +107,10 @@ class WaveformView: UIView {
         self.setupConstraints()
     }
 
+//    func reloadData() {
+//        self.z
+//    }
+    
     func reload() {
         coordinator.values = []
         collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
@@ -116,7 +124,7 @@ class WaveformView: UIView {
         self.coordinator.values = values
         self.collectionView.reloadData()
     }
-
+    
     private func enableRecordingMode() {
         self.coordinator.endlessScrollingEnabled = true
         self.collectionView.reloadData()
@@ -153,6 +161,7 @@ extension WaveformView {
             self.coordinator.values.append(model)
             self.coordinator.appendItems(atSection: indexPath.section,
                                          collectionView: self.collectionView) { [weak self] in
+                                            self?.delegate?.valuesDidChange(self?.coordinator.values ?? [])
                                             self?.updateLeadingLine(x: offset)
             }
         } else {
@@ -164,6 +173,7 @@ extension WaveformView {
 
 //            self.collectionView.reloadItems(at: [indexPath])
             self.collectionView.reloadData()
+            self.delegate?.valuesDidChange(self.coordinator.values)
             self.updateLeadingLine(x: offset)
         }
     }
@@ -175,7 +185,7 @@ extension WaveformView {
     private func commonInit() {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
 
-        self.elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
+        let elementsPerSecond = self.coordinator.configurator.layersPerSecond
         self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
         self.leadingLineTimeUpdater.delegate = self
     }
@@ -213,7 +223,7 @@ extension WaveformView {
 
 extension WaveformView: LeadingLineTimeUpdaterDelegate {
     func timeIntervalDidChange(with timeInterval: TimeInterval) {
-        let value = Double(self.elementsPerSecond) * timeInterval
+        let value = Double(self.coordinator.configurator.layersPerSecond) * timeInterval
 
         self.sampleIndex = Int(round(value))
         self.currentTimeInterval = timeInterval

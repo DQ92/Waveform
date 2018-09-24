@@ -84,7 +84,7 @@ extension WaveformCoordinator: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let standardWidth = CGFloat(self.configurator.layersPerSecond) * self.configurator.sampleLayerWidth
+        let standardWidth = self.configurator.intervalWidth
         
         if self.endlessScrollingEnabled {
             return CGSize(width: standardWidth, height: collectionView.bounds.size.height)

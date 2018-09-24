@@ -79,7 +79,7 @@ class WaveformPlot: UIView {
     
     private func commonInit() {
         self.timelineView.contentOffset = self.waveformView.contentOffset
-        self.timelineView.intervalWidth = CGFloat(self.waveformView.elementsPerSecond)
+        self.timelineView.intervalWidth = self.waveformView.intervalWidth
     }
     
     private func setupConstraints() {
@@ -95,6 +95,10 @@ class WaveformPlot: UIView {
     }
     
     // MARK: - Access methods
+    
+    func reloadData() {
+        
+    }
     
     func clear() {
         self.waveformView.reload()
@@ -113,5 +117,10 @@ extension WaveformPlot: WaveformViewDelegate {
     
     func secondWidthDidChange(_ secondWidth: CGFloat) {
         self.timelineView.intervalWidth = secondWidth
+    }
+    
+    func valuesDidChange(_ values: [WaveformModel]) {
+//        let samplesPerPoint = CGFloat(values.count) / self.waveformView.bounds.width
+//        self.zoom = Zoom(samplesPerPoint: samplesPerPoint)
     }
 }

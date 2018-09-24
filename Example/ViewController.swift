@@ -47,7 +47,6 @@ class ViewController: UIViewController {
     private func setupView() {
         totalTimeLabel.text = "00:00:00"
         timeLabel.text = "00:00:00"
-
     }
 
     private func setupRecorder() {
@@ -154,8 +153,6 @@ extension ViewController {
 
         if recorder.recorderState == .isRecording {
             recorder.pause()
-            //        } else if (currentlyShownTime < recorder.currentTime) {
-            //            startRecording(with: true)
         } else {
             do {
                 try recorder.activateSession() { [weak self] permissionGranted in
@@ -269,10 +266,6 @@ extension ViewController {
 }
 
 extension ViewController {
-    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
-    }
-
     func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
 
@@ -332,9 +325,6 @@ extension ViewController: RecorderDelegate {
                 recordButton.setTitle("Start", for: .normal)
                 waveformPlot.recordingModeEnabled = false
                 enableZoomAction()
-                
-//                let samplesPerPoint = CGFloat(self.waveformPlot.waveformView.values.count) / self.waveformPlot.waveformView.bounds.width
-//                self.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
 
             case .paused, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
