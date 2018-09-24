@@ -21,6 +21,4 @@ class WaveformConfiguration {
     static let preferredTimescale: CMTimeScale = 1000
     
     static let timeInterval: TimeInterval = (TimeInterval(Float(amountOfSecondsDisplayingOnScreen) / Float(UIScreen.main.bounds.width)))
-
-    static let collectionViewItemReuseIdentifier = "collectionViewCell"
 }

@@ -11,7 +11,7 @@
 		65481FFB214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
 		65481FFD21400AAA00BFA378 /* Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65481FFC21400AAA00BFA378 /* Assert.swift */; };
 		661175BA2155043A003F7C4C /* EndlessScrollingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661175B92155043A003F7C4C /* EndlessScrollingCoordinator.swift */; };
-		661175BC21550468003F7C4C /* TimelineCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661175BB21550468003F7C4C /* TimelineCoordinator.swift */; };
+		661175BC21550468003F7C4C /* TimelineViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661175BB21550468003F7C4C /* TimelineViewCoordinator.swift */; };
 		661175BE21550538003F7C4C /* WaveformCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661175BD21550538003F7C4C /* WaveformCoordinator.swift */; };
 		663BE7782153A71E00CB6234 /* Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663BE7772153A71E00CB6234 /* Zoom.swift */; };
 		66427A1221428B9300C6BCE9 /* IntervalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */; };
@@ -65,7 +65,7 @@
 		65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
 		65481FFC21400AAA00BFA378 /* Assert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assert.swift; sourceTree = "<group>"; };
 		661175B92155043A003F7C4C /* EndlessScrollingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndlessScrollingCoordinator.swift; sourceTree = "<group>"; };
-		661175BB21550468003F7C4C /* TimelineCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCoordinator.swift; sourceTree = "<group>"; };
+		661175BB21550468003F7C4C /* TimelineViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineViewCoordinator.swift; sourceTree = "<group>"; };
 		661175BD21550538003F7C4C /* WaveformCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformCoordinator.swift; sourceTree = "<group>"; };
 		663BE7772153A71E00CB6234 /* Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zoom.swift; sourceTree = "<group>"; };
 		66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				66427A0F21428B9300C6BCE9 /* IntervalCollectionViewCell.swift */,
-				661175BB21550468003F7C4C /* TimelineCoordinator.swift */,
+				661175BB21550468003F7C4C /* TimelineViewCoordinator.swift */,
 				66427A1021428B9300C6BCE9 /* IntervalView.swift */,
 				66427A1121428B9300C6BCE9 /* TimelineView.swift */,
 			);
@@ -440,7 +440,7 @@
 				E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */,
 				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
 				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,
-				661175BC21550468003F7C4C /* TimelineCoordinator.swift in Sources */,
+				661175BC21550468003F7C4C /* TimelineViewCoordinator.swift in Sources */,
 				E889368C9934AFEE8D9F123E /* ZoomLevel.swift in Sources */,
 				E8893285D27461C2405EC839 /* TimeIntervalCalculator.swift in Sources */,
 			);

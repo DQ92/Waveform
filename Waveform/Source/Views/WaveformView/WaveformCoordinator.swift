@@ -8,45 +8,26 @@
 
 import UIKit
 
-class WaveformCoordinator: EndlessScrollingCoordinator {
+protocol WaveformViewCoordinatorDataSource: class {
+    func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, numberOfItemsInSection section: Int) -> Int
+    func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, samplesAtIndexPath indexPath: IndexPath) -> [Sample]
+    func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, customItemWidthAtIndexPath indexPath: IndexPath) -> CGFloat
+    func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, standardItemWidthAtIndexPath indexPath: IndexPath) -> CGFloat
+}
+
+protocol WaveformViewCoordinatorDelegate: class {
+    func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, contentOffsetDidChange contentOffset: CGPoint)
+}
+
+class WaveformViewCoordinator: EndlessScrollingCoordinator {
     
     // MARK: - Public attributes
     
-    let configurator = RecorderWaveformCollectionViewCellConfigurator()
-    var contentOffsetDidChangeBlock: ((CGPoint) -> ())?
-    var values: [WaveformModel] = []
-    var samplePerLayer: Int = 1
-    
-    // MARK: - Access methods
-    
-    private func getSamples(indexPath: IndexPath) -> [Sample] {
-        let samplesPerSecond = self.configurator.layersPerSecond * self.samplePerLayer
-        let startIndex = indexPath.row * samplesPerSecond
-        let endIndex = min(startIndex + samplesPerSecond, self.values.count) - 1
-        
-        let subarray = Array(self.values[startIndex...endIndex])
-        let range = 0..<Int(ceil(CGFloat(subarray.count) / CGFloat(self.samplePerLayer)))
-        var samples: [Sample] = []
-        
-        for index in range {
-            let startIndex = index * self.samplePerLayer
-            let endIndex = min(startIndex + self.samplePerLayer, subarray.count) - 1
-            let range = startIndex...endIndex
-            
-            let models = subarray[range]
-            let sum = models.map { $0.value }.reduce(0.0, +)
-            let average = sum / CGFloat(range.count)
-            
-            samples.append(Sample(value: average,
-                                  color: WaveformColor.color(for: models.last!.mode),
-                                  width: self.configurator.sampleLayerWidth))
-            
-        }
-        return samples
-    }
+    weak var dataSource: WaveformViewCoordinatorDataSource?
+    weak var delegate:WaveformViewCoordinatorDelegate?
 }
 
-extension WaveformCoordinator: UICollectionViewDataSource {
+extension WaveformViewCoordinator: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -54,49 +35,51 @@ extension WaveformCoordinator: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if self.endlessScrollingEnabled {
             return self.numberOfItems
+        } else if let dataSource = self.dataSource {
+            return dataSource.waveformViewCoordinator(self, numberOfItemsInSection: section)
         }
-        let numberOfLayers = Int(ceil(CGFloat(self.values.count) / CGFloat(self.samplePerLayer)))
-        return Int(ceil(CGFloat(numberOfLayers) / CGFloat(self.configurator.layersPerSecond)))
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! WaveformCollectionViewCell
-        let numberOfRows = Int(ceil(CGFloat(self.values.count) / CGFloat(self.configurator.layersPerSecond)))
         var samples: [Sample] = []
         
-        if indexPath.row < numberOfRows {
-            samples = self.getSamples(indexPath: indexPath)
+        if let dataSource = self.dataSource {
+            let numberOfRows = dataSource.waveformViewCoordinator(self, numberOfItemsInSection: indexPath.section)
+            
+            if indexPath.row < numberOfRows {
+                samples = dataSource.waveformViewCoordinator(self, samplesAtIndexPath: indexPath)
+            }
         }
         cell.setupSamples(samples)
-        
+
         return cell
     }
 }
 
-extension WaveformCoordinator: UICollectionViewDelegateFlowLayout {
+extension WaveformViewCoordinator: UICollectionViewDelegateFlowLayout {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.contentOffsetDidChangeBlock?(scrollView.contentOffset)
+        self.delegate?.waveformViewCoordinator(self, contentOffsetDidChange: scrollView.contentOffset)
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        let standardWidth = self.configurator.intervalWidth
-        
-        if self.endlessScrollingEnabled {
-            return CGSize(width: standardWidth, height: collectionView.bounds.size.height)
+        if let dataSource = self.dataSource {
+            let width: CGFloat
+            
+            if self.endlessScrollingEnabled {
+                width = dataSource.waveformViewCoordinator(self, standardItemWidthAtIndexPath: indexPath)
+            } else {
+                width = dataSource.waveformViewCoordinator(self, customItemWidthAtIndexPath: indexPath)
+            }
+            return CGSize(width: width, height: collectionView.bounds.size.height)
         }
-        
-        let samplesPerSecond = self.configurator.layersPerSecond * self.samplePerLayer
-        let startIndex = indexPath.row * samplesPerSecond
-        let numberOfLayer = Int(ceil(CGFloat(self.values.count - startIndex) / CGFloat(self.samplePerLayer)))
-        let customWidth = CGFloat(min(numberOfLayer, self.configurator.layersPerSecond)) * self.configurator.sampleLayerWidth
-        
-        return CGSize(width: customWidth, height: collectionView.bounds.size.height)
+        return CGSize.zero
     }
-
 }
 

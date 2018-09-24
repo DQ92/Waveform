@@ -13,7 +13,7 @@ class TimelineView: UIView {
     
     var timeInterval: TimeInterval = 1.0 {
         didSet {
-            self.coordinator.timeInterval = timeInterval
+            self.coordinator?.timeInterval = timeInterval
             self.setNeedsReloadData()
         }
     }
@@ -21,7 +21,7 @@ class TimelineView: UIView {
     var intervalWidth: CGFloat = 100 {
         didSet {
             self.boundsVew.intervalWidth = intervalWidth
-            self.coordinator.intervalWidth = intervalWidth
+            self.coordinator?.intervalWidth = intervalWidth
             self.setNeedsReloadData()
         }
     }
@@ -29,7 +29,7 @@ class TimelineView: UIView {
     var lineWidth: CGFloat = 1.0 {
         didSet {
             self.boundsVew.lineWidth = lineWidth
-            self.coordinator.lineWidth = lineWidth
+            self.coordinator?.lineWidth = lineWidth
             self.setNeedsReloadData()
         }
     }
@@ -37,7 +37,7 @@ class TimelineView: UIView {
     var lineColor: UIColor = UIColor.gray {
         didSet {
             self.boundsVew.lineColor = lineColor
-            self.coordinator.lineColor = lineColor
+            self.coordinator?.lineColor = lineColor
             self.setNeedsReloadData()
         }
     }
@@ -45,7 +45,7 @@ class TimelineView: UIView {
     var sublineHeight: CGFloat = 7.0 {
         didSet {
             self.boundsVew.sublineHeight = sublineHeight
-            self.coordinator.sublineHeight = sublineHeight
+            self.coordinator?.sublineHeight = sublineHeight
             self.setNeedsReloadData()
         }
     }
@@ -53,7 +53,7 @@ class TimelineView: UIView {
     var numberOfSublines: Int = 3 {
         didSet {
             self.boundsVew.numberOfSublines = numberOfSublines
-            self.coordinator.numberOfSublines = numberOfSublines
+            self.coordinator?.numberOfSublines = numberOfSublines
             self.setNeedsReloadData()
         }
     }
@@ -64,14 +64,20 @@ class TimelineView: UIView {
         }
     }
     
+    var coordinator: TimelineViewCoordinator? {
+        didSet {
+            self.collectionView.dataSource = self.coordinator
+            self.collectionView.delegate = self.coordinator
+            
+            if let cellIdentifier = coordinator?.cellIdentifier {
+                self.collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+            }
+        }
+    }
+    
     // MARK: - Private attributes
     
-    private static let collectionViewCellIdentifier = "CollectionViewCellIdentifier"
     private var reloadTimer: Timer?
-    
-    private lazy var coordinator: TimelineCoordinator = {
-        return TimelineCoordinator(cellIdentifier: TimelineView.collectionViewCellIdentifier)
-    }()
     
     // MARK: - Views
     
@@ -84,11 +90,8 @@ class TimelineView: UIView {
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: TimelineView.collectionViewCellIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isScrollEnabled = false
-        collectionView.dataSource = self.coordinator
-        collectionView.delegate = self.coordinator
         collectionView.backgroundColor = .clear
         self.addSubview(collectionView)
         

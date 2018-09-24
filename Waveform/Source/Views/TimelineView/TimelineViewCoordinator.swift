@@ -1,5 +1,5 @@
 //
-//  TimelineCoordinator.swift
+//  TimelineViewCoordinator.swift
 //  Waveform
 //
 //  Created by Robert Mietelski on 18.09.2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineCoordinator: EndlessScrollingCoordinator {
+class TimelineViewCoordinator: EndlessScrollingCoordinator {
     
     // MARK: - Public attributes
     
@@ -42,7 +42,7 @@ class TimelineCoordinator: EndlessScrollingCoordinator {
     }()
 }
 
-extension TimelineCoordinator: UICollectionViewDataSource {
+extension TimelineViewCoordinator: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -74,7 +74,7 @@ extension TimelineCoordinator: UICollectionViewDataSource {
     }
 }
 
-extension TimelineCoordinator: UICollectionViewDelegateFlowLayout {
+extension TimelineViewCoordinator: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if self.shouldLoadMoreItems(forIndexPath: indexPath) {
             self.appendItems(atSection: indexPath.section,

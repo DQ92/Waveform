@@ -128,7 +128,7 @@ extension ViewController {
                 DispatchQueue.main.async {
                     do {
                         var time = 0.0
-                        if let timeInterval = self?.waveformPlot.waveformView.currentTimeInterval {
+                        if let timeInterval = self?.waveformPlot.currentTimeInterval {
                             time = timeInterval
                         }
                         try self?.player.playFile(with: URL, at: time)
@@ -180,10 +180,10 @@ extension ViewController {
         Log.info("Start recording")
         do {
             if recorder.recorderState == .stopped {
-                waveformPlot.clear()
+                waveformPlot.reset()
                 try recorder.start()
             } else {
-                let timeInterval = self.waveformPlot.waveformView.currentTimeInterval
+                let timeInterval = self.waveformPlot.currentTimeInterval
                 let time = CMTime(seconds: timeInterval, preferredTimescale: 100)
                 let range = CMTimeRange(start: time, duration: kCMTimeZero)
                 try recorder.resume(from: range)
@@ -287,9 +287,9 @@ extension ViewController {
 
 extension ViewController: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
-        self.waveformPlot.waveformView.setCurrentValue(data * AudioUtils.defaultWaveformFloatModifier,
-                                                for: recorder.currentTime,
-                                                mode: recorder.mode)
+        self.waveformPlot.setCurrentValue(data * AudioUtils.defaultWaveformFloatModifier,
+                                          for: recorder.currentTime,
+                                          mode: recorder.mode)
     }
 }
 
@@ -348,12 +348,12 @@ extension ViewController: AudioPlayerDelegate {
     func playerStateDidChange(with state: AudioPlayerState) {
         switch state {
             case .isPlaying:
-                waveformPlot.waveformView.isUserInteractionEnabled = false
+                waveformPlot.isUserInteractionEnabled = false
                 waveformPlot.waveformView.scrollToTheEndOfFile()
                 playOrPauseButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
             case .paused:
-                waveformPlot.waveformView.isUserInteractionEnabled = true
+                waveformPlot.isUserInteractionEnabled = true
                 waveformPlot.waveformView.stopScrolling()
                 playOrPauseButton.setTitle("Play", for: .normal)
                 enableZoomAction()
