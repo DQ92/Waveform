@@ -11,4 +11,5 @@ import UIKit
 struct IllustrationMarkModel {
     let timeInterval: TimeInterval
     let centerXConstraintValue: CGFloat
+    let isActive: Bool
 }

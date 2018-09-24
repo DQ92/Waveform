@@ -20,12 +20,12 @@ class WaveformWithIllustrationsPlot: UIView {
         
         return scrollView
     }()
-
+    
     lazy var scrollContentView: UIView = {
         let view = UIView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(view)
-
+        
         return view
     }()
     
@@ -36,14 +36,14 @@ class WaveformWithIllustrationsPlot: UIView {
         
         return waveformPlotView
     }()
-
+    
     // MARK: - Private properties
-
+    
     private var autoScrollTimer: Timer!
     private var illustrationMarkViewWidth: CGFloat {
         return UIScreen.main.bounds.width * 0.08
     }
-    private var illustrationMarkDictionary: [RecordingAddedIllustrationMarkView: IllustrationMarkModel] = [:]
+    private var illustrationMarkDataList: [IllustrationMarkModel] = []
     
     // MARK: - Private constants
     
@@ -77,56 +77,64 @@ class WaveformWithIllustrationsPlot: UIView {
         scrollView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
         scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
         scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
-
+        
         scrollContentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth))
         scrollContentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: -(illustrationMarkViewWidth))
         scrollContentView.setupConstraint(attribute: .top, toItem: scrollView, attribute: .top)
         scrollContentView.setupConstraint(attribute: .bottom, toItem: scrollView, attribute: .bottom)
         scrollContentView.setupConstraint(attribute: .centerY, toItem: scrollView, attribute: .centerY)
-
+        
         waveformPlot.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
         waveformPlot.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
         waveformPlot.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
         waveformPlot.setupConstraint(attribute: .height, toItem: self, attribute: .height, multiplier: 0.7, constant: 0)
     }
-
+    
     func addIllustrationMark() {
         let halfOfScrollContentViewWidth = -(scrollContentView.bounds.width / 2)
-        let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth
+        var centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth
+        centerXConstraintValue = round(centerXConstraintValue * 10) / 10.0
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         
         setAllIllustrationMarksInactive()
-        let view = setupNewIllustrationMarkView(with: currentTimeInterval, centerXConstraintValue: centerXConstraintValue)
-        illustrationMarkDictionary[view] = (IllustrationMarkModel(timeInterval: currentTimeInterval,
-                                                                  centerXConstraintValue: centerXConstraintValue))
-        
+        let data = IllustrationMarkModel(timeInterval: currentTimeInterval,
+                                         centerXConstraintValue: centerXConstraintValue,
+                                         isActive: true)
+        illustrationMarkDataList.append(data)
+        setupNewIllustrationMarkView(with: data)
     }
     
-    private func setupNewIllustrationMarkView(with currentTimeInterval: TimeInterval, centerXConstraintValue: CGFloat) -> RecordingAddedIllustrationMarkView {
+    private func setupNewIllustrationMarkView(with data: IllustrationMarkModel) {
         let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
         scrollContentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
-        setupIllustrationMarkConstraints(with: centerXConstraintValue, view: view)
+        setupIllustrationMarkConstraints(with: data.centerXConstraintValue, view: view)
         
-        view.setupTimeLabel(with: currentTimeInterval)
-        view.removeMarkBlock = { [weak self] in
-            if let index = self?.illustrationMarkDictionary.firstIndex(where: { $0.value.timeInterval == currentTimeInterval }) {
-                self?.illustrationMarkDictionary.remove(at: index)
-                view.removeFromSuperview()
+        view.data = data
+        view.setupTimeLabel(with: data.timeInterval)
+        view.setupTimeLabelAndRemoveButtonVisibility(isHidden: !data.isActive)
+        view.removeMarkBlock = { [weak self, weak view] in
+            if let index = self?.illustrationMarkDataList.firstIndex(where: { $0.timeInterval == data.timeInterval }) {
+                self?.illustrationMarkDataList.remove(at: index)
+                view?.removeFromSuperview()
             }
         }
-        view.bringMarkViewToFrontBlock = { [weak self] in
-            guard let strongSelf = self else { return }
+        view.bringMarkViewToFrontBlock = { [weak self, weak view] in
+            guard let strongSelf = self, let strongView = view else { return }
             strongSelf.setAllIllustrationMarksInactive()
-            strongSelf.scrollContentView.bringSubview(toFront: view)
-            view.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
+            strongSelf.scrollContentView.bringSubview(toFront: strongView)
+            strongView.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
         }
-        
-        return view
     }
     
     private func setAllIllustrationMarksInactive() {
-        illustrationMarkDictionary.keys.forEach { $0.setupTimeLabelAndRemoveButtonVisibility(isHidden: true) }
+        var dataList: [IllustrationMarkModel] = []
+        illustrationMarkDataList.forEach {
+            let data = IllustrationMarkModel.init(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, isActive: false)
+            dataList.append(data)
+        }
+
+        illustrationMarkDataList = dataList
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
@@ -171,27 +179,28 @@ class WaveformWithIllustrationsPlot: UIView {
 extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         waveformPlot.waveformView.contentOffset = scrollView.contentOffset
-        
-        illustrationMarkDictionary.forEach { element in
-            let leftOffset = element.value.centerXConstraintValue + (scrollContentView.bounds.width / 2) - (scrollView.contentOffset.x - scrollView.contentInset.left)
-            
-           // print("leftOffset: \(leftOffset)       constraint: \(element.value.centerXConstraintValue)")
-            if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && scrollContentView.subviews.contains(element.key) {
-                scrollContentView.willRemoveSubview(element.key)
-                element.key.removeFromSuperview()
+        illustrationMarkDataList.forEach { data in
+            let leftOffset = data.centerXConstraintValue + (scrollContentView.bounds.width / 2) - (scrollView.contentOffset.x - scrollView.contentInset.left)
+
+            // print("leftOffset: \(leftOffset)       constraint: \(element.value.centerXConstraintValue)")
+            let subview = scrollContentView.subviews.first(where: { view in
+                (view as? RecordingAddedIllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue
+            })
+            if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && subview != nil {
+                scrollContentView.willRemoveSubview(subview!)
+                subview!.removeFromSuperview()
                 print("removed mark view")
             }
 
-            if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && !scrollContentView.subviews.contains(element.key) {
-                scrollContentView.addSubview(element.key)
-                setupIllustrationMarkConstraints(with: element.value.centerXConstraintValue, view: element.key)
+            if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && subview == nil {
+                setupNewIllustrationMarkView(with: data)
                 print("added mark view")
             }
         }
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-
+        
     }
 }
 
@@ -199,12 +208,12 @@ extension WaveformWithIllustrationsPlot: LeadingLineTimeUpdaterDelegate {
     func timeIntervalDidChange(with timeInterval: TimeInterval) {
         waveformPlot.waveformView.timeIntervalDidChange(with: timeInterval)
     }
-
+    
     func scrollToTheEnd() {
         let point = scrollView.contentOffset
         scrollView.setContentOffset(point, animated: false)
         waveformPlot.waveformView.contentOffset = point
-
+        
         autoScrollTimer?.invalidate()
         autoScrollTimer = Timer.scheduledTimer(timeInterval: 0.01,
                                                target: self,
@@ -212,7 +221,7 @@ extension WaveformWithIllustrationsPlot: LeadingLineTimeUpdaterDelegate {
                                                userInfo: nil,
                                                repeats: true)
     }
-
+    
     @objc func scrollContentOffset() {
         let difference: CGFloat = CGFloat(WaveformConfiguration.microphoneSamplePerSecond) / 100
         let finalPosition: CGFloat = scrollView.contentOffset.x + difference
@@ -225,7 +234,7 @@ extension WaveformWithIllustrationsPlot: LeadingLineTimeUpdaterDelegate {
         waveformPlot.waveformView.contentOffset = scrollView.contentOffset
         waveformPlot.waveformView.scrollContentOffset()
     }
-
+    
     func stopScrolling() {
         autoScrollTimer.invalidate()
     }
