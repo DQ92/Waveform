@@ -35,6 +35,7 @@
 		709E2EC32146547000BC0DE5 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E2EC22146547000BC0DE5 /* Operators.swift */; };
 		70B52CB02142549F000D4989 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B52CAF2142549F000D4989 /* Time.swift */; };
 		70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C6CFD121414BDE0059E174 /* FileDataLoader.swift */; };
+		E8893285D27461C2405EC839 /* TimeIntervalCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88935D55003D5F13EE5FC24 /* TimeIntervalCalculator.swift */; };
 		E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939EE21AC6ECE7509AED4 /* RecorderError.swift */; };
 		E88934EC1C50C2ED38614386 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889324ECFA632E33ECBA121 /* Logger.swift */; };
 		E88936392F81CD966EEB8544 /* AVFoundationRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889316FC43DCA7105BE9F29 /* AVFoundationRecorder.swift */; };
@@ -98,6 +99,7 @@
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E8893423F0FE312759A629FB /* RecorderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderProtocol.swift; sourceTree = "<group>"; };
 		E8893549B61B999208FD341E /* MicrophoneError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneError.swift; sourceTree = "<group>"; };
+		E88935D55003D5F13EE5FC24 /* TimeIntervalCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeIntervalCalculator.swift; sourceTree = "<group>"; };
 		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				E889324ECFA632E33ECBA121 /* Logger.swift */,
 				705F9BD32141039F00C98859 /* String+Extension.swift */,
 				709E2EC22146547000BC0DE5 /* Operators.swift */,
+				E88935D55003D5F13EE5FC24 /* TimeIntervalCalculator.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -439,6 +442,7 @@
 				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,
 				661175BC21550468003F7C4C /* TimelineCoordinator.swift in Sources */,
 				E889368C9934AFEE8D9F123E /* ZoomLevel.swift in Sources */,
+				E8893285D27461C2405EC839 /* TimeIntervalCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

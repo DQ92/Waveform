@@ -111,26 +111,26 @@ extension WaveformPlot: WaveformViewDelegate {
 extension WaveformPlot {
     func zoomIn() {
         zoom.in()
-        zoomDidChange()
+        zoomLevelDidChange()
     }
 
     func zoomOut() {
         zoom.out()
-        zoomDidChange()
+        zoomLevelDidChange()
     }
 
     func resetZoom() {
         zoom.reset()
-        zoomDidChange()
+        zoomLevelDidChange()
     }
 
-    private func zoomDidChange() {
-        waveformView.zoomDidChange(with: zoom)
-        timelineView.timeInterval = TimeInterval(zoom.samplesPerLayer)
+    private func zoomLevelDidChange() {
+        waveformView.zoomLevelDidChange(with: zoom.level)
+        timelineView.timeInterval = TimeInterval(zoom.level.samplesPerLayer)
     }
 
     func currentZoomPercent() -> String {
-        return zoom.percent
+        return zoom.level.percent
     }
 
     func changeSamplesPerPoint(_ samplesPerPoint: CGFloat) {

@@ -24,16 +24,8 @@ class Zoom {
         return self.levels.count
     }
 
-    var samplesPerLayer: Int {
-        return self.levels[self.currentLevel].samplePerLayer
-    }
-
-    var multiplier: Double {
-        return self.levels[self.currentLevel].multiplier
-    }
-
-    var percent: String {
-        return self.levels[self.currentLevel].percent
+    var level: ZoomLevel {
+        return self.levels[currentLevel]
     }
 
     // MARK: - Private properties
@@ -83,7 +75,7 @@ class Zoom {
                                                               return self.createZoomLevel(with: max, and: $0)
                                                           }
                                                           .filter {
-                                                              $0.samplePerLayer >= 1
+                                                              $0.samplesPerLayer >= 1
                                                           }
                                                           .sorted {
                                                               $0.multiplier > $1.multiplier
@@ -113,7 +105,7 @@ class Zoom {
             countingMultiplier = 1.0 / Double(maxSamplePerLayer)
             multiplierToDisplay = 1.0
         }
-        return ZoomLevel(samplePerLayer: Int(ceil(countingMultiplier * Double(maxSamplePerLayer))),
+        return ZoomLevel(samplesPerLayer: Int(ceil(countingMultiplier * Double(maxSamplePerLayer))),
                          multiplier: multiplierToDisplay)
     }
 }

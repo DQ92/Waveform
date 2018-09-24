@@ -61,8 +61,7 @@ class WaveformView: UIView {
     private let leadingLineAnimationDuration = WaveformConfiguration.timeInterval
     private var autoScrollTimer: Timer!
     private var leadingLineTimeUpdater: LeadingLineTimeUpdater!
-    private var zoomMultiplier: Double = 1.0
-    private var samplePerLayer: Int = 1
+    private var zoomLevel = ZoomLevel(samplesPerLayer: 1, multiplier: 1.0)
 
     private lazy var coordinator: WaveformCoordinator = {
         let coordinator = WaveformCoordinator(cellIdentifier: self.collectionViewCellIdentifier, endlessScrollingEnabled: false)
@@ -71,7 +70,7 @@ class WaveformView: UIView {
                 return
             }
             let currentX = max(round(contentOffset.x + caller.leadingLine.position.x), 0.0)
-            caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.samplePerLayer)
+//            caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.zoomLevel.samplesPerLayer)
             caller.contentOffset = contentOffset
             caller.delegate?.contentOffsetDidChange(contentOffset)
         }
@@ -106,6 +105,7 @@ class WaveformView: UIView {
         self.collectionView.reloadData()
         updateLeadingLine(x: self.collectionView.bounds.size.width / 2)
         self.collectionView.contentInset = self.calculateContentInset()
+        self.collectionView.contentOffset = CGPoint(x: -leadingLine.position.x, y: 0)
     }
 
     private func enableRecordingMode() {
@@ -132,7 +132,7 @@ class WaveformView: UIView {
 extension WaveformView {
     func setCurrentValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
         let currentRow = self.sampleIndex / self.coordinator.configurator.layersPerSecond
-        let offset = CGFloat(self.sampleIndex) + 1.0 * CGFloat(zoomMultiplier)
+        let offset = CGFloat(self.sampleIndex) + 1.0 * CGFloat(zoomLevel.samplesPerLayer)
         let indexPath = IndexPath(row: currentRow, section: 0)
         let model = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
         if self.coordinator.shouldLoadMoreItems(forIndexPath: indexPath) {
@@ -187,7 +187,7 @@ extension WaveformView {
         } else {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
-            self.leadingLineTimeUpdater.changeTime(withX: x, and: samplePerLayer)
+            self.leadingLineTimeUpdater.changeTime(withX: x, and: zoomLevel.samplesPerLayer)
             self.leadingLine.position.x = abs(self.collectionView.contentOffset.x) + x
             CATransaction.commit()
         }
@@ -210,14 +210,14 @@ extension WaveformView {
 
     @objc func changeOffsetTimerRepetition() {
         let numberOfLayersPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
-        let difference: CGFloat = CGFloat(numberOfLayersPerSecond) / CGFloat((100 * samplePerLayer))
+        let difference: CGFloat = CGFloat(numberOfLayersPerSecond) / CGFloat((100 * zoomLevel.samplesPerLayer))
         let finalPosition: CGFloat = collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
         collectionView.bounds = CGRect(x: point.x,
                                        y: point.y,
                                        width: collectionView.bounds.size.width,
                                        height: collectionView.bounds.size.height)
-        leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x, and: samplePerLayer)
+        leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x, and: zoomLevel.samplesPerLayer)
         delegate?.contentOffsetDidChange(point)
     }
 
@@ -240,10 +240,22 @@ extension WaveformView: LeadingLineTimeUpdaterDelegate {
 // MARK: - Zoom
 
 extension WaveformView {
-    func zoomDidChange(with zoom: Zoom) {
-        self.zoomMultiplier = zoom.multiplier
-        self.samplePerLayer = zoom.samplesPerLayer
-        self.coordinator.samplePerLayer = zoom.samplesPerLayer
-        self.collectionView.reloadData()
+    func zoomLevelDidChange(with level: ZoomLevel) {
+        zoomLevel = level
+        coordinator.samplePerLayer = level.samplesPerLayer
+        collectionView.reloadData()
+        scrollToCurrentTimeIntervalWithoutLeadingLineUpdate()
+    }
+
+    private func scrollToCurrentTimeIntervalWithoutLeadingLineUpdate() {
+        let xPosition = TimeIntervalCalculator.calculateXPosition(for: currentTimeInterval,
+                                                                  samplePerLayer: zoomLevel.samplesPerLayer,
+                                                                  elementsPerSecond: elementsPerSecond) - leadingLine.position.x
+        let point = CGPoint(x: xPosition, y: 0.0)
+        collectionView.bounds = CGRect(x: point.x,
+                                       y: point.y,
+                                       width: collectionView.bounds.size.width,
+                                       height: collectionView.bounds.size.height)
+        delegate?.contentOffsetDidChange(point)
     }
 }

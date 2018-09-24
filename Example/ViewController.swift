@@ -248,9 +248,9 @@ extension ViewController {
                 }
                 let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
                 let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
-                changeZoomSamplesPerPointForNewFile(samplesPerPoint)
                 DispatchQueue.main.async {
                     caller.waveformPlot.waveformView.load(values: values)
+                    caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {

@@ -6,7 +6,7 @@
 import Foundation
 
 struct ZoomLevel: Equatable {
-    let samplePerLayer: Int
+    let samplesPerLayer: Int
     let multiplier: Double
 
     var percent: String {
@@ -15,5 +15,5 @@ struct ZoomLevel: Equatable {
 }
 
 func ==(lhs: ZoomLevel, rhs: ZoomLevel) -> Bool {
-    return lhs.samplePerLayer == rhs.samplePerLayer
+    return lhs.samplesPerLayer == rhs.samplesPerLayer
 }
