@@ -16,11 +16,6 @@ class AddIllustrationsViewController: UIViewController {
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoader!
     private var url: URL!
-    private var values = [[WaveformModel]]() {
-        didSet {
-            waveformWithIllustrationsPlot.waveformPlot.waveformView.values = values
-        }
-    }
 
     private var elementsPerSecond: Int {
         return WaveformConfiguration.microphoneSamplePerSecond
@@ -106,19 +101,26 @@ extension AddIllustrationsViewController {
 extension AddIllustrationsViewController {
     private func retrieveFileDataAndSet(with url: URL) {
         do {
+            if recorder.recorderState == .isRecording {
+                recorder.stop()
+            }
             loader = try FileDataLoader(fileURL: url)
-            self.url = url
             let time = AudioUtils.time(from: (loader.fileDuration)!)
             let totalTimeString = String(format: "%02d:%02d:%02d",
                                          time.minutes,
                                          time.seconds,
                                          time.milliSeconds)
             totalTimeLabel.text = totalTimeString
+            try recorder.openFile(with: url)
             try loader.loadFile(completion: { [weak self] (array) in
-                let model = self?.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                guard let caller = self else {
+                    return
+                }
+                let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
+                let samplesPerPoint = CGFloat(values.count) / caller.waveformWithIllustrationsPlot.bounds.width
                 DispatchQueue.main.async {
-                    self?.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: model ?? [])
-                    self?.waveformWithIllustrationsPlot.setupContentViewOfScrollView()
+                    caller.waveformWithIllustrationsPlot.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
+                    caller.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: values)
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {
@@ -134,6 +136,7 @@ extension AddIllustrationsViewController {
             alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alertController, animated: true)
         }
+
 
     }
 
@@ -154,29 +157,13 @@ extension AddIllustrationsViewController {
         return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
     }
 
-    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [[WaveformModel]] {
-        // Liczba próbek na sekundę
+    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
         let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-
-        let waveformSamples = samples.enumerated()
-            .map { sample in
-                WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp: TimeInterval(sample.offset / sampleRate))
-        }
-
-        let samplesPerCell = sampleRate
-        var result = [[WaveformModel]]()
         
-        for cellIndex in 0..<Int(ceil(numberOfSeconds)) {
-            let beginIndex = cellIndex * samplesPerCell
-            let endIndex = min(beginIndex + samplesPerCell, waveformSamples.count)
-            var cellSamples = [WaveformModel]()
-            
-            for index in beginIndex..<endIndex {
-                cellSamples.append(waveformSamples[index])
-            }
-            result.append(cellSamples)
+        return samples.enumerated().map { sample in
+            WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
+                TimeInterval(sample.offset / sampleRate))
         }
-        return result
     }
 }
 
