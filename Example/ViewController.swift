@@ -155,8 +155,6 @@ extension ViewController {
 
         if recorder.recorderState == .isRecording {
             recorder.pause()
-            //        } else if (currentlyShownTime < recorder.currentTime) {
-            //            startRecording(with: true)
         } else {
             do {
                 try recorder.activateSession() { [weak self] permissionGranted in
@@ -182,7 +180,7 @@ extension ViewController {
         Log.info("Start recording")
         do {
             if recorder.recorderState == .stopped {
-                waveformPlot.clear()
+                waveformPlot.reset()
                 try recorder.start()
             } else {
                 let timeInterval = self.waveformPlot.waveformView.currentTimeInterval
