@@ -24,7 +24,9 @@ class LeadingLineTimeUpdater {
     // MARK: - Access method
 
     func changeTime(withX position: CGFloat, and samplePerLayer: Int) {
-        let timeInterval = (Double(position) / Double(elementsPerSecond)) * Double(samplePerLayer)
+        let timeInterval = TimeIntervalCalculator.calculateTimeInterval(for: position,
+                                                                        samplePerLayer: samplePerLayer,
+                                                                        elementsPerSecond: elementsPerSecond)
         delegate?.timeIntervalDidChange(with: timeInterval)
     }
 }

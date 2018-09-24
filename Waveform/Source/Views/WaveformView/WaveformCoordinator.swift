@@ -97,4 +97,6 @@ extension WaveformCoordinator: UICollectionViewDelegateFlowLayout {
         
         return CGSize(width: customWidth, height: collectionView.bounds.size.height)
     }
+
 }
+
