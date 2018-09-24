@@ -70,7 +70,7 @@ class WaveformView: UIView {
                 return
             }
             let currentX = max(round(contentOffset.x + caller.leadingLine.position.x), 0.0)
-//            caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.zoomLevel.samplesPerLayer)
+            caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.zoomLevel.samplesPerLayer)
             caller.contentOffset = contentOffset
             caller.delegate?.contentOffsetDidChange(contentOffset)
         }
