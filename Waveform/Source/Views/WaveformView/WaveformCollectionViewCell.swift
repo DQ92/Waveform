@@ -1,3 +1,10 @@
+//
+//  WaveformPlot.swift
+//  Waveform
+//
+//  Created by Robert Mietelski on 07.09.2018.
+//  Copyright © 2018 Andrew L. Jaffee. All rights reserved.
+//
 
 import UIKit
 
@@ -35,16 +42,12 @@ class WaveformCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         
         self.sampleDictionary = [:]
+        self.setNeedsDisplay()
     }
     
     // MARK: - Access methods
     
-    func setupSample(sample: Sample, at index: Int) {
-        self.sampleDictionary[index] = sample
-        self.setNeedsDisplay()
-    }
-    
-    func setupSamples(samples: [Sample]) {
+    func setupSamples(_ samples: [Sample]) {
         samples.enumerated().forEach { [weak self] (index, sample) in
             self?.sampleDictionary[index] = sample
         }

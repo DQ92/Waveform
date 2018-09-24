@@ -5,7 +5,6 @@
 //  Created by Robert Mietelski on 06.09.2018.
 //  Copyright © 2018 Andrew L. Jaffee. All rights reserved.
 //
-
 import UIKit
 
 class TimelineView: UIView {
@@ -14,6 +13,7 @@ class TimelineView: UIView {
     
     var timeInterval: TimeInterval = 1.0 {
         didSet {
+            self.coordinator.timeInterval = timeInterval
             self.setNeedsReloadData()
         }
     }
@@ -21,6 +21,7 @@ class TimelineView: UIView {
     var intervalWidth: CGFloat = 100 {
         didSet {
             self.boundsVew.intervalWidth = intervalWidth
+            self.coordinator.intervalWidth = intervalWidth
             self.setNeedsReloadData()
         }
     }
@@ -28,8 +29,7 @@ class TimelineView: UIView {
     var lineWidth: CGFloat = 1.0 {
         didSet {
             self.boundsVew.lineWidth = lineWidth
-            self.timeLabelInsets.left = lineWidth + 4
-            self.timeLabelInsets.right = lineWidth + 4
+            self.coordinator.lineWidth = lineWidth
             self.setNeedsReloadData()
         }
     }
@@ -37,6 +37,7 @@ class TimelineView: UIView {
     var lineColor: UIColor = UIColor.gray {
         didSet {
             self.boundsVew.lineColor = lineColor
+            self.coordinator.lineColor = lineColor
             self.setNeedsReloadData()
         }
     }
@@ -44,7 +45,7 @@ class TimelineView: UIView {
     var sublineHeight: CGFloat = 7.0 {
         didSet {
             self.boundsVew.sublineHeight = sublineHeight
-            self.timeLabelInsets.bottom = lineWidth + 2
+            self.coordinator.sublineHeight = sublineHeight
             self.setNeedsReloadData()
         }
     }
@@ -52,6 +53,7 @@ class TimelineView: UIView {
     var numberOfSublines: Int = 3 {
         didSet {
             self.boundsVew.numberOfSublines = numberOfSublines
+            self.coordinator.numberOfSublines = numberOfSublines
             self.setNeedsReloadData()
         }
     }
@@ -65,21 +67,11 @@ class TimelineView: UIView {
     // MARK: - Private attributes
     
     private static let collectionViewCellIdentifier = "CollectionViewCellIdentifier"
-    
-    private lazy var timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss"
-        
-        return formatter
-    }()
-    
-    private var timeLabelInsets: UIEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 10.0, 5.0) {
-        didSet {
-            self.setNeedsReloadData()
-        }
-    }
-    private var numberOfItems: Int = 20
     private var reloadTimer: Timer?
+    
+    private lazy var coordinator: TimelineCoordinator = {
+        return TimelineCoordinator(cellIdentifier: TimelineView.collectionViewCellIdentifier)
+    }()
     
     // MARK: - Views
     
@@ -95,8 +87,8 @@ class TimelineView: UIView {
         collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: TimelineView.collectionViewCellIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isScrollEnabled = false
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        collectionView.dataSource = self.coordinator
+        collectionView.delegate = self.coordinator
         collectionView.backgroundColor = .clear
         self.addSubview(collectionView)
         
@@ -173,59 +165,5 @@ class TimelineView: UIView {
             timer.invalidate()
         }
         self.reloadTimer = nil
-    }
-}
-
-extension TimelineView: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.numberOfItems
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TimelineView.collectionViewCellIdentifier,
-                                                            for: indexPath) as? IntervalCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        
-        let timeInterval = self.timeInterval * Double(indexPath.row)
-        let date = Date(timeIntervalSince1970: timeInterval)
-        
-        cell.timeLabelInsets = self.timeLabelInsets
-        cell.timeLabel.font = UIFont.systemFont(ofSize: 10.5)
-        cell.timeLabel.text = self.timeFormatter.string(from: date)
-        
-        cell.intervalView.intervalWidth = self.intervalWidth
-        cell.intervalView.lineWidth = self.lineWidth
-        cell.intervalView.lineColor = self.lineColor
-        cell.intervalView.sublineHeight = self.sublineHeight
-        cell.intervalView.numberOfSublines = self.numberOfSublines
-        
-        return cell
-    }
-}
-
-extension TimelineView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row > self.numberOfItems - 10 {
-            let currentNumberOfItems = self.numberOfItems + 10
-            let indexPaths = (self.numberOfItems...currentNumberOfItems - 1).map { IndexPath(row: $0, section: indexPath.section) }
-            
-            collectionView.performBatchUpdates({
-                self.numberOfItems = currentNumberOfItems
-                collectionView.insertItems(at: indexPaths)
-            }, completion: { _ in
-                collectionView.reloadData()
-            })
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.intervalWidth, height: collectionView.bounds.size.height)
     }
 }

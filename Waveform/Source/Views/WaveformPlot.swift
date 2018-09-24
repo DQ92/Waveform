@@ -38,6 +38,29 @@ class WaveformPlot: UIView {
     
     weak var delegate: WaveformPlotDelegate?
     
+    var zoom: Zoom = Zoom() {
+        didSet {
+            self.waveformView.zoom = zoom
+            self.timelineView.timeInterval = TimeInterval(zoom.samplePerLayer)
+        }
+    }
+    
+    var recordingModeEnabled: Bool = false {
+        didSet {
+            self.isUserInteractionEnabled = !recordingModeEnabled
+            self.waveformView.recordingModeEnabled = recordingModeEnabled
+        }
+    }
+    
+    var contentOffset: CGPoint {
+        set {
+            self.waveformView.contentOffset = newValue
+        }
+        get {
+            return waveformView.contentOffset
+        }
+    }
+    
     // MARK: - Initialization
     
     override init(frame: CGRect) {
@@ -71,6 +94,12 @@ class WaveformPlot: UIView {
         self.waveformView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
         self.waveformView.setupConstraint(attribute: .top, toItem: self.timelineView, attribute: .bottom)
         self.waveformView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+    }
+    
+    // MARK: - Access methods
+    
+    func clear() {
+        self.waveformView.reload()
     }
 }
 
