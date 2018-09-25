@@ -44,6 +44,11 @@ class WaveformCoordinator: EndlessScrollingCoordinator {
         }
         return samples
     }
+    
+    private func numberOfItemsInSection(_ section: Int) -> Int {
+        let numberOfLayers = Int(ceil(CGFloat(self.values.count) / CGFloat(self.samplePerLayer)))
+        return Int(ceil(CGFloat(numberOfLayers) / CGFloat(self.configurator.layersPerSecond)))
+    }
 }
 
 extension WaveformCoordinator: UICollectionViewDataSource {
@@ -55,18 +60,17 @@ extension WaveformCoordinator: UICollectionViewDataSource {
         if self.endlessScrollingEnabled {
             return self.numberOfItems
         }
-        let numberOfLayers = Int(ceil(CGFloat(self.values.count) / CGFloat(self.samplePerLayer)))
-        return Int(ceil(CGFloat(numberOfLayers) / CGFloat(self.configurator.layersPerSecond)))
+        return self.numberOfItemsInSection(section)
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdentifier, for: indexPath) as! WaveformCollectionViewCell
-        let numberOfRows = Int(ceil(CGFloat(self.values.count) / CGFloat(self.configurator.layersPerSecond)))
+        let numberOfItems = self.numberOfItemsInSection(indexPath.section)
         var samples: [Sample] = []
         
-        if indexPath.row < numberOfRows {
+        if indexPath.row < numberOfItems {
             samples = self.getSamples(indexPath: indexPath)
         }
         cell.setupSamples(samples)

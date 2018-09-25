@@ -69,7 +69,7 @@ class WaveformPlot: UIView {
 
     private func commonInit() {
         self.timelineView.contentOffset = self.waveformView.contentOffset
-        self.timelineView.intervalWidth = CGFloat(self.waveformView.elementsPerSecond)
+        self.timelineView.intervalWidth = CGFloat(self.waveformView.layersPerSecond)
         timelineView.backgroundColor = .clear
         waveformView.backgroundColor = .clear
     }
@@ -87,8 +87,8 @@ class WaveformPlot: UIView {
 
     // MARK: - Access methods
 
-    func clear() {
-        self.waveformView.reload()
+    func reset() {
+        self.waveformView.reset()
     }
 }
 

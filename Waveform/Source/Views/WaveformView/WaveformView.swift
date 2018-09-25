@@ -37,20 +37,26 @@ class WaveformView: UIView {
     private(set) var currentTimeInterval: TimeInterval = 0.0
     private(set) var sampleIndex: Int = 0
 
+    var layersPerSecond: Int {
+        return self.coordinator.configurator.layersPerSecond
+    }
+
     var contentOffset: CGPoint = CGPoint.zero {
         didSet {
             self.collectionView.contentOffset = contentOffset
         }
     }
+
     var contentInset: UIEdgeInsets {
         return collectionView.contentInset
     }
+
     var waveformViewContentSize: CGSize {
         get {
             return collectionView.contentSize
         }
     }
-    var elementsPerSecond: Int = 0
+
     var recordingModeEnabled: Bool = false {
         didSet {
             if recordingModeEnabled {
@@ -98,7 +104,7 @@ class WaveformView: UIView {
         self.setupConstraints()
     }
 
-    func reload() {
+    func reset() {
         coordinator.values = []
         collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
         leadingLine.position = CGPoint(x: 0, y: leadingLine.position.y)
@@ -130,18 +136,22 @@ class WaveformView: UIView {
         let contentWidth = CGFloat(self.coordinator.values.count) * self.coordinator.configurator.sampleLayerWidth
         let minimumRightInsets = self.collectionView.bounds.width * 0.5
         let currentRightInsets = self.collectionView.bounds.width - contentWidth
+
         let rightInsets = max(currentRightInsets, minimumRightInsets)
         let leftInsets = self.collectionView.bounds.width - rightInsets
+
         return UIEdgeInsets(top: 0.0, left: leftInsets, bottom: 0.0, right: rightInsets)
     }
 }
 
 extension WaveformView {
     func setCurrentValue(_ value: Float, for timeInterval: TimeInterval, mode: RecordingMode) {
-        let currentRow = self.sampleIndex / self.coordinator.configurator.layersPerSecond
-        let offset = CGFloat(self.sampleIndex) + 1.0 * CGFloat(zoomLevel.samplesPerLayer)
+        let currentRow = self.sampleIndex / self.layersPerSecond
+        let sampleWidth = self.coordinator.configurator.sampleLayerWidth / CGFloat(self.zoomLevel.samplesPerLayer)
+        let offset = CGFloat(self.sampleIndex + 1) * sampleWidth
         let indexPath = IndexPath(row: currentRow, section: 0)
         let model = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
+
         if self.coordinator.shouldLoadMoreItems(forIndexPath: indexPath) {
             self.coordinator.values.append(model)
             self.coordinator.appendItems(atSection: indexPath.section,
@@ -166,10 +176,9 @@ extension WaveformView {
 extension WaveformView {
     private func commonInit() {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
-        self.collectionView.backgroundColor = .clear
-        self.elementsPerSecond = WaveformConfiguration.microphoneSamplePerSecond
-        self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: elementsPerSecond)
+        self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: self.layersPerSecond)
         self.leadingLineTimeUpdater.delegate = self
+        self.collectionView.backgroundColor = .clear
     }
 
     private func setupConstraints() {
@@ -191,7 +200,8 @@ extension WaveformView {
         let scrollStartPosition = self.collectionView.bounds.width * 0.5
         let offset = abs(self.collectionView.contentOffset.x) + x
         if offset > scrollStartPosition {
-            collectionView.setContentOffset(CGPoint(x: x - scrollStartPosition, y: 0), animated: false)
+            self.setContentOffset(CGPoint(x: x - scrollStartPosition, y: 0))
+            self.leadingLineTimeUpdater.changeTime(withX: x, and: self.zoomLevel.samplesPerLayer)
         } else {
             CATransaction.begin()
             CATransaction.setAnimationDuration(leadingLineAnimationDuration)
@@ -199,6 +209,15 @@ extension WaveformView {
             self.leadingLine.position.x = abs(self.collectionView.contentOffset.x) + x
             CATransaction.commit()
         }
+    }
+}
+
+// MARK: - Content offset
+
+extension WaveformView {
+    private func setContentOffset(_ origin: CGPoint) {
+        self.collectionView.bounds = CGRect(origin: origin, size: self.collectionView.bounds.size)
+        self.delegate?.contentOffsetDidChange(origin)
     }
 }
 
@@ -217,16 +236,13 @@ extension WaveformView {
     }
 
     @objc func changeOffsetTimerRepetition() {
-        let numberOfLayersPerSecond = CGFloat(WaveformConfiguration.microphoneSamplePerSecond)
+        let numberOfLayersPerSecond = CGFloat(self.layersPerSecond)
         let difference: CGFloat = CGFloat(numberOfLayersPerSecond) / CGFloat((100 * zoomLevel.samplesPerLayer))
         let finalPosition: CGFloat = collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
-        collectionView.bounds = CGRect(x: point.x,
-                                       y: point.y,
-                                       width: collectionView.bounds.size.width,
-                                       height: collectionView.bounds.size.height)
+
+        setContentOffset(point)
         leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x, and: zoomLevel.samplesPerLayer)
-        delegate?.contentOffsetDidChange(point)
     }
 
     func stopScrolling() {
@@ -238,7 +254,7 @@ extension WaveformView {
 
 extension WaveformView: LeadingLineTimeUpdaterDelegate {
     func timeIntervalDidChange(with timeInterval: TimeInterval) {
-        let value = Double(self.elementsPerSecond) * timeInterval
+        let value = timeInterval * Double(self.layersPerSecond)
         self.sampleIndex = Int(round(value))
         self.currentTimeInterval = timeInterval
         self.delegate?.currentTimeIntervalDidChange(timeInterval)
@@ -258,12 +274,7 @@ extension WaveformView {
     private func scrollToCurrentTimeIntervalWithoutLeadingLineUpdate() {
         let xPosition = TimeIntervalCalculator.calculateXPosition(for: currentTimeInterval,
                                                                   samplePerLayer: zoomLevel.samplesPerLayer,
-                                                                  elementsPerSecond: elementsPerSecond) - leadingLine.position.x
-        let point = CGPoint(x: xPosition, y: 0.0)
-        collectionView.bounds = CGRect(x: point.x,
-                                       y: point.y,
-                                       width: collectionView.bounds.size.width,
-                                       height: collectionView.bounds.size.height)
-        delegate?.contentOffsetDidChange(point)
+                                                                  elementsPerSecond: self.layersPerSecond)
+        self.setContentOffset(CGPoint(x: xPosition - leadingLine.position.x, y: 0.0))
     }
 }
