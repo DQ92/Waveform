@@ -146,7 +146,7 @@ extension AddIllustrationsViewController {
                 DispatchQueue.main.async {
                     caller.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: values)
                     caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
-                    caller.waveformWithIllustrationsPlot.setupContentViewOfScrollView()
+                    caller.waveformWithIllustrationsPlot.setupScrollViewWithScrollContentView()
                 }
             })
         } catch FileDataLoaderError.openUrlFailed {

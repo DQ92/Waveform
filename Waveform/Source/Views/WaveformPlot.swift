@@ -11,6 +11,7 @@ import UIKit
 protocol WaveformPlotDelegate: class {
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
     func contentOffsetDidChange(_ contentOffset: CGPoint)
+    func zoomLevelDidChange(_ zoomLevel: ZoomLevel)
 }
 
 class WaveformPlot: UIView {
@@ -129,6 +130,7 @@ extension WaveformPlot {
     private func zoomLevelDidChange() {
         waveformView.zoomLevelDidChange(with: zoom.level)
         timelineView.timeInterval = TimeInterval(zoom.level.samplesPerLayer)
+        delegate?.zoomLevelDidChange(zoom.level)
     }
 
     func currentZoomPercent() -> String {

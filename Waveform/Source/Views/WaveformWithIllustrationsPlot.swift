@@ -48,6 +48,8 @@ class WaveformWithIllustrationsPlot: UIView {
         return UIScreen.main.bounds.width * 0.08
     }
     private var illustrationMarkDataList: [IllustrationMarkModel] = []
+    private var scrollContentViewWidthConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    private var currentZoomLevel: ZoomLevel = ZoomLevel(samplesPerLayer: 1, multiplier: 1.0)
     
     // MARK: - Private constants
     
@@ -103,7 +105,7 @@ class WaveformWithIllustrationsPlot: UIView {
     func addIllustrationMark() {
         let halfOfScrollContentViewWidth = -(scrollContentView.bounds.width / 2)
         var centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth
-        centerXConstraintValue = round(centerXConstraintValue * 10) / 10.0
+        centerXConstraintValue *= CGFloat(currentZoomLevel.samplesPerLayer)
         let currentTimeInterval = waveformPlot.waveformView.currentTimeInterval
         
         hideScrollContentViewSubviews()
@@ -119,7 +121,8 @@ class WaveformWithIllustrationsPlot: UIView {
         let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollContentView.bounds.height))
         scrollContentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
-        setupIllustrationMarkConstraints(with: data.centerXConstraintValue, view: view)
+        let currentCenterXConstraintValue = data.centerXConstraintValue / CGFloat(currentZoomLevel.samplesPerLayer)
+        setupIllustrationMarkConstraints(with: currentCenterXConstraintValue, view: view)
         
         view.data = data
         view.setupTimeLabel(with: data.timeInterval)
@@ -182,36 +185,50 @@ class WaveformWithIllustrationsPlot: UIView {
                                  constant: centerXConstraintValue).isActive = true
     }
     
-    func setupContentViewOfScrollView() {
-        waveformPlot.waveformView.layoutIfNeeded() // TODO: updating view in different way
-        let width = waveformPlot.waveformView.waveformViewContentSize.width + (2 * illustrationMarkViewWidth)
+    func setupScrollViewWithScrollContentView() {
+        let width = calculateScrollContentViewWidth()
         scrollView.contentInset = waveformPlot.waveformView.contentInset
-        let constraint = NSLayoutConstraint.build(item: scrollContentView,
+        scrollContentViewWidthConstraint = NSLayoutConstraint.build(item: scrollContentView,
                                                   attribute: .width,
                                                   relatedBy: .equal,
                                                   toItem: nil,
                                                   attribute: .notAnAttribute,
                                                   constant: width)
-        constraint.isActive = true
+        scrollContentViewWidthConstraint.isActive = true
+    }
+    
+    private func updateScrollViewWithScrollContentView() {
+        let width = calculateScrollContentViewWidth()
+        scrollView.contentInset = waveformPlot.waveformView.contentInset
+        scrollContentViewWidthConstraint.constant = width
+    }
+    
+    private func calculateScrollContentViewWidth() -> CGFloat {
+        waveformPlot.waveformView.layoutIfNeeded() // TODO: updating view in different way
+        let width = waveformPlot.waveformView.waveformViewContentSize.width + (2 * illustrationMarkViewWidth)
+        return width
     }
 }
 
 extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         waveformPlot.waveformView.contentOffset = scrollView.contentOffset
+        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
+    }
+    
+    private func redrawIllustrationMarkViews(contentOffset: CGPoint) {
         illustrationMarkDataList.forEach { data in
-            let leftOffset = data.centerXConstraintValue + (scrollContentView.bounds.width / 2) - (scrollView.contentOffset.x - scrollView.contentInset.left)
-
-            // print("leftOffset: \(leftOffset)       constraint: \(element.value.centerXConstraintValue)")
+            let leftOffset = (data.centerXConstraintValue / CGFloat(currentZoomLevel.samplesPerLayer)) + (scrollContentViewWidthConstraint.constant / 2) - (contentOffset.x - scrollView.contentInset.left)
             let subview = scrollContentView.subviews.first(where: { view in
                 (view as? RecordingAddedIllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue
             })
+            
             if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && subview != nil {
                 scrollContentView.willRemoveSubview(subview!)
                 subview!.removeFromSuperview()
                 print("removed mark view")
             }
-
+            
             if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && subview == nil {
                 setupNewIllustrationMarkView(with: data)
                 print("added mark view")
@@ -221,6 +238,13 @@ extension WaveformWithIllustrationsPlot: UIScrollViewDelegate {
 }
 
 extension WaveformWithIllustrationsPlot: WaveformPlotDelegate {
+    func zoomLevelDidChange(_ zoomLevel: ZoomLevel) {
+        scrollContentView.subviews.forEach { $0.removeFromSuperview() }
+        updateScrollViewWithScrollContentView()
+        currentZoomLevel = zoomLevel
+        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
+    }
+    
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
         delegate?.currentTimeIntervalDidChange(timeInterval)
     }

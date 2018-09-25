@@ -302,6 +302,10 @@ extension ViewController: MicrophoneControllerDelegate {
 // MARK: - WaveformViewDelegate
 
 extension ViewController: WaveformPlotDelegate {
+    func zoomLevelDidChange(_ zoomLevel: ZoomLevel) {
+        
+    }
+    
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
         timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
     }
