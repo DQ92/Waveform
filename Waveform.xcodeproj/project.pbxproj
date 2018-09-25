@@ -14,40 +14,40 @@
 		66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4D213D5290004EFB6B /* AudioContext.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		705F9BD42141039F00C98859 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705F9BD32141039F00C98859 /* String+Extension.swift */; };
+		70999A96215A503C00746BFD /* IntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A8C215A503C00746BFD /* IntervalView.swift */; };
+		70999A97215A503C00746BFD /* IntervalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A8D215A503C00746BFD /* IntervalCollectionViewCell.swift */; };
+		70999A98215A503C00746BFD /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A8E215A503C00746BFD /* TimelineView.swift */; };
+		70999A99215A503C00746BFD /* TimelineCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A8F215A503C00746BFD /* TimelineCoordinator.swift */; };
+		70999A9A215A503C00746BFD /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A91215A503C00746BFD /* WaveformView.swift */; };
+		70999A9B215A503C00746BFD /* WaveformCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A92215A503C00746BFD /* WaveformCoordinator.swift */; };
+		70999A9C215A503C00746BFD /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A93215A503C00746BFD /* WaveformCollectionViewCell.swift */; };
+		70999A9D215A503C00746BFD /* WaveformPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A94215A503C00746BFD /* WaveformPlot.swift */; };
+		70999A9E215A503C00746BFD /* EndlessScrollingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A95215A503C00746BFD /* EndlessScrollingCoordinator.swift */; };
+		70999AA1215A508800746BFD /* IllustrationMarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA0215A508800746BFD /* IllustrationMarkModel.swift */; };
+		70999AA6215A511700746BFD /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA2215A511700746BFD /* Time.swift */; };
+		70999AA7215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA3215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
+		70999AA8215A511700746BFD /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA4215A511700746BFD /* WaveformModel.swift */; };
+		70999AA9215A511700746BFD /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA5215A511700746BFD /* WaveformColor.swift */; };
 		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
 		709E2EC32146547000BC0DE5 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E2EC22146547000BC0DE5 /* Operators.swift */; };
+		70F12029215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */; };
+		70F1202A215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */; };
+		70F1202B215A52EA0046D01A /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12027215A52EA0046D01A /* TimeLineView.swift */; };
+		70F1202C215A52EA0046D01A /* WaveformWithIllustrationsPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12028215A52EA0046D01A /* WaveformWithIllustrationsPlot.swift */; };
+		AEF53435214FDC76003C0539 /* AddIllustrationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */; };
 		E889307DAACC1C2F21D206AC /* AudioPlayerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88933CD924C9CBE76B4D5B5 /* AudioPlayerProtocol.swift */; };
 		E88931074DF844649330F020 /* AudioPlayerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889324E24952454A0B783E9 /* AudioPlayerState.swift */; };
-		E88931C4C87B84C3063ED02A /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88938CFF08F03D7EDAF1F86 /* WaveformCollectionViewCell.swift */; };
 		E889324A29580B79059A803E /* AssetComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893223F6B82F741055EF29 /* AssetComponent.swift */; };
-		E8893253911B4F5C9FCCE1E3 /* IntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939A2D5D05909CBCCDBDE /* IntervalView.swift */; };
-		E889327DADEAE675E6E9D516 /* IntervalCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893FBEE084515996A3AA4D /* IntervalCollectionViewCell.swift */; };
-		70B52CB02142549F000D4989 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B52CAF2142549F000D4989 /* Time.swift */; };
-		70C6CFD221414BDE0059E174 /* FileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C6CFD121414BDE0059E174 /* FileDataLoader.swift */; };
-		AEE3AD5E2153684D00BACDC7 /* IllustrationMarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */; };
-		AEF53435214FDC76003C0539 /* AddIllustrationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */; };
-		AEF5343B214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53437214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift */; };
-		AEF5343C214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */; };
-		AEF5343D214FDCD6003C0539 /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53439214FDCD6003C0539 /* TimeLineView.swift */; };
-		AEF5343E214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF5343A214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift */; };
-		B02F1729F40EE42CF79BBB77 /* WaveformCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */; };
-		B02F1DA085F4EA3C85E1ADE2 /* WaveformCollectionViewDelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */; };
 		E8893285D27461C2405EC839 /* TimeIntervalCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88935D55003D5F13EE5FC24 /* TimeIntervalCalculator.swift */; };
 		E88932CB823547E4233EB79D /* Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889307DEE8FBC3197937A23 /* Zoom.swift */; };
-		E889334CAC839AFF11475E78 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889397BAA303534D837D739 /* TimelineView.swift */; };
-		E88933B43329F189F3F0D9E8 /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88933D8EB43223895E9301B /* WaveformModel.swift */; };
 		E8893412C1041B73E0EABD2F /* RecorderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893E6B3A3E6572898C9B8F /* RecorderState.swift */; };
-		E8893440D3C03F7E18A3955F /* EndlessScrollingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889315B4EF482BE01F1C7FE /* EndlessScrollingCoordinator.swift */; };
 		E889344D54917262D408BE08 /* AVFoundationRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F5056E52325D1B70309 /* AVFoundationRecorder.swift */; };
 		E889345DDA9397CE032964BF /* FileDataLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893614A04E60F94A8CC386 /* FileDataLoaderError.swift */; };
-		E889345E6FC3DF99E70D4A7A /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889353CF27A265317061845 /* Time.swift */; };
 		E889346B92AC15161BF10715 /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88933849C993075B2D4F8C4 /* RecorderError.swift */; };
 		E88934EC1C50C2ED38614386 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889324ECFA632E33ECBA121 /* Logger.swift */; };
 		E88934F26F6A317A51355F20 /* ZoomType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893BF5AEB17BF19CCD6D84 /* ZoomType.swift */; };
 		E88935D540CAE01790C70F31 /* RecorderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939F8D15EADD7C3CDB73C /* RecorderProtocol.swift */; };
-		E88936E196CB4CF9D988A589 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F96657CDDD00A946C6E /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
-		E88937BC02665A5BBF4BA6A6 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893BEB77F45AD78084DA9C /* WaveformView.swift */; };
 		E889387C93CA49290CFEEF37 /* MicrophoneControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889347325CAA1A4F42EFCAE /* MicrophoneControllerProtocol.swift */; };
 		E889389722BC44CA2252C65E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E88933E17C3DD509432D589D /* Assets.xcassets */; };
 		E88938D7801809F4772753D2 /* MicrophoneControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C25F7B86354DFC8E088 /* MicrophoneControllerDelegate.swift */; };
@@ -57,18 +57,14 @@
 		E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E889321E20374C0C8FD33AD5 /* Main.storyboard */; };
 		E8893AC13C0E16AE315F8EFB /* AVFoundationAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889351CC4618729129FA50D /* AVFoundationAudioPlayer.swift */; };
 		E8893B18EF65C4A4DA2D4366 /* RecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889383AFE75C29F2D2E5E83 /* RecorderDelegate.swift */; };
-		E8893B1F66B0466C0266BC8D /* WaveformCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893131A084C617926E5D7E /* WaveformCoordinator.swift */; };
-		E8893CE90703F0BCC7D76B3D /* WaveformPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893668E0A3BF3164556749 /* WaveformPlot.swift */; };
 		E8893D1531E463D04436EA77 /* AudioToolboxFileDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889357080438AAFF5377C8B /* AudioToolboxFileDataLoader.swift */; };
 		E8893D30AADE405CEBE93592 /* LeadingLineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88939F6F26F0E0001C31CFC /* LeadingLineLayer.swift */; };
 		E8893D5F9AC09BCF1F15E307 /* MicrophoneError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893B747714947269BE93FB /* MicrophoneError.swift */; };
 		E8893E55C84A4CFA7EEB8A2B /* AudioToolboxMicrophoneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88937C804244C4A61E60736 /* AudioToolboxMicrophoneController.swift */; };
-		E8893ED219E8897E0D9876AE /* TimelineCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893065B95D88FDBF2E0112 /* TimelineCoordinator.swift */; };
 		E8893EE5E43E72448BC09D2E /* FileDataLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893C78FE7C84FCAFEC6977 /* FileDataLoaderProtocol.swift */; };
 		E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88936352B1611E5D825383D /* AudioUtils.swift */; };
 		E8893F1FA5F2D99A97F5865C /* LeadingLineTimeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893F2D9A564EE0477CCFE8 /* LeadingLineTimeUpdater.swift */; };
 		E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889367CB6423F4B57B69FE1 /* ViewController.swift */; };
-		E8893FEC57A152529D82B54C /* WaveformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E889352A79BA9ADB2D1786FB /* WaveformColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,23 +75,29 @@
 		66B83A4D213D5290004EFB6B /* AudioContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioContext.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		705F9BD32141039F00C98859 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		70999A8C215A503C00746BFD /* IntervalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalView.swift; sourceTree = "<group>"; };
+		70999A8D215A503C00746BFD /* IntervalCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalCollectionViewCell.swift; sourceTree = "<group>"; };
+		70999A8E215A503C00746BFD /* TimelineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		70999A8F215A503C00746BFD /* TimelineCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCoordinator.swift; sourceTree = "<group>"; };
+		70999A91215A503C00746BFD /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		70999A92215A503C00746BFD /* WaveformCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCoordinator.swift; sourceTree = "<group>"; };
+		70999A93215A503C00746BFD /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
+		70999A94215A503C00746BFD /* WaveformPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformPlot.swift; sourceTree = "<group>"; };
+		70999A95215A503C00746BFD /* EndlessScrollingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndlessScrollingCoordinator.swift; sourceTree = "<group>"; };
+		70999AA0215A508800746BFD /* IllustrationMarkModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllustrationMarkModel.swift; sourceTree = "<group>"; };
+		70999AA2215A511700746BFD /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
+		70999AA3215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
+		70999AA4215A511700746BFD /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
+		70999AA5215A511700746BFD /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		709E2EC22146547000BC0DE5 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
-		70B52CAF2142549F000D4989 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
-		70C6CFD121414BDE0059E174 /* FileDataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoader.swift; sourceTree = "<group>"; };
-		AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllustrationMarkModel.swift; sourceTree = "<group>"; };
+		70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordingAddedIllustrationMarkView.xib; sourceTree = "<group>"; };
+		70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingAddedIllustrationMarkView.swift; sourceTree = "<group>"; };
+		70F12027215A52EA0046D01A /* TimeLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineView.swift; sourceTree = "<group>"; };
+		70F12028215A52EA0046D01A /* WaveformWithIllustrationsPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformWithIllustrationsPlot.swift; sourceTree = "<group>"; };
 		AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddIllustrationsViewController.swift; sourceTree = "<group>"; };
-		AEF53437214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingAddedIllustrationMarkView.swift; sourceTree = "<group>"; };
-		AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordingAddedIllustrationMarkView.xib; sourceTree = "<group>"; };
-		AEF53439214FDCD6003C0539 /* TimeLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeLineView.swift; sourceTree = "<group>"; };
-		AEF5343A214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformWithIllustrationsPlot.swift; sourceTree = "<group>"; };
-		B02F1004E1F3D9F2BC99A286 /* WaveformCollectionViewDelegateFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDelegateFlowLayout.swift; sourceTree = "<group>"; };
-		B02F1B66466C816C67A89BC9 /* WaveformCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		BC925FDD2088EFEF00E52984 /* Waveform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Waveform.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E8893065B95D88FDBF2E0112 /* TimelineCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineCoordinator.swift; sourceTree = "<group>"; };
 		E889307DEE8FBC3197937A23 /* Zoom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zoom.swift; sourceTree = "<group>"; };
-		E8893131A084C617926E5D7E /* WaveformCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCoordinator.swift; sourceTree = "<group>"; };
-		E889315B4EF482BE01F1C7FE /* EndlessScrollingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndlessScrollingCoordinator.swift; sourceTree = "<group>"; };
 		E889321E20374C0C8FD33AD5 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		E8893223F6B82F741055EF29 /* AssetComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetComponent.swift; sourceTree = "<group>"; };
 		E889323EBA2E29528696E105 /* ZoomLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomLevel.swift; sourceTree = "<group>"; };
@@ -105,29 +107,21 @@
 		E88933849C993075B2D4F8C4 /* RecorderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderError.swift; sourceTree = "<group>"; };
 		E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E88933CD924C9CBE76B4D5B5 /* AudioPlayerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlayerProtocol.swift; sourceTree = "<group>"; };
-		E88933D8EB43223895E9301B /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
 		E88933E17C3DD509432D589D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E889347325CAA1A4F42EFCAE /* MicrophoneControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerProtocol.swift; sourceTree = "<group>"; };
 		E889351CC4618729129FA50D /* AVFoundationAudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVFoundationAudioPlayer.swift; sourceTree = "<group>"; };
-		E889352A79BA9ADB2D1786FB /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
-		E889353CF27A265317061845 /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		E889357080438AAFF5377C8B /* AudioToolboxFileDataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioToolboxFileDataLoader.swift; sourceTree = "<group>"; };
 		E88935D55003D5F13EE5FC24 /* TimeIntervalCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeIntervalCalculator.swift; sourceTree = "<group>"; };
 		E8893614A04E60F94A8CC386 /* FileDataLoaderError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoaderError.swift; sourceTree = "<group>"; };
 		E88936352B1611E5D825383D /* AudioUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtils.swift; sourceTree = "<group>"; };
-		E8893668E0A3BF3164556749 /* WaveformPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformPlot.swift; sourceTree = "<group>"; };
 		E889367CB6423F4B57B69FE1 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E8893772C0A0AF858ED58E14 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		E88937C804244C4A61E60736 /* AudioToolboxMicrophoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioToolboxMicrophoneController.swift; sourceTree = "<group>"; };
 		E889383AFE75C29F2D2E5E83 /* RecorderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderDelegate.swift; sourceTree = "<group>"; };
 		E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E88938CFF08F03D7EDAF1F86 /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
-		E889397BAA303534D837D739 /* TimelineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
-		E88939A2D5D05909CBCCDBDE /* IntervalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalView.swift; sourceTree = "<group>"; };
 		E88939F6F26F0E0001C31CFC /* LeadingLineLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineLayer.swift; sourceTree = "<group>"; };
 		E88939F8D15EADD7C3CDB73C /* RecorderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderProtocol.swift; sourceTree = "<group>"; };
 		E8893B747714947269BE93FB /* MicrophoneError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneError.swift; sourceTree = "<group>"; };
-		E8893BEB77F45AD78084DA9C /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		E8893BF5AEB17BF19CCD6D84 /* ZoomType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoomType.swift; sourceTree = "<group>"; };
 		E8893C25F7B86354DFC8E088 /* MicrophoneControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MicrophoneControllerDelegate.swift; sourceTree = "<group>"; };
 		E8893C78FE7C84FCAFEC6977 /* FileDataLoaderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileDataLoaderProtocol.swift; sourceTree = "<group>"; };
@@ -136,8 +130,6 @@
 		E8893F2D9A564EE0477CCFE8 /* LeadingLineTimeUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeadingLineTimeUpdater.swift; sourceTree = "<group>"; };
 		E8893F5056E52325D1B70309 /* AVFoundationRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVFoundationRecorder.swift; sourceTree = "<group>"; };
 		E8893F77695D0196AD278505 /* README.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.MD; sourceTree = "<group>"; };
-		E8893F96657CDDD00A946C6E /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
-		E8893FBEE084515996A3AA4D /* IntervalCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntervalCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +146,7 @@
 		65FD73BD2135E6E60003029F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				70F1202D215A530A0046D01A /* Illustrations */,
 				709AB9D2213D260D00F63746 /* Common */,
 				E88939B3D3BCC0AC80D54463 /* AudioModules */,
 				E88937511E1C4EEF8E292A93 /* Waveform */,
@@ -161,6 +154,35 @@
 				E8893B7746A7769B72C6D917 /* LeadingLine */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		70999A8B215A503C00746BFD /* TimelineView */ = {
+			isa = PBXGroup;
+			children = (
+				70999A8C215A503C00746BFD /* IntervalView.swift */,
+				70999A8D215A503C00746BFD /* IntervalCollectionViewCell.swift */,
+				70999A8E215A503C00746BFD /* TimelineView.swift */,
+				70999A8F215A503C00746BFD /* TimelineCoordinator.swift */,
+			);
+			path = TimelineView;
+			sourceTree = "<group>";
+		};
+		70999A90215A503C00746BFD /* WaveformView */ = {
+			isa = PBXGroup;
+			children = (
+				70999A91215A503C00746BFD /* WaveformView.swift */,
+				70999A92215A503C00746BFD /* WaveformCoordinator.swift */,
+				70999A93215A503C00746BFD /* WaveformCollectionViewCell.swift */,
+			);
+			path = WaveformView;
+			sourceTree = "<group>";
+		};
+		70999A9F215A508800746BFD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				70999AA0215A508800746BFD /* IllustrationMarkModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		709AB9D2213D260D00F63746 /* Common */ = {
@@ -180,14 +202,32 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		AEF53436214FDCD6003C0539 /* RecordingAddedIllustrationMarkView */ = {
+		70F12023215A52EA0046D01A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				AEF53437214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift */,
-				AEF53438214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib */,
-				AEF53439214FDCD6003C0539 /* TimeLineView.swift */,
+				70F12024215A52EA0046D01A /* RecordingAddedIllustrationMarkView */,
+				70F12028215A52EA0046D01A /* WaveformWithIllustrationsPlot.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		70F12024215A52EA0046D01A /* RecordingAddedIllustrationMarkView */ = {
+			isa = PBXGroup;
+			children = (
+				70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */,
+				70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */,
+				70F12027215A52EA0046D01A /* TimeLineView.swift */,
 			);
 			path = RecordingAddedIllustrationMarkView;
+			sourceTree = "<group>";
+		};
+		70F1202D215A530A0046D01A /* Illustrations */ = {
+			isa = PBXGroup;
+			children = (
+				70999A9F215A508800746BFD /* Model */,
+				70F12023215A52EA0046D01A /* Views */,
+			);
+			path = Illustrations;
 			sourceTree = "<group>";
 		};
 		BC925FD42088EFEF00E52984 = {
@@ -220,12 +260,10 @@
 		E8893145F11CBBA9C7463A6E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				AEF53436214FDCD6003C0539 /* RecordingAddedIllustrationMarkView */,
-				AEF5343A214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift */,
-				66427A0E21428B9300C6BCE9 /* TimelineView */,
-				66427A1B2142900300C6BCE9 /* WaveformView */,
-				661175B92155043A003F7C4C /* EndlessScrollingCoordinator.swift */,
-				66427A1921428FE300C6BCE9 /* WaveformPlot.swift */,
+				70999AA3215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift */,
+				70999AA2215A511700746BFD /* Time.swift */,
+				70999AA5215A511700746BFD /* WaveformColor.swift */,
+				70999AA4215A511700746BFD /* WaveformModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -243,11 +281,10 @@
 		E88932BF764C896274E930F0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				65481FFA214007AA00BFA378 /* RecorderWaveformCollectionViewCellConfigurator.swift */,
-				E88930D698705E7F475F1D2D /* WaveformModel.swift */,
-				E88931A75C5F9A8DB0820BD7 /* WaveformColor.swift */,
-				70B52CAF2142549F000D4989 /* Time.swift */,
-				AEE3AD5D2153684D00BACDC7 /* IllustrationMarkModel.swift */,
+				70999A95215A503C00746BFD /* EndlessScrollingCoordinator.swift */,
+				70999A8B215A503C00746BFD /* TimelineView */,
+				70999A94215A503C00746BFD /* WaveformPlot.swift */,
+				70999A90215A503C00746BFD /* WaveformView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -350,27 +387,6 @@
 			path = Player;
 			sourceTree = "<group>";
 		};
-		E8893FB70B3894C535348396 /* WaveformView */ = {
-			isa = PBXGroup;
-			children = (
-				E88938CFF08F03D7EDAF1F86 /* WaveformCollectionViewCell.swift */,
-				E8893131A084C617926E5D7E /* WaveformCoordinator.swift */,
-				E8893BEB77F45AD78084DA9C /* WaveformView.swift */,
-			);
-			path = WaveformView;
-			sourceTree = "<group>";
-		};
-		E8893FF2E68D3EF6D37B75B4 /* TimelineView */ = {
-			isa = PBXGroup;
-			children = (
-				E8893FBEE084515996A3AA4D /* IntervalCollectionViewCell.swift */,
-				E8893065B95D88FDBF2E0112 /* TimelineCoordinator.swift */,
-				E88939A2D5D05909CBCCDBDE /* IntervalView.swift */,
-				E889397BAA303534D837D739 /* TimelineView.swift */,
-			);
-			path = TimelineView;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -438,7 +454,7 @@
 			files = (
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
-				AEF5343C214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.xib in Resources */,
+				70F12029215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,50 +467,35 @@
 			files = (
 				709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */,
 				66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */,
-				AEF5343B214FDCD6003C0539 /* RecordingAddedIllustrationMarkView.swift in Sources */,
-				7097B15321491772006EE8FB /* AudioPlayerProtocol.swift in Sources */,
-				7097B15721491981006EE8FB /* AudioPlayerError.swift in Sources */,
+				70999A9C215A503C00746BFD /* WaveformCollectionViewCell.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
-				E8893AC02DDB87355D63CAE6 /* LeadingLineTimeUpdater.swift in Sources */,
-				66A5A522214BF8440020E022 /* AssetComponent.swift in Sources */,
-				709AB9CF213D25D500F63746 /* LeadingLineLayer.swift in Sources */,
-				70973B4921493739000C71E0 /* AVFoundationAudioPlayer.swift in Sources */,
-				AEE3AD5E2153684D00BACDC7 /* IllustrationMarkModel.swift in Sources */,
-				66427A1321428B9300C6BCE9 /* IntervalView.swift in Sources */,
-				661175BA2155043A003F7C4C /* EndlessScrollingCoordinator.swift in Sources */,
+				70999AA1215A508800746BFD /* IllustrationMarkModel.swift in Sources */,
 				65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */,
 				709E2EC32146547000BC0DE5 /* Operators.swift in Sources */,
+				70F1202B215A52EA0046D01A /* TimeLineView.swift in Sources */,
+				70999A9E215A503C00746BFD /* EndlessScrollingCoordinator.swift in Sources */,
 				709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */,
 				66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */,
+				70999AA8215A511700746BFD /* WaveformModel.swift in Sources */,
 				66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */,
 				66B83A4F213D5291004EFB6B /* AudioContext.swift in Sources */,
 				705F9BD42141039F00C98859 /* String+Extension.swift in Sources */,
 				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
+				70999A98215A503C00746BFD /* TimelineView.swift in Sources */,
+				70F1202C215A52EA0046D01A /* WaveformWithIllustrationsPlot.swift in Sources */,
 				65481FFD21400AAA00BFA378 /* Assert.swift in Sources */,
 				E88934EC1C50C2ED38614386 /* Logger.swift in Sources */,
-				AEF5343D214FDCD6003C0539 /* TimeLineView.swift in Sources */,
+				70999A9D215A503C00746BFD /* WaveformPlot.swift in Sources */,
 				AEF53435214FDC76003C0539 /* AddIllustrationsViewController.swift in Sources */,
-				663BE7782153A71E00CB6234 /* Zoom.swift in Sources */,
-				E889329BB0134F4A700B3AEA /* RecorderError.swift in Sources */,
-				E88939B343A5A3D1D022286A /* RecorderDelegate.swift in Sources */,
-				E8893D805570A16F976C1699 /* RecorderState.swift in Sources */,
-				AEF5343E214FDCD6003C0539 /* WaveformWithIllustrationsPlot.swift in Sources */,
-				66427A1A21428FE300C6BCE9 /* WaveformPlot.swift in Sources */,
-				7097B15921492573006EE8FB /* AudioPlayerDelegate.swift in Sources */,
-				E889373B022D8BF0F6CA94BC /* FileDataLoaderError.swift in Sources */,
-				E8893E22950C9C8F47884D66 /* ZoomType.swift in Sources */,
-				E8893AD1ADDB1D431828609F /* AudioToolboxMicrophoneController.swift in Sources */,
-				E8893C37B531D0C739FD385B /* MicrophoneControllerProtocol.swift in Sources */,
-				E88938D660A98E782F7C6DD6 /* MicrophoneControllerDelegate.swift in Sources */,
-				E889367147E7AFE714208D85 /* MicrophoneError.swift in Sources */,
-				661175BC21550468003F7C4C /* TimelineCoordinator.swift in Sources */,
-				E889368C9934AFEE8D9F123E /* ZoomLevel.swift in Sources */,
+				70999AA9215A511700746BFD /* WaveformColor.swift in Sources */,
 				E8893285D27461C2405EC839 /* TimeIntervalCalculator.swift in Sources */,
 				E889307DAACC1C2F21D206AC /* AudioPlayerProtocol.swift in Sources */,
 				E889394B47F9C3165FF33E85 /* AudioPlayerError.swift in Sources */,
 				E88938F506955CB5F802050B /* AudioPlayerDelegate.swift in Sources */,
+				70999AA6215A511700746BFD /* Time.swift in Sources */,
 				E88931074DF844649330F020 /* AudioPlayerState.swift in Sources */,
 				E8893AC13C0E16AE315F8EFB /* AVFoundationAudioPlayer.swift in Sources */,
+				70999A9A215A503C00746BFD /* WaveformView.swift in Sources */,
 				E8893D1531E463D04436EA77 /* AudioToolboxFileDataLoader.swift in Sources */,
 				E889345DDA9397CE032964BF /* FileDataLoaderError.swift in Sources */,
 				E889344D54917262D408BE08 /* AVFoundationRecorder.swift in Sources */,
@@ -506,26 +507,19 @@
 				E8893EE5E43E72448BC09D2E /* FileDataLoaderProtocol.swift in Sources */,
 				E8893E55C84A4CFA7EEB8A2B /* AudioToolboxMicrophoneController.swift in Sources */,
 				E889387C93CA49290CFEEF37 /* MicrophoneControllerProtocol.swift in Sources */,
+				70999AA7215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */,
 				E88938D7801809F4772753D2 /* MicrophoneControllerDelegate.swift in Sources */,
 				E8893D5F9AC09BCF1F15E307 /* MicrophoneError.swift in Sources */,
-				E88936E196CB4CF9D988A589 /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */,
-				E88933B43329F189F3F0D9E8 /* WaveformModel.swift in Sources */,
-				E8893FEC57A152529D82B54C /* WaveformColor.swift in Sources */,
-				E889345E6FC3DF99E70D4A7A /* Time.swift in Sources */,
-				E889327DADEAE675E6E9D516 /* IntervalCollectionViewCell.swift in Sources */,
-				E8893ED219E8897E0D9876AE /* TimelineCoordinator.swift in Sources */,
-				E8893253911B4F5C9FCCE1E3 /* IntervalView.swift in Sources */,
-				E889334CAC839AFF11475E78 /* TimelineView.swift in Sources */,
-				E88931C4C87B84C3063ED02A /* WaveformCollectionViewCell.swift in Sources */,
-				E8893B1F66B0466C0266BC8D /* WaveformCoordinator.swift in Sources */,
-				E88937BC02665A5BBF4BA6A6 /* WaveformView.swift in Sources */,
-				E8893440D3C03F7E18A3955F /* EndlessScrollingCoordinator.swift in Sources */,
-				E8893CE90703F0BCC7D76B3D /* WaveformPlot.swift in Sources */,
+				70999A9B215A503C00746BFD /* WaveformCoordinator.swift in Sources */,
+				70999A96215A503C00746BFD /* IntervalView.swift in Sources */,
+				70999A97215A503C00746BFD /* IntervalCollectionViewCell.swift in Sources */,
 				E88934F26F6A317A51355F20 /* ZoomType.swift in Sources */,
 				E88932CB823547E4233EB79D /* Zoom.swift in Sources */,
 				E88938FD6189BE0B2BB487A0 /* ZoomLevel.swift in Sources */,
+				70F1202A215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift in Sources */,
 				E8893F1FA5F2D99A97F5865C /* LeadingLineTimeUpdater.swift in Sources */,
 				E8893D30AADE405CEBE93592 /* LeadingLineLayer.swift in Sources */,
+				70999A99215A503C00746BFD /* TimelineCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

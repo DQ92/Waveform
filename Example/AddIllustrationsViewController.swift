@@ -18,7 +18,7 @@ class AddIllustrationsViewController: UIViewController {
 
     private var recorder: RecorderProtocol = AVFoundationRecorder()
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
-    private var loader: FileDataLoader!
+    private var loader: FileDataLoaderProtocol = AudioToolboxFileDataLoader()
     private var url: URL!
 
     private lazy var dateFormatter: DateFormatter = {
@@ -129,15 +129,7 @@ extension AddIllustrationsViewController {
             if recorder.recorderState == .isRecording {
                 recorder.stop()
             }
-            loader = try FileDataLoader(fileURL: url)
-            let time = AudioUtils.time(from: (loader.fileDuration)!)
-            let totalTimeString = String(format: "%02d:%02d:%02d",
-                                         time.minutes,
-                                         time.seconds,
-                                         time.milliSeconds)
-            totalTimeLabel.text = totalTimeString
-            try recorder.openFile(with: url)
-            try loader.loadFile(completion: { [weak self] (array) in
+            try loader.loadFile(with: url, completion: { [weak self] (array) in
                 guard let caller = self else {
                     return
                 }
@@ -149,6 +141,12 @@ extension AddIllustrationsViewController {
                     caller.waveformWithIllustrationsPlot.setupScrollViewWithScrollContentView()
                 }
             })
+            let time = AudioUtils.time(from: (loader.fileDuration)!)
+            let totalTimeString = String(format: "%02d:%02d:%02d",
+                                         time.minutes,
+                                         time.seconds,
+                                         time.milliSeconds)
+            totalTimeLabel.text = totalTimeString
         } catch FileDataLoaderError.openUrlFailed {
             let alertController = UIAlertController(title: "Błąd",
                                                     message: "Błędny url",
