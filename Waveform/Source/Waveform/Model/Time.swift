@@ -3,7 +3,7 @@
 //  Waveform
 //
 //  Created by Michał Kos on 07/09/2018.
-//  Copyright © 2018 Andrew L. Jaffee. All rights reserved.
+//  Copyright © 2018 Daniel Kuta. All rights reserved.
 //
 
 import Foundation
