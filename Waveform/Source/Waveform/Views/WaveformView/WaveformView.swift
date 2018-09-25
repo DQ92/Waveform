@@ -40,10 +40,20 @@ class WaveformView: UIView {
     var layersPerSecond: Int {
         return self.coordinator.configurator.layersPerSecond
     }
-    
+
     var contentOffset: CGPoint = CGPoint.zero {
         didSet {
             self.collectionView.contentOffset = contentOffset
+        }
+    }
+
+    var contentInset: UIEdgeInsets {
+        return collectionView.contentInset
+    }
+
+    var waveformViewContentSize: CGSize {
+        get {
+            return collectionView.contentSize
         }
     }
 
@@ -70,9 +80,8 @@ class WaveformView: UIView {
     private lazy var coordinator: WaveformCoordinator = {
         let coordinator = WaveformCoordinator(cellIdentifier: self.collectionViewCellIdentifier, endlessScrollingEnabled: false)
         coordinator.contentOffsetDidChangeBlock = { [weak self] contentOffset in
-            guard let caller = self else {
-                return
-            }
+            guard let caller = self else { return }
+
             let currentX = max(round(contentOffset.x + caller.leadingLine.position.x), 0.0)
             caller.leadingLineTimeUpdater.changeTime(withX: currentX, and: caller.zoomLevel.samplesPerLayer)
             caller.contentOffset = contentOffset
@@ -127,10 +136,10 @@ class WaveformView: UIView {
         let contentWidth = CGFloat(self.coordinator.values.count) * self.coordinator.configurator.sampleLayerWidth
         let minimumRightInsets = self.collectionView.bounds.width * 0.5
         let currentRightInsets = self.collectionView.bounds.width - contentWidth
-        
+
         let rightInsets = max(currentRightInsets, minimumRightInsets)
         let leftInsets = self.collectionView.bounds.width - rightInsets
-        
+
         return UIEdgeInsets(top: 0.0, left: leftInsets, bottom: 0.0, right: rightInsets)
     }
 }
@@ -142,7 +151,7 @@ extension WaveformView {
         let offset = CGFloat(self.sampleIndex + 1) * sampleWidth
         let indexPath = IndexPath(row: currentRow, section: 0)
         let model = WaveformModel(value: CGFloat(value), mode: mode, timeStamp: timeInterval)
-        
+
         if self.coordinator.shouldLoadMoreItems(forIndexPath: indexPath) {
             self.coordinator.values.append(model)
             self.coordinator.appendItems(atSection: indexPath.section,
@@ -169,6 +178,7 @@ extension WaveformView {
         self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         self.leadingLineTimeUpdater = LeadingLineTimeUpdater(elementsPerSecond: self.layersPerSecond)
         self.leadingLineTimeUpdater.delegate = self
+        self.collectionView.backgroundColor = .clear
     }
 
     private func setupConstraints() {
@@ -230,7 +240,7 @@ extension WaveformView {
         let difference: CGFloat = CGFloat(numberOfLayersPerSecond) / CGFloat((100 * zoomLevel.samplesPerLayer))
         let finalPosition: CGFloat = collectionView.contentOffset.x + difference
         let point = CGPoint(x: finalPosition, y: 0.0)
-        
+
         setContentOffset(point)
         leadingLineTimeUpdater.changeTime(withX: point.x + leadingLine.position.x, and: zoomLevel.samplesPerLayer)
     }
