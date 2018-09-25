@@ -10,7 +10,7 @@ class AudioToolboxMicrophoneController {
 
     // MARK: - Public properties
 
-    var delegate: MicrophoneControllerDelegate!
+    weak var delegate: MicrophoneControllerDelegate?
     static let shared = AudioToolboxMicrophoneController()
 
     // MARK: - Initialization
@@ -137,7 +137,7 @@ func recordingCallback(inRefCon: UnsafeMutableRawPointer,
     let rms = AudioUtils.toRMS(buffer: monoSamples, bufferSize: 512)
 
     DispatchQueue.main.async {
-        AudioToolboxMicrophoneController.shared.delegate.processSampleData(rms)
+        AudioToolboxMicrophoneController.shared.delegate!.processSampleData(rms)
     }
 
     return noErr

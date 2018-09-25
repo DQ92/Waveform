@@ -1,6 +1,6 @@
 //
 // Created by Michał Kos on 2018-09-20.
-// Copyright (c) 2018 Andrew L. Jaffee. All rights reserved.
+// Copyright (c) 2018 Daniel Kuta. All rights reserved.
 //
 
 import Foundation
