@@ -2,10 +2,9 @@ import UIKit
 import AVFoundation
 
 class ViewController: UIViewController {
-
+    
     // MARK: - IBOutlets
-
-    @IBOutlet var recordingTimeLabel: UILabel!
+    
     @IBOutlet var recordButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
     @IBOutlet weak var timeLabel: UILabel!
@@ -17,119 +16,173 @@ class ViewController: UIViewController {
     @IBOutlet weak var zoomValueLabel: UILabel!
     @IBOutlet weak var zoomInButton: UIButton!
     @IBOutlet weak var zoomOutButton: UIButton!
-
-    // MARK: - Private Properties
-
+    
+    // MARK: - Private properties
+    
     private var recorder: RecorderProtocol = AVFoundationRecorder()
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoaderProtocol = AudioToolboxFileDataLoader()
-    private var url: URL!
-
+    
+    private var manager: WaveformPlotDataManager = WaveformPlotDataManager()
+    private var timeInterval: TimeInterval = 0.0
+    private var sampleIndex: Int = 0
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "mm:ss:SS"
         return formatter
     }()
-
+    
+    private lazy var movementCoordinator: MovementCoordinator = {
+        return MovementCoordinator(plot: self.waveformPlot)
+    }()
+    
     // MARK: - Life cycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        setupRecorder()
-        setupWaveform()
-        setupPlayer()
-        setupMicrophoneController()
-    }
 
+        self.setupView()
+        self.setupRecorder()
+        self.setupPlayer()
+        self.setupManager()
+        self.setupWaveformPlot()
+        self.setupMicrophoneController()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let viewController = segue.destination as? AudioFilesListViewController {
+            if recorder.recorderState == .isRecording {
+                recorder.pause()
+            }
+            viewController.directoryUrl = recorder.resultsDirectoryURL
+            viewController.didSelectFileBlock = { [weak self] url in
+                self?.retrieveFileDataAndSet(with: url)
+                self?.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func startRecording(_ sender: UIButton) {
+        recordOrPause()
+    }
+    
+    @IBAction func finishButtonTapped(_ sender: Any) {
+        finishRecording()
+    }
+    
+    @IBAction func clearButtonTapped(_ sender: UIButton) {
+        clearRecordings()
+    }
+    
+    @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
+        playOrPause()
+    }
+    
+    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
+        self.manager.zoomIn()
+        self.waveformPlot.reloadData()
+    }
+    
+    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
+        self.manager.zoomOut()
+        self.waveformPlot.reloadData()
+    }
+    
+    // MARK: - Other
+    
+    private func retrieveFileDataAndSet(with url: URL) {
+        do {
+            if recorder.recorderState == .isRecording {
+                recorder.stop()
+            }
+            try recorder.openFile(with: url)
+            try loader.loadFile(with: url, completion: { [weak self] values in
+                guard let caller = self else {
+                    return
+                }
+                let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
+                
+                caller.manager.loadData(from: values)
+                caller.manager.loadZoom(from: samplesPerPoint)
+                
+                caller.waveformPlot.contentOffset = CGPoint(x: caller.waveformPlot.contentInset.left, y: 0.0)
+                caller.waveformPlot.currentPosition = 0.0
+                caller.waveformPlot.reloadData()
+            })
+            totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: loader.fileDuration))
+            
+        } catch FileDataLoaderError.openUrlFailed {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Błędny url",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        } catch {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Nieznany",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
+    }
+    
+    private func resetCurrentSampleData() {
+        self.timeInterval = 0.0
+        self.sampleIndex = 0
+    }
+}
+
+// MARK: - Setup
+
+extension ViewController {
     private func setupView() {
-        totalTimeLabel.text = "00:00:00"
-        timeLabel.text = "00:00:00"
-        zoomValueLabel.text = "Zoom: \(waveformPlot.currentZoomPercent())"
-        disableZoomAction()
+        self.disableZoomAction()
     }
-
+    
     private func setupRecorder() {
-        recorder.delegate = self
+        self.recorder.delegate = self
     }
-
-    private func setupWaveform() {
-        self.waveformPlot.delegate = self
-    }
-
+    
     private func setupPlayer() {
         self.player.delegate = self
     }
-
+    
+    private func setupManager() {
+        self.manager.delegate = self
+    }
+    
+    private func setupWaveformPlot() {
+        let offset = self.waveformPlot.bounds.width * 0.5
+        let timeIndicatorView = TimeIndicatorView(frame: .zero)
+        timeIndicatorView.indicatorColor = .blue
+        
+        self.waveformPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
+        self.waveformPlot.timeIndicatorView = timeIndicatorView
+        self.waveformPlot.contentOffset = CGPoint(x: -offset, y: 0.0)
+        self.waveformPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
+        self.waveformPlot.dataSource = self
+        self.waveformPlot.delegate = self
+    }
+    
     private func setupMicrophoneController() {
         AudioToolboxMicrophoneController.shared.delegate = self
     }
 }
 
-// MARK: - Buttons - start/pause/resume
+// MARK: - Zoom
 
 extension ViewController {
-    @IBAction func startRecording(_ sender: UIButton) {
-        recordOrPause()
+    private func enableZoomAction() {
+        self.zoomWrapperView.isUserInteractionEnabled = true
+        self.zoomWrapperView.alpha = 1.0
     }
-
-    @IBAction func finishButtonTapped(_ sender: Any) {
-        finishRecording()
-    }
-
-    @IBAction func clearButtonTapped(_ sender: UIButton) {
-        clearRecordings()
-    }
-
-    @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
-        playOrPause()
-    }
-
-    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-        waveformPlot.zoomIn()
-        zoomValueLabel.text = "Zoom: \(self.waveformPlot.currentZoomPercent())"
-    }
-
-    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-        waveformPlot.zoomOut()
-        zoomValueLabel.text = "Zoom: \(self.waveformPlot.currentZoomPercent())"
-    }
-}
-
-// MARK: - Audio player
-
-extension ViewController {
-    func playOrPause() {
-        if player.state == .paused && recorder.recorderState != .isRecording {
-            playFileInRecording()
-        } else if player.state == .isPlaying {
-            player.pause()
-        }
-    }
-
-    private func playFileInRecording() {
-        do {
-            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
-                guard let URL = url else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    do {
-                        var time = 0.0
-                        if let timeInterval = self?.waveformPlot.waveformView.currentTimeInterval {
-                            time = timeInterval
-                        }
-                        try self?.player.playFile(with: URL, at: time)
-                    } catch AudioPlayerError.openFileFailed(let error) {
-                        Log.error(error)
-                    } catch {
-                        Log.error("Unknown error")
-                    }
-                }
-            }
-        } catch {
-            Log.error("Error while exporting temporary file")
-        }
+    
+    private func disableZoomAction() {
+        self.zoomWrapperView.isUserInteractionEnabled = false
+        self.zoomWrapperView.alpha = 0.3
     }
 }
 
@@ -162,16 +215,16 @@ extension ViewController {
             }
         }
     }
-
+    
     func startRecording() {
         Log.info("Start recording")
         do {
             if recorder.recorderState == .stopped {
-                waveformPlot.reset()
+                self.resetCurrentSampleData()
+                self.manager.reset()
                 try recorder.start()
             } else {
-                let timeInterval = self.waveformPlot.waveformView.currentTimeInterval
-                let time = CMTime(seconds: timeInterval, preferredTimescale: 100)
+                let time = CMTime(seconds: self.timeInterval, preferredTimescale: 100)
                 let range = CMTimeRange(start: time, duration: kCMTimeZero)
                 try recorder.resume(from: range)
             }
@@ -210,160 +263,156 @@ extension ViewController {
     }
 }
 
-// MARK: - Loader
+// MARK: - Audio player
 
 extension ViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? AudioFilesListViewController {
-            if recorder.recorderState == .isRecording {
-                recorder.pause()
-            }
-            viewController.directoryUrl = recorder.resultsDirectoryURL
-            viewController.didSelectFileBlock = { [weak self] url in
-                self?.retrieveFileDataAndSet(with: url)
-                self?.navigationController?
-                     .popViewController(animated: true)
-            }
+    func playOrPause() {
+        if player.state == .paused && recorder.recorderState != .isRecording {
+            playFileInRecording()
+        } else if player.state == .isPlaying {
+            player.pause()
         }
-    }
-
-    private func retrieveFileDataAndSet(with url: URL) {
-        do {
-            if recorder.recorderState == .isRecording {
-                recorder.stop()
-            }
-            try recorder.openFile(with: url)
-            try loader.loadFile(with: url, completion: { [weak self] (array) in
-                guard let caller = self else {
-                    return
-                }
-                let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
-                let samplesPerPoint = CGFloat(values.count) / caller.waveformPlot.bounds.width
-                DispatchQueue.main.async {
-                    caller.waveformPlot.waveformView.load(values: values)
-                    caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
-                }
-            })
-
-            let time = AudioUtils.time(from: (loader.fileDuration)!)
-            let totalTimeString = String(format: "%02d:%02d:%02d",
-                                         time.minutes,
-                                         time.seconds,
-                                         time.milliSeconds)
-            totalTimeLabel.text = totalTimeString
-
-        } catch FileDataLoaderError.openUrlFailed {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Błędny url",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
-        } catch {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Nieznany",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
-        }
-    }
-
-    private func changeZoomSamplesPerPointForNewFile(_ samplesPerPoint: CGFloat) {
-        waveformPlot.changeSamplesPerPoint(samplesPerPoint)
-        waveformPlot.resetZoom()
-        zoomValueLabel.text = "Zoom: \(waveformPlot.currentZoomPercent())"
-        enableZoomAction()
-    }
-}
-
-extension ViewController {
-    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
-    }
-
-    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
-        let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-        return samples.enumerated().map { sample in
-            WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
-            TimeInterval(sample.offset / sampleRate))
-        }
-    }
-}
-
-extension ViewController: MicrophoneControllerDelegate {
-    func processSampleData(_ data: Float) {
-        self.waveformPlot.waveformView.setCurrentValue(data * AudioUtils.defaultWaveformFloatModifier,
-                                                       for: recorder.currentTime,
-                                                       mode: recorder.mode)
-    }
-}
-
-// MARK: - WaveformViewDelegate
-
-extension ViewController: WaveformPlotDelegate {
-    func zoomLevelDidChange(_ zoomLevel: ZoomLevel) {
-        
     }
     
-    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
-        timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
-    }
-
-    func contentOffsetDidChange(_ contentOffset: CGPoint) {
+    private func playFileInRecording() {
+        do {
+            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
+                guard let URL = url else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    do {
+                        let timeInterval = self?.timeInterval ?? 0.0
+                        try self?.player.playFile(with: URL, at: timeInterval)
+                    } catch AudioPlayerError.openFileFailed(let error) {
+                        Log.error(error)
+                    } catch {
+                        Log.error("Unknown error")
+                    }
+                }
+            }
+        } catch {
+            Log.error("Error while exporting temporary file")
+        }
     }
 }
 
-// MARK: - Zoom
-
-extension ViewController {
-    private func enableZoomAction() {
-        zoomWrapperView.isUserInteractionEnabled = true
-        zoomWrapperView.alpha = 1.0
-    }
-
-    private func disableZoomAction() {
-        zoomWrapperView.isUserInteractionEnabled = false
-        zoomWrapperView.alpha = 0.3
-    }
-}
+// MARK: - RecorderDelegate
 
 extension ViewController: RecorderDelegate {
     func recorderStateDidChange(with state: RecorderState) {
         switch state {
-            case .isRecording:
-                AudioToolboxMicrophoneController.shared.start()
-                recordButton.setTitle("Pause", for: .normal)
-                waveformPlot.recordingModeEnabled = true
-                totalTimeLabel.text = "00:00:00"
-                disableZoomAction()
-            case .stopped:
-                AudioToolboxMicrophoneController.shared.stop()
-                recordButton.setTitle("Start", for: .normal)
-                waveformPlot.recordingModeEnabled = false
-                enableZoomAction()
-//                let samplesPerPoint = CGFloat(self.waveformPlot.waveformView.values.count) / self.waveformPlot.waveformView.bounds.width
-//                self.waveformPlot.zoom = Zoom(samplesPerPoint: samplesPerPoint)
-            case .paused, .fileLoaded:
-                AudioToolboxMicrophoneController.shared.stop()
-                recordButton.setTitle("Resume", for: .normal)
-                waveformPlot.recordingModeEnabled = false
-                enableZoomAction()
+        case .isRecording:
+            AudioToolboxMicrophoneController.shared.start()
+            self.recordButton.setTitle("Pause", for: .normal)
+            self.totalTimeLabel.text = "00:00:00"
+            disableZoomAction()
+        case .stopped:
+            AudioToolboxMicrophoneController.shared.stop()
+            self.recordButton.setTitle("Start", for: .normal)
+            enableZoomAction()
+            
+//            let samplesPerPoint = CGFloat(self.manager.numberOfSamples) / self.waveformPlot.bounds.width
+//            self.manager.loadZoom(from: samplesPerPoint)
+//            self.waveformPlot.reloadData()
+            
+        case .paused:
+            AudioToolboxMicrophoneController.shared.stop()
+            self.recordButton.setTitle("Resume", for: .normal)
+            enableZoomAction()
+        case .fileLoaded:
+            AudioToolboxMicrophoneController.shared.stop()
+            self.recordButton.setTitle("Resume", for: .normal)
+            enableZoomAction()
         }
     }
 }
 
+// MARK: - AudioPlayerDelegate
+
 extension ViewController: AudioPlayerDelegate {
     func playerStateDidChange(with state: AudioPlayerState) {
         switch state {
-            case .isPlaying:
-                waveformPlot.waveformView.isUserInteractionEnabled = false
-                waveformPlot.waveformView.scrollToTheEndOfFile()
-                playOrPauseButton.setTitle("Pause", for: .normal)
-                disableZoomAction()
-            case .paused:
-                waveformPlot.waveformView.isUserInteractionEnabled = true
-                waveformPlot.waveformView.stopScrolling()
-                playOrPauseButton.setTitle("Play", for: .normal)
-                enableZoomAction()
+        case .isPlaying:
+            waveformPlot.isUserInteractionEnabled = false
+            playOrPauseButton.setTitle("Pause", for: .normal)
+            disableZoomAction()
+            
+            let numberOfSteps = self.manager.numberOfSamples - self.sampleIndex
+            let stepWidth = CGFloat(self.manager.layersPerTimeInterval) / CGFloat((100 * self.manager.zoomLevel.samplesPerLayer))
+
+            movementCoordinator.startScrolling(numberOfSteps: numberOfSteps, stepWidth: stepWidth)
+            
+        case .paused:
+            waveformPlot.isUserInteractionEnabled = true
+            playOrPauseButton.setTitle("Play", for: .normal)
+            movementCoordinator.stopScrolling()
+            enableZoomAction()
         }
+    }
+}
+
+// MARK: - WaveformPlotDataManagerDelegate
+
+extension ViewController: WaveformPlotDataManagerDelegate {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+        
+    }
+    
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+        self.zoomValueLabel.text = "Zoom: \(level.percent)"
+    }
+}
+    
+// MARK: - WaveformPlotDataSource
+
+extension ViewController: WaveformPlotDataSource {
+    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+        return self.manager.numberOfTimeInterval
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample] {
+        return self.manager.samples(timeIntervalIndex: index)
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
+        return self.manager.timeIntervalWidth(index: index)
+    }
+}
+
+// MARK: - WaveformPlotDelegate
+
+extension ViewController: WaveformPlotDelegate {
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
+        print("contentOffset.x = \(contentOffset.x)")
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
+        let validPosition = max(position, 0.0)
+        
+        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition)
+        self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
+        self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
+        
+        print("validPosition = \(validPosition)")
+        print("timeInterval = \(self.timeInterval)")
+        print("sampleIndex = \(self.sampleIndex)")
+        print("numberOfSamples = \(self.manager.numberOfSamples)")
+    }
+}
+
+// MARK: - MicrophoneControllerDelegate
+
+extension ViewController: MicrophoneControllerDelegate {
+    func processSampleData(_ data: Float) {
+        let data = WaveformModel(value: CGFloat(data * AudioUtils.defaultWaveformFloatModifier),
+                                 mode: recorder.mode,
+                                 timeStamp: recorder.currentTime)
+        
+        let offset = CGFloat(self.sampleIndex + 1) * self.manager.sampleWidth
+        
+        self.manager.setData(data: data, atIndex: self.sampleIndex)
+        self.waveformPlot.currentPosition = offset
+        self.waveformPlot.reloadData()
     }
 }

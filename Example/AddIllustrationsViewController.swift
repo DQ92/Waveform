@@ -7,12 +7,121 @@ class AddIllustrationsViewController: UIViewController {
     
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var totalTimeLabel: UILabel!
-    @IBOutlet weak var waveformWithIllustrationsPlot: WaveformWithIllustrationsPlot!
+    @IBOutlet weak var illustrationPlot: IllustrationPlot!
     @IBOutlet weak var playOrPauseButton: UIButton!
     @IBOutlet weak var zoomWrapperView: UIView!
     @IBOutlet weak var zoomValueLabel: UILabel!
     @IBOutlet weak var zoomInButton: UIButton!
     @IBOutlet weak var zoomOutButton: UIButton!
+    
+    // MARK: - Private properties
+    
+    private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
+    private var loader: FileDataLoaderProtocol = AudioToolboxFileDataLoader()
+    
+    private var manager: WaveformPlotDataManager = WaveformPlotDataManager()
+    private var timeInterval: TimeInterval = 0.0
+    private var sampleIndex: Int = 0
+    
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss:SS"
+        return formatter
+    }()
+    
+    private lazy var movementCoordinator: MovementCoordinator = {
+        return MovementCoordinator(plot: self.illustrationPlot)
+    }()
+    
+    // MARK: - Life cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.setupView()
+        self.setupPlayer()
+        self.setupManager()
+        self.setupIllustrationPlot()
+    }
+}
+
+// MARK: - Setup
+
+extension AddIllustrationsViewController {
+    private func setupView() {
+        self.disableZoomAction()
+    }
+    
+    private func setupPlayer() {
+        self.player.delegate = self
+    }
+    
+    private func setupManager() {
+        self.manager.delegate = self
+    }
+    
+    private func setupIllustrationPlot() {
+        let offset = self.illustrationPlot.bounds.width * 0.5
+        
+//        self.illustrationPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
+//        self.illustrationPlot.contentOffset = CGPoint(x: -offset, y: 0.0)
+//        self.illustrationPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
+//        self.illustrationPlot.dataSource = self
+//        self.illustrationPlot.delegate = self
+    }
+}
+
+// MARK: - Zoom
+
+extension AddIllustrationsViewController {
+    private func enableZoomAction() {
+        self.zoomWrapperView.isUserInteractionEnabled = true
+        self.zoomWrapperView.alpha = 1.0
+    }
+    
+    private func disableZoomAction() {
+        self.zoomWrapperView.isUserInteractionEnabled = false
+        self.zoomWrapperView.alpha = 0.3
+    }
+}
+
+// MARK: - AudioPlayerDelegate
+
+extension AddIllustrationsViewController: AudioPlayerDelegate {
+    func playerStateDidChange(with state: AudioPlayerState) {
+        switch state {
+        case .isPlaying:
+            illustrationPlot.isUserInteractionEnabled = false
+            playOrPauseButton.setTitle("Pause", for: .normal)
+            disableZoomAction()
+            
+            let numberOfSteps = self.manager.numberOfSamples - self.sampleIndex
+            let stepWidth = CGFloat(self.manager.layersPerTimeInterval) / CGFloat((100 * self.manager.zoomLevel.samplesPerLayer))
+            
+            movementCoordinator.startScrolling(numberOfSteps: numberOfSteps, stepWidth: stepWidth)
+            
+        case .paused:
+            illustrationPlot.isUserInteractionEnabled = true
+            playOrPauseButton.setTitle("Play", for: .normal)
+            movementCoordinator.stopScrolling()
+            enableZoomAction()
+        }
+    }
+}
+
+// MARK: - WaveformPlotDataManagerDelegate
+
+extension AddIllustrationsViewController: WaveformPlotDataManagerDelegate {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+        
+    }
+    
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+        self.zoomValueLabel.text = "Zoom: \(level.percent)"
+    }
+}
+
+/*
     
     // MARK: - Private Properties
 
@@ -226,3 +335,4 @@ extension AddIllustrationsViewController: AudioPlayerDelegate {
         }
     }
 }
+*/
