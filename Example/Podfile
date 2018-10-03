@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'Waveform_Example' do
+  pod 'Waveform', :path => '../'
+
+  target 'Waveform_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

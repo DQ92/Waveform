@@ -1,0 +1,6 @@
+framework module Waveform {
+  umbrella header "Waveform-umbrella.h"
+
+  export *
+  module * { export * }
+}

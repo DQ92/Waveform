@@ -1,0 +1,6 @@
+framework module Pods_Waveform_Example {
+  umbrella header "Pods-Waveform_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

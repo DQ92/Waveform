@@ -1,0 +1,22 @@
+{
+  "name": "Waveform",
+  "version": "0.1.0",
+  "summary": "A short description of Waveform.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/DQ92/Waveform",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "DQ92": "daniel.kuta@altconnect.pl"
+  },
+  "source": {
+    "git": "https://github.com/DQ92/Waveform.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "Waveform/Classes/**/*"
+}

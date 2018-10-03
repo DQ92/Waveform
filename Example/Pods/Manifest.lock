@@ -1,0 +1,16 @@
+PODS:
+  - Waveform (0.1.0)
+
+DEPENDENCIES:
+  - Waveform (from `../`)
+
+EXTERNAL SOURCES:
+  Waveform:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Waveform: 29596daa7a98ad9f00995e4df55de22c210a0cae
+
+PODFILE CHECKSUM: feb7cc9977cbb10eae745e9c86a77775e78cb551
+
+COCOAPODS: 1.5.3
