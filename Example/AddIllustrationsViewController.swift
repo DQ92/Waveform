@@ -62,7 +62,9 @@ class AddIllustrationsViewController: UIViewController {
     }
     
     @IBAction func addIllustration(_ sender: Any) {
-//        waveformWithIllustrationsPlot.addIllustrationMark()
+        let data = createIllustrationMarkData(with: nil, and: timeInterval)
+        manager.updateIllustrationMarkDatasource(for: 1, with: data)
+        waveformWithIllustrationsPlot.addIllustrationMark()
     }
     
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
@@ -76,6 +78,15 @@ class AddIllustrationsViewController: UIViewController {
     }
     
     // MARK: - Other
+    
+    private func createIllustrationMarkData(with imageURL: URL?, and currentTimeInterval: TimeInterval) -> IllustrationMarkModel {
+        let centerXConstraintValue = coordinator?.calculateXConstraintForCurrentWaveformPosition()
+        let data = IllustrationMarkModel(timeInterval: currentTimeInterval,
+                                         centerXConstraintValue: centerXConstraintValue!,
+                                         imageURL: imageURL,
+                                         isActive: true)
+        return data
+    }
     
     private func retrieveFileDataAndSet(with url: URL) {
         do {
@@ -216,7 +227,7 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
         let validPosition = max(position, 0.0)
         
-        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration)
+        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration ?? 0)
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
         

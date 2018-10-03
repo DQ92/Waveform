@@ -9,6 +9,9 @@
 import UIKit
 
 class IllustrationPlotDataManager: WaveformPlotDataManager {
-
-
+    var illustrationMarksDatasource: [Int: [IllustrationMarkModel]] = [:]
+    
+    func updateIllustrationMarkDatasource(for chapterId: Int, with data: IllustrationMarkModel) {
+        
+    }
 }

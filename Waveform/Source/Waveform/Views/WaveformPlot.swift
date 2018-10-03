@@ -172,7 +172,7 @@ extension WaveformPlot: WaveformViewDataSource {
 
 extension WaveformPlot: WaveformViewDelegate {
     func waveformView(_ waveformView: WaveformView, contentOffsetDidChange contentOffset: CGPoint) {
-        self.currentPosition = self.contentOffset.x + self.timelineView.center.x
+        self.currentPosition = contentOffset.x + waveformView.contentInset.left
         self.timelineView.contentOffset = contentOffset
         
         self.delegate?.waveformPlot(self, contentOffsetDidChange: contentOffset)

@@ -25,7 +25,7 @@ class IllustrationPlot: UIView, ScrollablePlot {
     // MARK: - Public properties
     
     weak var dataSource: IllustrationPlotDataSource?
-    weak var delegate: IllustrationPlotDataSource?
+    weak var delegate: IllustrationPlotDelegate?
     
     var contentOffset: CGPoint {
         set {
@@ -47,12 +47,10 @@ class IllustrationPlot: UIView, ScrollablePlot {
         }
     }
     
-    var currentPosition: CGFloat {
-        set {
-            self.waveformPlot.currentPosition = newValue
-        }
-        get {
-            return self.waveformPlot.currentPosition
+    var currentPosition: CGFloat = 0.0 {
+        didSet {
+            self.contentOffset = CGPoint(x: currentPosition - self.contentInset.left, y: 0.0)
+            self.delegate?.illustrationPlot(self, currentPositionDidChange: currentPosition)
         }
     }
     
@@ -118,7 +116,10 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func commonInit() {
+        waveformPlot.isUserInteractionEnabled = false
+        waveformPlot.backgroundColor = .clear
         
+        bringSubview(toFront: scrollView)
     }
     
     private func setupConstraints() {
@@ -146,11 +147,14 @@ class IllustrationPlot: UIView, ScrollablePlot {
     func reloadData() {
         self.waveformPlot.reloadData()
     }
+    
+    
 }
 
 extension IllustrationPlot: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.waveformPlot.contentOffset = scrollView.contentOffset
+        currentPosition = scrollView.contentOffset.x + scrollView.contentInset.left
+        waveformPlot.contentOffset = scrollView.contentOffset
     }
 }
 
@@ -183,11 +187,11 @@ extension IllustrationPlot: WaveformPlotDelegate {
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
-        
+
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
-        
+        self.delegate?.illustrationPlot(self, currentPositionDidChange: position)
     }
 }
 
