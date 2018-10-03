@@ -29,10 +29,39 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     var contentOffset: CGPoint {
         set {
+            self.scrollView.contentOffset = newValue
             self.waveformPlot.contentOffset = newValue
         }
         get {
-            return self.waveformPlot.contentOffset
+            return self.scrollView.contentOffset
+        }
+    }
+    
+    var contentInset: UIEdgeInsets {
+        set {
+            self.scrollView.contentInset = newValue
+            self.waveformPlot.contentInset = newValue
+        }
+        get {
+            return self.scrollView.contentInset
+        }
+    }
+    
+    var currentPosition: CGFloat {
+        set {
+            self.waveformPlot.currentPosition = newValue
+        }
+        get {
+            return self.waveformPlot.currentPosition
+        }
+    }
+    
+    var standardTimeIntervalWidth: CGFloat {
+        set {
+            self.waveformPlot.standardTimeIntervalWidth = newValue
+        }
+        get {
+            return self.waveformPlot.standardTimeIntervalWidth
         }
     }
     
@@ -66,6 +95,12 @@ class IllustrationPlot: UIView, ScrollablePlot {
         return waveformPlot
     }()
     
+    // MARK: - Private attributes
+    
+    private lazy var contentWidthLayoutConstraint: NSLayoutConstraint = {
+        return NSLayoutConstraint.build(item: self.contentView, attribute: .width)
+    }()
+    
     // MARK: - Initialization
     
     override init(frame: CGRect) {
@@ -97,16 +132,26 @@ class IllustrationPlot: UIView, ScrollablePlot {
         self.scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
         self.scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
         
-//        self.contentView.setupConstraint(attribute: .leading, toItem: scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth))
-//        self.contentView.setupConstraint(attribute: .trailing, toItem: scrollView, attribute: .trailing, constant: illustrationMarkViewWidth)
-//        self.contentView.setupConstraint(attribute: .top, toItem: scrollView, attribute: .top)
-//        self.contentView.setupConstraint(attribute: .bottom, toItem: scrollView, attribute: .bottom)
-//        self.contentView.setupConstraint(attribute: .centerY, toItem: scrollView, attribute: .centerY)
+        self.contentView.setupConstraint(attribute: .leading, toItem: self.scrollView, attribute: .leading)
+        self.contentView.setupConstraint(attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
+        self.contentView.setupConstraint(attribute: .top, toItem: self.scrollView, attribute: .top)
+        self.contentView.setupConstraint(attribute: .bottom, toItem: self.scrollView, attribute: .bottom)
+        self.contentView.setupConstraint(attribute: .centerY, toItem: self.scrollView, attribute: .centerY)
+        
+        self.contentWidthLayoutConstraint.isActive = true
+    }
+    
+    // MARK: - Access methods
+    
+    func reloadData() {
+        self.waveformPlot.reloadData()
     }
 }
 
 extension IllustrationPlot: UIScrollViewDelegate {
-    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.waveformPlot.contentOffset = scrollView.contentOffset
+    }
 }
 
 extension IllustrationPlot: WaveformPlotDataSource {
@@ -133,6 +178,10 @@ extension IllustrationPlot: WaveformPlotDataSource {
 }
 
 extension IllustrationPlot: WaveformPlotDelegate {
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
+        self.contentWidthLayoutConstraint.constant = contentSize.width
+    }
+    
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
         
     }
@@ -140,8 +189,6 @@ extension IllustrationPlot: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
         
     }
-    
-    
 }
 
 /*

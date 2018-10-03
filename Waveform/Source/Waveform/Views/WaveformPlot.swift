@@ -16,8 +16,13 @@ protocol WaveformPlotDataSource: class {
 }
 
 protocol WaveformPlotDelegate: class {
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize)
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint)
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat)
+}
+
+extension WaveformPlotDelegate {
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {}
 }
 
 class WaveformPlot: UIView, ScrollablePlot {
@@ -171,5 +176,9 @@ extension WaveformPlot: WaveformViewDelegate {
         self.timelineView.contentOffset = contentOffset
         
         self.delegate?.waveformPlot(self, contentOffsetDidChange: contentOffset)
+    }
+    
+    func waveformView(_ waveformView: WaveformView, contentSizeDidChange contentSize: CGSize) {
+        self.delegate?.waveformPlot(self, contentSizeDidChange: contentSize)
     }
 }

@@ -12,6 +12,7 @@ enum RecordingMode {
 
 protocol RecorderProtocol {
     var currentTime: TimeInterval { get }
+    var duration: TimeInterval { get }
     var delegate: RecorderDelegate? { get set }
     var currentlyRecordedFileURL: URL? { get }
     var mode: RecordingMode { get }

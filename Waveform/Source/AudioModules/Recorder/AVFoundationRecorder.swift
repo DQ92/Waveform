@@ -13,7 +13,6 @@ class AVFoundationRecorder: NSObject {
     weak var delegate: RecorderDelegate?
     var mode: RecordingMode {
         let numberOfComponents = self.components.count
-
         if numberOfComponents > 1 {
             return .override(turn: numberOfComponents - 1)
         }
@@ -27,12 +26,11 @@ class AVFoundationRecorder: NSObject {
     private let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     private let tempDirectoryUrl: URL
     private let tempExportDirectoryUrl: URL
-    private var audioRecorder: AVAudioRecorder!
+    private var audioRecorder: AVAudioRecorder?
     private let fileManager = FileManager.default
     private var totalDuration: Float = 0
-    private var currentDuration: Float = 0
     private var components: [AssetComponent] = []
-    private var duration: CMTime = kCMTimeZero
+    private var durationTime: CMTime = kCMTimeZero
 
     // MARK: - Initialization
 
@@ -53,20 +51,37 @@ class AVFoundationRecorder: NSObject {
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         audioRecorder = try AVAudioRecorder(url: url, settings: settings)
-        audioRecorder.delegate = self
+        audioRecorder?.delegate = self
     }
 
     private func resetDirectories() throws {
         let directoriesToRemove = [self.tempDirectoryUrl, self.tempExportDirectoryUrl]
-
         for url in directoriesToRemove {
             try self.removeDirectory(url: url)
         }
         let directoriesToCreate = [self.tempDirectoryUrl, self.tempExportDirectoryUrl, self.resultsDirectoryURL]
-
         for url in directoriesToCreate {
             try self.createDirectoryIfNeeded(url: url)
         }
+    }
+    
+    private func currentDurationTime() -> CMTime {
+        if let timeRange = self.components.last?.timeRange {
+            let currentTime = self.audioRecorder?.currentTime ?? 0.0
+            let currentAudioDuration = CMTime(seconds: currentTime, preferredTimescale: 100)
+
+            if timeRange.duration.value > 0 {
+                return self.durationTime - timeRange.duration + currentAudioDuration
+            } else {
+                let endTime = timeRange.start + currentAudioDuration
+                if endTime > self.durationTime {
+                    return endTime
+                } else {
+                    return self.durationTime
+                }
+            }
+        }
+        return kCMTimeZero
     }
 }
 
@@ -108,22 +123,18 @@ extension AVFoundationRecorder {
     func listContentOfDirectory(at url: URL) {
         do {
             let listing = try FileManager.default.contentsOfDirectory(atPath: url.path)
-
             if listing.count > 0 {
                 print("\n----------------------------")
                 print("LISTING: \(url.path) \n")
-
                 listing.sorted().forEach {
                     print("File: \($0.debugDescription)")
                 }
-
                 print("")
                 print("----------------------------\n")
             } else {
                 print("Brak plików w \(url.path)")
             }
         } catch {
-
         }
     }
 }
@@ -152,6 +163,11 @@ extension AVFoundationRecorder: RecorderProtocol {
         return currentTime
     }
 
+    var duration: TimeInterval {
+        let durationTime = currentDurationTime()
+        return TimeInterval(durationTime.value) / TimeInterval(durationTime.timescale)
+    }
+    
     var currentlyRecordedFileURL: URL? {
         guard let URL = audioRecorder?.url else {
             return nil
@@ -170,14 +186,12 @@ extension AVFoundationRecorder: RecorderProtocol {
     func start() throws {
         try self.resetDirectories()
         self.components.removeAll()
-
         let filename = "temp_\(components.count).m4a"
         let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
         try self.setupAudioRecorder(fileName: filename)
-
         components.append(AssetComponent(fileName: filename, timeRange: timeRange))
-        audioRecorder.prepareToRecord()
-        audioRecorder.record()
+        audioRecorder?.prepareToRecord()
+        audioRecorder?.record()
         Log.debug("startRecording")
         changeRecorderStateWithViewUpdate(with: .isRecording)
     }
@@ -193,40 +207,25 @@ extension AVFoundationRecorder: RecorderProtocol {
 
     func resume(from timeRange: CMTimeRange) throws {
         let possibleTimeDifference = CMTime(seconds: 0.05, preferredTimescale: 100)
-
-        if let recorder = audioRecorder, self.duration - timeRange.start <= possibleTimeDifference {
+        if let recorder = audioRecorder, self.durationTime - timeRange.start <= possibleTimeDifference {
             recorder.record()
             Log.debug("Resumed")
         } else {
             let filename = "temp_\(components.count).m4a"
             try self.setupAudioRecorder(fileName: filename)
-
             components.append(AssetComponent(fileName: filename, timeRange: timeRange))
-            audioRecorder.prepareToRecord()
-            audioRecorder.record()
-
+            audioRecorder?.prepareToRecord()
+            audioRecorder?.record()
             Log.debug("Overwrite")
         }
         changeRecorderStateWithViewUpdate(with: .isRecording)
     }
 
     func pause() {
-        if let timeRange = self.components.last?.timeRange {
-            let currentAudioDuration = CMTime(seconds: self.audioRecorder.currentTime, preferredTimescale: 100)
-
-            if timeRange.duration.value > 0 {
-                self.duration = self.duration - timeRange.duration + currentAudioDuration
-            } else {
-                let endTime = timeRange.start + currentAudioDuration
-
-                if endTime > self.duration {
-                    self.duration = endTime
-                }
-            }
-        }
+        audioRecorder?.pause()
+        durationTime = currentDurationTime()
         changeRecorderStateWithViewUpdate(with: .paused)
         Log.debug("Paused")
-        audioRecorder.pause()
         listFiles()
     }
 
@@ -235,7 +234,8 @@ extension AVFoundationRecorder: RecorderProtocol {
             return
         }
         let result = try self.merge(components: self.components)
-
+        
+        self.durationTime = kCMTimeZero
         self.exportAsset(result, destinationDictionaryURL: resultsDirectoryURL)
     }
 
@@ -291,38 +291,37 @@ extension AVFoundationRecorder: RecorderProtocol {
     }
 
     func crop(startTime: Double, endTime: Double) {
-
     }
 
     func temporallyExportRecordedFileAndGetUrl(completion: @escaping (_ url: URL?) -> Void) throws {
+        try exportRecordedFile(at: tempExportDirectoryUrl, completion: completion)
+    }
+
+    private func exportRecordedFile(at destination: URL, completion: @escaping (_ url: URL?) -> Void) throws {
         if let recorder = audioRecorder, recorderState != .stopped {
             Log.debug("Recorder paused")
             recorderState = .paused
             recorder.stop()
             audioRecorder = nil
         }
-
         if components.isEmpty {
             completion(nil)
             return
         }
-
         let result = try self.merge(components: self.components)
-        exportAsset(result, destinationDictionaryURL: tempExportDirectoryUrl, completion: completion)
+        exportAsset(result, destinationDictionaryURL: destination, completion: completion)
     }
 
     func openFile(with url: URL) throws {
         try resetDirectories()
         self.components.removeAll()
-
         let filename = "temp_\(components.count).m4a"
-
         try FileManager.default.copyItem(at: url, to: self.tempDirectoryUrl.appendingPathComponent(filename))
         let timeRange = CMTimeRange(start: kCMTimeZero, duration: kCMTimeZero)
-
         components.append(AssetComponent(fileName: filename, timeRange: timeRange))
+        durationTime = AVURLAsset(url: url).duration
+        
         Log.debug("openFile")
-
         changeRecorderStateWithViewUpdate(with: .fileLoaded)
     }
 }
@@ -332,16 +331,13 @@ extension AVFoundationRecorder: RecorderProtocol {
 extension AVFoundationRecorder {
     private func merge(components: [AssetComponent]) throws -> AVAsset {
         let audioComposition = AVMutableComposition()
-
         for component in components {
             let asset = component.loadAsset(directoryUrl: self.tempDirectoryUrl)
             let removeTimeRange: CMTimeRange
-
             if component.timeRange.duration.value > 0 {
                 removeTimeRange = component.timeRange
             } else {
                 let duration = audioComposition.duration - component.timeRange.start
-
                 if duration < asset.duration {
                     removeTimeRange = CMTimeRange(start: component.timeRange.start, duration: duration)
                 } else {
@@ -353,16 +349,16 @@ extension AVFoundationRecorder {
                                                  of: asset,
                                                  at: component.timeRange.start) ~> RecorderError.timeRangeInsertFailed
         }
-
         return audioComposition
     }
 
-    private func exportAsset(_ asset: AVAsset, destinationDictionaryURL: URL, completion: @escaping (_ url: URL?) -> Void = { _ in }) {
+    private func exportAsset(_ asset: AVAsset,
+                             destinationDictionaryURL: URL,
+                             completion: @escaping (_ url: URL?) -> Void = { _ in
+                             }) {
         let resultFileName = generateResultFileName()
         let finalURL = destinationDictionaryURL.appendingPathComponent(resultFileName)
-
         Log.debug("EXPORTING ....\(finalURL)")
-
         if let exportSession = AVAssetExportSession(asset: asset,
                                                     presetName: AVAssetExportPresetHighestQuality) {
             exportSession.outputURL = finalURL

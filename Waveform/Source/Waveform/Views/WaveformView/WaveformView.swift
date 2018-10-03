@@ -17,6 +17,7 @@ protocol WaveformViewDataSource: class {
 }
 
 protocol WaveformViewDelegate: class {
+    func waveformView(_ waveformView: WaveformView, contentSizeDidChange contentSize: CGSize)
     func waveformView(_ waveformView: WaveformView, contentOffsetDidChange contentOffset: CGPoint)
 }
 
@@ -55,6 +56,8 @@ class WaveformView: UIView {
         return coordinator
     }()
     
+    private var observers: [NSKeyValueObservation] = []
+    
     // MARK: - Views
     
     private lazy var collectionView: UICollectionView = {
@@ -67,6 +70,7 @@ class WaveformView: UIView {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.register(WaveformCollectionViewCell.self, forCellWithReuseIdentifier: self.coordinator.cellIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.dataSource = self.coordinator
         collectionView.delegate = self.coordinator
         collectionView.backgroundColor = .clear
@@ -80,19 +84,15 @@ class WaveformView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.commonInit()
         self.setupConstraints()
+        self.setupObservers()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.commonInit()
         self.setupConstraints()
-    }
-    
-    private func commonInit() {
-
+        self.setupObservers()
     }
     
     private func setupConstraints() {
@@ -100,6 +100,21 @@ class WaveformView: UIView {
         self.setupConstraint(attribute: .bottom, toItem: self.collectionView, attribute: .bottom, constant: 12.0)
         self.setupConstraint(attribute: .leading, toItem: self.collectionView, attribute: .leading)
         self.setupConstraint(attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
+    }
+    
+    private func setupObservers() {
+        self.observers = [
+            self.collectionView.observe(\.contentSize, options: [.new, .old]) { [weak self] collectionView, change in
+                guard let caller = self, let currentContentSize = change.newValue else {
+                    return
+                }
+                let previousContentSize = change.oldValue ?? currentContentSize
+                
+                if currentContentSize != previousContentSize {
+                    caller.delegate?.waveformView(caller, contentSizeDidChange: currentContentSize)
+                }
+            }
+        ]
     }
     
     // MARK: - Access methods

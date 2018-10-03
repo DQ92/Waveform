@@ -108,7 +108,7 @@ class ViewController: UIViewController {
                 caller.manager.loadData(from: values)
                 caller.manager.loadZoom(from: samplesPerPoint)
                 
-                caller.waveformPlot.contentOffset = CGPoint(x: caller.waveformPlot.contentInset.left, y: 0.0)
+                caller.waveformPlot.contentOffset = CGPoint(x: -caller.waveformPlot.contentInset.left, y: 0.0)
                 caller.waveformPlot.currentPosition = 0.0
                 caller.waveformPlot.reloadData()
             })
@@ -155,13 +155,12 @@ extension ViewController {
     }
     
     private func setupWaveformPlot() {
-        let offset = self.waveformPlot.bounds.width * 0.5
+        let offset = self.view.bounds.width * 0.5
         let timeIndicatorView = TimeIndicatorView(frame: .zero)
         timeIndicatorView.indicatorColor = .blue
         
         self.waveformPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
         self.waveformPlot.timeIndicatorView = timeIndicatorView
-        self.waveformPlot.contentOffset = CGPoint(x: -offset, y: 0.0)
         self.waveformPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
         self.waveformPlot.dataSource = self
         self.waveformPlot.delegate = self
@@ -305,11 +304,12 @@ extension ViewController: RecorderDelegate {
         case .isRecording:
             AudioToolboxMicrophoneController.shared.start()
             self.recordButton.setTitle("Pause", for: .normal)
-            self.totalTimeLabel.text = "00:00:00"
+            self.waveformPlot.isUserInteractionEnabled = false
             disableZoomAction()
         case .stopped:
             AudioToolboxMicrophoneController.shared.stop()
             self.recordButton.setTitle("Start", for: .normal)
+            self.waveformPlot.isUserInteractionEnabled = true
             enableZoomAction()
             
 //            let samplesPerPoint = CGFloat(self.manager.numberOfSamples) / self.waveformPlot.bounds.width
@@ -319,10 +319,12 @@ extension ViewController: RecorderDelegate {
         case .paused:
             AudioToolboxMicrophoneController.shared.stop()
             self.recordButton.setTitle("Resume", for: .normal)
+            self.waveformPlot.isUserInteractionEnabled = true
             enableZoomAction()
         case .fileLoaded:
             AudioToolboxMicrophoneController.shared.stop()
             self.recordButton.setTitle("Resume", for: .normal)
+            self.waveformPlot.isUserInteractionEnabled = true
             enableZoomAction()
         }
     }
@@ -384,20 +386,20 @@ extension ViewController: WaveformPlotDataSource {
 
 extension ViewController: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
-        print("contentOffset.x = \(contentOffset.x)")
+//        print("contentOffset.x = \(contentOffset.x)")
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
         let validPosition = max(position, 0.0)
         
-        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition)
+        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.recorder.duration)
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
         
-        print("validPosition = \(validPosition)")
-        print("timeInterval = \(self.timeInterval)")
-        print("sampleIndex = \(self.sampleIndex)")
-        print("numberOfSamples = \(self.manager.numberOfSamples)")
+//        print("validPosition = \(validPosition)")
+//        print("timeInterval = \(self.timeInterval)")
+//        print("sampleIndex = \(self.sampleIndex)")
+//        print("numberOfSamples = \(self.manager.numberOfSamples)")
     }
 }
 
@@ -414,5 +416,7 @@ extension ViewController: MicrophoneControllerDelegate {
         self.manager.setData(data: data, atIndex: self.sampleIndex)
         self.waveformPlot.currentPosition = offset
         self.waveformPlot.reloadData()
+        
+        self.totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.recorder.duration))
     }
 }

@@ -51,11 +51,11 @@ class MovementCoordinator {
     
     @objc private func updateCounter() {
         self.index -= 1
-        
-        if self.index == 0 {
-            self.stopScrolling()
-        } else {
+//
+//        if self.index == 0 {
+//            self.stopScrolling()
+//        } else {
             self.plot?.contentOffset.x += self.offset
-        }
+//        }
     }
 }

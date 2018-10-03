@@ -19,7 +19,7 @@ class AddIllustrationsViewController: UIViewController {
     private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
     private var loader: FileDataLoaderProtocol = AudioToolboxFileDataLoader()
     
-    private var manager: WaveformPlotDataManager = WaveformPlotDataManager()
+    private var manager: IllustrationPlotDataManager = IllustrationPlotDataManager()
     private var timeInterval: TimeInterval = 0.0
     private var sampleIndex: Int = 0
     
@@ -43,6 +43,76 @@ class AddIllustrationsViewController: UIViewController {
         self.setupManager()
         self.setupIllustrationPlot()
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let viewController = segue.destination as? AudioFilesListViewController {
+            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            viewController.directoryUrl = documentsURL.appendingPathComponent("results")
+            viewController.didSelectFileBlock = { [weak self] url in
+                self?.retrieveFileDataAndSet(with: url)
+                self?.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
+    // MARK: - Actions
+
+    @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
+//        playOrPause()
+    }
+    
+    @IBAction func addIllustration(_ sender: Any) {
+//        waveformWithIllustrationsPlot.addIllustrationMark()
+    }
+    
+    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
+        self.manager.zoomIn()
+        self.illustrationPlot.reloadData()
+    }
+    
+    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
+        self.manager.zoomOut()
+        self.illustrationPlot.reloadData()
+    }
+    
+    // MARK: - Other
+    
+    private func retrieveFileDataAndSet(with url: URL) {
+        do {
+            try loader.loadFile(with: url, completion: { [weak self] values in
+                guard let caller = self else {
+                    return
+                }
+                let samplesPerPoint = CGFloat(values.count) / caller.illustrationPlot.bounds.width
+                
+                caller.manager.loadData(from: values)
+                caller.manager.loadZoom(from: samplesPerPoint)
+                
+                caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)
+                caller.illustrationPlot.currentPosition = 0.0
+                caller.illustrationPlot.reloadData()
+            })
+            totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: loader.fileDuration))
+            
+        } catch FileDataLoaderError.openUrlFailed {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Błędny url",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        } catch {
+            let alertController = UIAlertController(title: "Błąd",
+                                                    message: "Nieznany",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
+    }
+    
+    private func resetCurrentSampleData() {
+        self.timeInterval = 0.0
+        self.sampleIndex = 0
+    }
 }
 
 // MARK: - Setup
@@ -61,13 +131,12 @@ extension AddIllustrationsViewController {
     }
     
     private func setupIllustrationPlot() {
-        let offset = self.illustrationPlot.bounds.width * 0.5
+        let offset = self.view.bounds.width * 0.5
         
-//        self.illustrationPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
-//        self.illustrationPlot.contentOffset = CGPoint(x: -offset, y: 0.0)
-//        self.illustrationPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
-//        self.illustrationPlot.dataSource = self
-//        self.illustrationPlot.delegate = self
+        self.illustrationPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
+        self.illustrationPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
+        self.illustrationPlot.dataSource = self
+        self.illustrationPlot.delegate = self
     }
 }
 
@@ -120,6 +189,44 @@ extension AddIllustrationsViewController: WaveformPlotDataManagerDelegate {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
     }
 }
+
+// MARK: - WaveformPlotDataSource
+
+extension AddIllustrationsViewController: IllustrationPlotDataSource {
+    func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int {
+        return self.manager.numberOfTimeInterval
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample] {
+        return self.manager.samples(timeIntervalIndex: index)
+    }
+
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
+        return self.manager.timeIntervalWidth(index: index)
+    }
+}
+
+// MARK: - WaveformPlotDelegate
+
+extension AddIllustrationsViewController: IllustrationPlotDelegate {
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint) {
+        print("contentOffset.x = \(contentOffset.x)")
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
+        let validPosition = max(position, 0.0)
+        
+        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration)
+        self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
+        self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
+        
+        print("validPosition = \(validPosition)")
+        print("timeInterval = \(self.timeInterval)")
+        print("sampleIndex = \(self.sampleIndex)")
+        print("numberOfSamples = \(self.manager.numberOfSamples)")
+    }
+}
+
 
 /*
     

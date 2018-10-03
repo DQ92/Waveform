@@ -28,7 +28,7 @@ class WaveformPlotDataManager {
     var standardTimeIntervalWidth: CGFloat {
         return CGFloat(self.layersPerTimeInterval) * self.layerWidth
     }
-    
+
     var sampleWidth: CGFloat {
         return self.layerWidth / CGFloat(self.zoom.level.samplesPerLayer)
     }
@@ -145,8 +145,14 @@ extension WaveformPlotDataManager {
 // MARK: - Conversion
 
 extension WaveformPlotDataManager {
-    func calculateTimeInterval(for position: CGFloat) -> TimeInterval {
-        return TimeInterval(position) / TimeInterval(self.layersPerTimeInterval) * TimeInterval(self.zoom.level.samplesPerLayer)
+    func calculateTimeInterval(for position: CGFloat, duration: TimeInterval) -> TimeInterval {
+        let plotWidth = CGFloat(self.data.count) * self.sampleWidth
+        
+        if plotWidth > 0 {
+            let multiplier = position / plotWidth
+            return Double(multiplier) * duration
+        }
+        return 0.0
     }
     
     func calculatePosition(for timeInterval: TimeInterval) -> CGFloat {

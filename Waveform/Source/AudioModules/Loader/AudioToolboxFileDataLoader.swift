@@ -5,6 +5,7 @@
 
 import Foundation
 import AudioToolbox
+import AVFoundation
 
 class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
 
@@ -13,6 +14,8 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
     private var fileReference: ExtAudioFileRef?
     private var audioFormat = AudioUtils.monoFloatNonInterleavedFormat(with: AudioUtils.defaultSampleRate)
     private var fileLengthInFrames: Int?
+    
+    var engine = AVAudioEngine()
 
     // MARK: - Public properties
 
@@ -30,6 +33,24 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
         try loadFile(with: url, completion: completion)
     }
 
+//    func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float]) -> Void) throws {
+//        let settings = [
+//            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+//            AVSampleRateKey: 44100,
+//            AVNumberOfChannelsKey: 1,
+//            ]
+//        let format = AVAudioFormat(settings: settings)
+//        let file = try AVAudioFile(forWriting: URL, settings: settings)
+//
+//        try self.engine.start()
+//
+//
+//
+//        self.engine.mainMixerNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, when in
+//
+//        }
+//    }
+    
     func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float]) -> Void) throws {
         try openFile(with: URL)
         let numberOfPoints = Int(Double(WaveformConfiguration.microphoneSamplePerSecond) * fileDuration)
@@ -60,7 +81,7 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
         }
         completion(rmss)
     }
-
+    
     // MARK: - Private methods
 
     private func openFile(with fileURL: URL) throws {

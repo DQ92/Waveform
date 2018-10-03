@@ -106,9 +106,10 @@ class TimelineView: UIView {
         collectionViewLayout.sectionInset = .zero
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: self.coordinator.cellIdentifier)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.isScrollEnabled = false
         collectionView.dataSource = self.coordinator
         collectionView.delegate = self.coordinator
