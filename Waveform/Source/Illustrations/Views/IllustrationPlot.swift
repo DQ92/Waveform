@@ -9,6 +9,7 @@
 import UIKit
 
 protocol IllustrationPlotDataSource: class {
+    func timeInterval(in illustrationPlot: IllustrationPlot) -> TimeInterval
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int
     func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat
     func getCurrentChapterIllustrationMarks() -> [IllustrationMarkModel]
@@ -220,6 +221,8 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     func reloadData() {
         self.waveformPlot.reloadData()
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
     }
     
     func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
@@ -258,7 +261,14 @@ extension IllustrationPlot: UIScrollViewDelegate {
 }
 
 extension IllustrationPlot: WaveformPlotDataSource {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+    func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval {
+        guard let result = self.dataSource?.timeInterval(in: self) else {
+            return 0
+        }
+        return result
+    }
+    
+    func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int {
         guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
             return 0
         }

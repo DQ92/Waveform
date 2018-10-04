@@ -9,7 +9,8 @@
 import UIKit
 
 protocol WaveformPlotDataSource: class {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int
+    func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval
+    func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int
     
     func waveformPlot(_ waveformPlot: WaveformPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample]
     func waveformPlot(_ waveformPlot: WaveformPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat
@@ -139,13 +140,14 @@ class WaveformPlot: UIView, ScrollablePlot {
     // MARK: - Access methods
     
     func reloadData() {
+        self.timelineView.timeInterval = dataSource?.timeInterval(in: self) ?? 1.0
         self.waveformView.reloadData()
     }
 }
 
 extension WaveformPlot: WaveformViewDataSource {
-    func numberOfTimeInterval(in waveformView: WaveformView) -> Int {
-        guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
+    func numberOfTimeIntervals(in waveformView: WaveformView) -> Int {
+        guard let result = self.dataSource?.numberOfTimeIntervals(in: self) else {
             return 0
         }
         return result

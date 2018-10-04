@@ -369,7 +369,11 @@ extension ViewController: WaveformPlotDataManagerDelegate {
 // MARK: - WaveformPlotDataSource
 
 extension ViewController: WaveformPlotDataSource {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+    func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval {
+        return TimeInterval(self.manager.zoomLevel.samplesPerLayer)
+    }
+    
+    func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int {
         return self.manager.numberOfTimeInterval
     }
     

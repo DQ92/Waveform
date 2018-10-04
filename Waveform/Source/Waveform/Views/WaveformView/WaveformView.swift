@@ -9,7 +9,7 @@
 import UIKit
 
 protocol WaveformViewDataSource: class {
-    func numberOfTimeInterval(in waveformView: WaveformView) -> Int
+    func numberOfTimeIntervals(in waveformView: WaveformView) -> Int
     func standardTimeIntervalWidth(in waveformView: WaveformView) -> CGFloat
     
     func waveformView(_ waveformView: WaveformView, samplesAtTimeIntervalIndex index: Int) -> [Sample]
@@ -125,8 +125,8 @@ class WaveformView: UIView {
 }
 
 extension WaveformView: WaveformViewCoordinatorDataSource {
-    func numberOfTimeInterval(in coordinator: WaveformViewCoordinator) -> Int {
-        guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
+    func numberOfTimeIntervals(in coordinator: WaveformViewCoordinator) -> Int {
+        guard let result = self.dataSource?.numberOfTimeIntervals(in: self) else {
             return 0
         }
         return result

@@ -114,6 +114,7 @@ class AddIllustrationsViewController: UIViewController {
                 caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)
                 caller.illustrationPlot.currentPosition = 0.0
                 caller.illustrationPlot.reloadData()
+                caller.enableZoomAction()
             })
             totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: loader.fileDuration))
             
@@ -213,12 +214,17 @@ extension AddIllustrationsViewController: WaveformPlotDataManagerDelegate {
     
     func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
+        self.illustrationPlot.reloadData()
     }
 }
 
 // MARK: - WaveformPlotDataSource
 
 extension AddIllustrationsViewController: IllustrationPlotDataSource {
+    func timeInterval(in illustrationPlot: IllustrationPlot) -> TimeInterval {
+        return TimeInterval(self.manager.zoomLevel.samplesPerLayer)
+    }
+    
     func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat {
         return CGFloat(manager.zoomLevel.samplesPerLayer)
     }
