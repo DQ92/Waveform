@@ -100,11 +100,18 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }()
     
     var timeIndicatorView: UIView? {
-        set {
-            self.waveformPlot.timeIndicatorView = newValue
+        willSet {
+            timeIndicatorView?.removeFromSuperview()
         }
-        get {
-            return self.waveformPlot.timeIndicatorView
+        didSet {
+            if let view = timeIndicatorView {
+                view.translatesAutoresizingMaskIntoConstraints = false
+                self.addSubview(view)
+                
+                self.setupConstraint(item: view, attribute: .top, toItem: self.waveformPlot, attribute: .top)
+                self.setupConstraint(item: view, attribute: .bottom, toItem: self, attribute: .bottom)
+                self.setupConstraint(item: view, attribute: .centerX, toItem: self.waveformPlot, attribute: .centerX)
+            }
         }
     }
     
@@ -147,13 +154,13 @@ class IllustrationPlot: UIView, ScrollablePlot {
     private func setupConstraints() {
         self.setupConstraint(item: self.waveformPlot, attribute: .leading, toItem: self, attribute: .leading)
         self.setupConstraint(item: self.waveformPlot, attribute: .trailing, toItem: self, attribute: .trailing)
-        self.setupConstraint(item: self.waveformPlot, attribute: .bottom, toItem: self, attribute: .bottom, constant: -30)
+        self.setupConstraint(item: self.waveformPlot, attribute: .bottom, toItem: self, attribute: .bottom, constant: -50)
         self.setupConstraint(item: self.waveformPlot, attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
         
         self.setupConstraint(item: self.scrollView, attribute: .leading, toItem: self, attribute: .leading)
         self.setupConstraint(item: self.scrollView, attribute: .trailing, toItem: self, attribute: .trailing)
         self.setupConstraint(item: self.scrollView, attribute: .top, toItem: self, attribute: .top)
-        self.setupConstraint(item: self.scrollView, attribute: .bottom, toItem: self, attribute: .bottom)
+        self.setupConstraint(item: self.scrollView, attribute: .height, toItem: self, attribute: .height, multiplier: 0.9, constant: 0)
         
         self.setupConstraint(item: self.contentView, attribute: .leading, toItem: self.scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth * 0.5))
         self.setupConstraint(item: self.contentView, attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
@@ -203,8 +210,8 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
-        self.setupConstraint(item: view, attribute: .top, toItem: contentView, attribute: .top, constant: 5)
-        self.setupConstraint(item: view, attribute: .bottom, toItem: contentView, attribute: .bottom, constant: 5)
+        self.setupConstraint(item: view, attribute: .top, toItem: contentView, attribute: .top)
+        self.setupConstraint(item: view, attribute: .bottom, toItem: contentView, attribute: .bottom)
         self.setupConstraint(item: view, attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
         self.setupConstraint(item: view, attribute: .centerX, toItem: contentView, attribute: .centerX, constant: centerXConstraintValue)
     }

@@ -108,11 +108,10 @@ class IllustrationMarkView: UIView {
         
         self.setupConstraint(item: self.lineView, attribute: .top, toItem: self.imageWrapperView, attribute: .bottom, constant: 9.0)
         self.setupConstraint(item: self.lineView, attribute: .centerX, toItem: self, attribute: .centerX)
-        
+
         self.setupConstraint(item: self.timeLabel, attribute: .top, toItem: self.lineView, attribute: .bottom, constant: 10.0)
-        self.setupConstraint(item: self, attribute: .bottom, toItem: self.timeLabel, attribute: .bottom, constant: 10.0)
-        self.setupConstraint(item: self.timeLabel, attribute: .leading, toItem: self, attribute: .leading)
-        self.setupConstraint(item: self.timeLabel, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self, attribute: .bottom, toItem: self.timeLabel, attribute: .bottom)
+        self.setupConstraint(item: self.timeLabel, attribute: .centerX, toItem: self, attribute: .centerX)
     }
     
     // MARK: - Access methods
