@@ -63,8 +63,14 @@ class AddIllustrationsViewController: UIViewController {
     
     @IBAction func addIllustration(_ sender: Any) {
         let data = createIllustrationMarkData(with: nil, and: timeInterval)
-        manager.updateIllustrationMarkDatasource(for: 0, with: data)
-        illustrationPlot.addIllustrationMark(with: data, for: CGFloat(manager.zoomLevel.samplesPerLayer))
+        let isMarkExistsAtCurrentTime = manager.checkIfIllustrationMarkExistsAtCurrentTime(for: 0, and: timeInterval)
+        
+        if isMarkExistsAtCurrentTime {
+            manager.updateIllustrationMarkDatasource(for: 0, with: data)
+        } else {
+            manager.appendIllustrationMarkData(for: 0, with: data)
+            illustrationPlot.addIllustrationMark(with: data, for: CGFloat(manager.zoomLevel.samplesPerLayer))
+        }
     }
     
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
