@@ -217,12 +217,16 @@ class IllustrationPlot: UIView, ScrollablePlot {
         }
     }
     
+    private func reloadIllustrationMarkViews() {
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
+    }
+    
     // MARK: - Access methods
     
     func reloadData() {
         self.waveformPlot.reloadData()
-        contentView.subviews.forEach { $0.removeFromSuperview() }
-        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
+        reloadIllustrationMarkViews()
     }
     
     func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
@@ -293,6 +297,7 @@ extension IllustrationPlot: WaveformPlotDataSource {
 extension IllustrationPlot: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
         self.contentWidthLayoutConstraint.constant = contentSize.width + illustrationMarkViewWidth
+        reloadIllustrationMarkViews()
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
