@@ -44,7 +44,7 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     var contentInset: UIEdgeInsets {
         set {
-            self.scrollView.contentInset = newValue
+            self.scrollView.contentInset = UIEdgeInsets(top: newValue.top, left: newValue.left, bottom: newValue.bottom, right: newValue.right - illustrationMarkViewWidth * 0.5)
             self.waveformPlot.contentInset = newValue
         }
         get {
@@ -99,30 +99,21 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }()
     
     var timeIndicatorView: UIView? {
-        willSet {
-            timeIndicatorView?.removeFromSuperview()
+        set {
+            self.waveformPlot.timeIndicatorView = newValue
         }
-        didSet {
-            if let view = timeIndicatorView {
-                view.translatesAutoresizingMaskIntoConstraints = false
-                self.scrollView.addSubview(view)
-                
-                view.setupConstraint(attribute: .top, toItem: self.waveformPlot, attribute: .top)
-                view.setupConstraint(attribute: .bottom, toItem: self.waveformPlot, attribute: .bottom)
-                view.setupConstraint(attribute: .centerX, toItem: self.waveformPlot, attribute: .centerX)
-            }
+        get {
+            return self.waveformPlot.timeIndicatorView
         }
     }
     
     // MARK: - Private attributes
     
     private lazy var contentWidthLayoutConstraint: NSLayoutConstraint = {
-        return NSLayoutConstraint.build(item: self.contentView, attribute: .width)
+        return NSLayoutConstraint.build(item: self.contentView, attribute: .width, constant: illustrationMarkViewWidth)
     }()
     
-    private lazy var illustrationMarkViewWidth: CGFloat = {
-        return UIScreen.main.bounds.width * 0.1
-    }()
+    var illustrationMarkViewWidth: CGFloat = UIScreen.main.bounds.width * 0.1
     
     // MARK: - Private constants
     
@@ -150,25 +141,24 @@ class IllustrationPlot: UIView, ScrollablePlot {
         waveformPlot.backgroundColor = .clear
         
         scrollView.showsHorizontalScrollIndicator = false
-        bringSubview(toFront: scrollView)
     }
     
     private func setupConstraints() {
+        self.waveformPlot.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
+        self.waveformPlot.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
+        self.waveformPlot.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom, constant: -30)
+        self.waveformPlot.setupConstraint(attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
+        
         self.scrollView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
         self.scrollView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
         self.scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
         self.scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
         
-        self.contentView.setupConstraint(attribute: .leading, toItem: self.scrollView, attribute: .leading)
+        self.contentView.setupConstraint(attribute: .leading, toItem: self.scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth * 0.5))
         self.contentView.setupConstraint(attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
         self.contentView.setupConstraint(attribute: .top, toItem: self.scrollView, attribute: .top)
         self.contentView.setupConstraint(attribute: .bottom, toItem: self.scrollView, attribute: .bottom)
         self.contentView.setupConstraint(attribute: .centerY, toItem: self.scrollView, attribute: .centerY)
-        
-        self.waveformPlot.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.waveformPlot.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.waveformPlot.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom, constant: -30)
-        self.waveformPlot.setupConstraint(attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
         
         self.contentWidthLayoutConstraint.isActive = true
     }
@@ -188,7 +178,7 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupNewIllustrationMarkView(with data: IllustrationMarkModel, for samplesPerLayer: CGFloat) {
-        let view = RecordingAddedIllustrationMarkView(frame: CGRect(x: 0, y: 0, width: illustrationMarkViewWidth, height: scrollView.bounds.height))
+        let view = RecordingAddedIllustrationMarkView(frame: .zero)
         contentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         let currentCenterXConstraintValue = data.centerXConstraintValue / samplesPerLayer
@@ -212,28 +202,10 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
-        NSLayoutConstraint.build(item: view,
-                                 attribute: .top,
-                                 toItem: contentView,
-                                 attribute: .top,
-                                 constant: 5).isActive = true
-        NSLayoutConstraint.build(item: contentView,
-                                 attribute: .bottom,
-                                 toItem: view,
-                                 attribute: .bottom,
-                                 constant: 5).isActive = true
-        
-        NSLayoutConstraint.build(item: view,
-                                 attribute: .width,
-                                 toItem: nil,
-                                 attribute: .notAnAttribute,
-                                 constant: illustrationMarkViewWidth).isActive = true
-        
-        NSLayoutConstraint.build(item: view,
-                                 attribute: .centerX,
-                                 toItem: contentView,
-                                 attribute: .centerX,
-                                 constant: centerXConstraintValue).isActive = true
+        view.setupConstraint(attribute: .top, toItem: contentView, attribute: .top, constant: 5)
+        view.setupConstraint(attribute: .bottom, toItem: contentView, attribute: .bottom, constant: 5)
+        view.setupConstraint(attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
+        view.setupConstraint(attribute: .centerX, toItem: contentView, attribute: .centerX, constant: centerXConstraintValue)
     }
     
     private func hideScrollContentViewSubviews() {
@@ -252,7 +224,7 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
         let halfOfScrollContentViewWidth = -(contentView.bounds.width / 2)
-        let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x
+        let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth * 0.5
         return centerXConstraintValue
     }
 }
@@ -276,12 +248,10 @@ extension IllustrationPlot: UIScrollViewDelegate {
             if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && subview != nil {
                 contentView.willRemoveSubview(subview!)
                 subview!.removeFromSuperview()
-                print("removed mark")
             }
             
             if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && subview == nil {
                 setupNewIllustrationMarkView(with: data, for: samplesPerLayer)
-                print("added mark")
             }
         }
     }
@@ -312,7 +282,7 @@ extension IllustrationPlot: WaveformPlotDataSource {
 
 extension IllustrationPlot: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
-        self.contentWidthLayoutConstraint.constant = contentSize.width
+        self.contentWidthLayoutConstraint.constant = contentSize.width + illustrationMarkViewWidth
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -59,11 +63,11 @@
                 </button>
             </subviews>
             <constraints>
+                <constraint firstItem="Pit-2W-615" firstAttribute="centerX" secondItem="g7X-Y0-BRv" secondAttribute="centerX" id="0hL-mw-KWG"/>
                 <constraint firstItem="Ogk-FL-KVh" firstAttribute="top" secondItem="1Hk-OS-uNL" secondAttribute="bottom" constant="10" id="1Lu-PL-IhJ"/>
-                <constraint firstItem="Pit-2W-615" firstAttribute="centerX" secondItem="5dF-uh-JhV" secondAttribute="centerX" id="7p7-WW-rno"/>
-                <constraint firstItem="1Hk-OS-uNL" firstAttribute="centerX" secondItem="5dF-uh-JhV" secondAttribute="centerX" id="BpC-nX-8hT"/>
                 <constraint firstItem="1Hk-OS-uNL" firstAttribute="top" secondItem="5dF-uh-JhV" secondAttribute="bottom" constant="9" id="GtD-SP-333"/>
-                <constraint firstItem="Ogk-FL-KVh" firstAttribute="centerX" secondItem="5dF-uh-JhV" secondAttribute="centerX" id="H2c-Fu-x7F"/>
+                <constraint firstItem="Ogk-FL-KVh" firstAttribute="centerX" secondItem="g7X-Y0-BRv" secondAttribute="centerX" id="Rf2-rq-HfU"/>
+                <constraint firstItem="1Hk-OS-uNL" firstAttribute="centerX" secondItem="g7X-Y0-BRv" secondAttribute="centerX" id="S16-7b-Y92"/>
                 <constraint firstItem="5dF-uh-JhV" firstAttribute="top" secondItem="Pit-2W-615" secondAttribute="bottom" constant="5" id="UME-tm-Ffc"/>
                 <constraint firstItem="Pit-2W-615" firstAttribute="height" secondItem="5dF-uh-JhV" secondAttribute="height" multiplier="0.4" id="ZOG-Tt-qCI"/>
                 <constraint firstAttribute="trailing" secondItem="5dF-uh-JhV" secondAttribute="trailing" id="dsi-G3-43U"/>

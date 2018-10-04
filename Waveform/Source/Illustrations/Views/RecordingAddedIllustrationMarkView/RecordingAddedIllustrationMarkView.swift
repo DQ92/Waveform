@@ -54,10 +54,13 @@ class RecordingAddedIllustrationMarkView: UIView {
     
     private func loadNib() {
         let _ = Bundle.main.loadNibNamed(nibName, owner: self, options: nil)?.first
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        view.frame = frame
+        view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
+        
+        view.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
+        view.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
+        view.setupConstraint(attribute: .top, toItem: self, attribute: .top)
+        view.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
     }
     
     // MARK: - View setup
