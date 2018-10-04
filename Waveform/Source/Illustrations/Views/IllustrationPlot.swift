@@ -145,21 +145,21 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupConstraints() {
-        self.waveformPlot.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.waveformPlot.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.waveformPlot.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom, constant: -30)
-        self.waveformPlot.setupConstraint(attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
+        self.setupConstraint(item: self.waveformPlot, attribute: .leading, toItem: self, attribute: .leading)
+        self.setupConstraint(item: self.waveformPlot, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self.waveformPlot, attribute: .bottom, toItem: self, attribute: .bottom, constant: -30)
+        self.setupConstraint(item: self.waveformPlot, attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
         
-        self.scrollView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.scrollView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
-        self.scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+        self.setupConstraint(item: self.scrollView, attribute: .leading, toItem: self, attribute: .leading)
+        self.setupConstraint(item: self.scrollView, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self.scrollView, attribute: .top, toItem: self, attribute: .top)
+        self.setupConstraint(item: self.scrollView, attribute: .bottom, toItem: self, attribute: .bottom)
         
-        self.contentView.setupConstraint(attribute: .leading, toItem: self.scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth * 0.5))
-        self.contentView.setupConstraint(attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
-        self.contentView.setupConstraint(attribute: .top, toItem: self.scrollView, attribute: .top)
-        self.contentView.setupConstraint(attribute: .bottom, toItem: self.scrollView, attribute: .bottom)
-        self.contentView.setupConstraint(attribute: .centerY, toItem: self.scrollView, attribute: .centerY)
+        self.setupConstraint(item: self.contentView, attribute: .leading, toItem: self.scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth * 0.5))
+        self.setupConstraint(item: self.contentView, attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
+        self.setupConstraint(item: self.contentView, attribute: .top, toItem: self.scrollView, attribute: .top)
+        self.setupConstraint(item: self.contentView, attribute: .bottom, toItem: self.scrollView, attribute: .bottom)
+        self.setupConstraint(item: self.contentView, attribute: .centerY, toItem: self.scrollView, attribute: .centerY)
         
         self.contentWidthLayoutConstraint.isActive = true
     }
@@ -179,7 +179,7 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupNewIllustrationMarkView(with data: IllustrationMark, for samplesPerLayer: CGFloat) {
-        let view = RecordingAddedIllustrationMarkView(frame: .zero)
+        let view = IllustrationMarkView(frame: .zero)
         contentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         let currentCenterXConstraintValue = data.centerXConstraintValue / samplesPerLayer
@@ -203,15 +203,15 @@ class IllustrationPlot: UIView, ScrollablePlot {
     }
     
     private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
-        view.setupConstraint(attribute: .top, toItem: contentView, attribute: .top, constant: 5)
-        view.setupConstraint(attribute: .bottom, toItem: contentView, attribute: .bottom, constant: 5)
-        view.setupConstraint(attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
-        view.setupConstraint(attribute: .centerX, toItem: contentView, attribute: .centerX, constant: centerXConstraintValue)
+        self.setupConstraint(item: view, attribute: .top, toItem: contentView, attribute: .top, constant: 5)
+        self.setupConstraint(item: view, attribute: .bottom, toItem: contentView, attribute: .bottom, constant: 5)
+        self.setupConstraint(item: view, attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
+        self.setupConstraint(item: view, attribute: .centerX, toItem: contentView, attribute: .centerX, constant: centerXConstraintValue)
     }
     
     private func hideScrollContentViewSubviews() {
         contentView.subviews.forEach {
-            if let subview = $0 as? RecordingAddedIllustrationMarkView {
+            if let subview = $0 as? IllustrationMarkView {
                 subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
             }
         }
@@ -249,7 +249,7 @@ extension IllustrationPlot: UIScrollViewDelegate {
         dataSource?.illustrationMarks(for: self).forEach { data in
             let leftOffset = (data.centerXConstraintValue / samplesPerLayer) + (contentWidthLayoutConstraint.constant / 2) - (contentOffset.x - scrollView.contentInset.left)
             let subview = contentView.subviews.first(where: { view in
-                (view as? RecordingAddedIllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue
+                (view as? IllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue
             })
             
             if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && subview != nil {

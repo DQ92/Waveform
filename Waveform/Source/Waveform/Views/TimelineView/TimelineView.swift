@@ -143,15 +143,15 @@ class TimelineView: UIView {
     }
     
     private func setupConstraints() {
-        self.setupConstraint(attribute: .top, toItem: self.collectionView, attribute: .top)
-        self.setupConstraint(attribute: .bottom, toItem: self.collectionView, attribute: .bottom)
-        self.setupConstraint(attribute: .leading, toItem: self.collectionView, attribute: .leading)
-        self.setupConstraint(attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
+        self.setupConstraint(item: self, attribute: .top, toItem: self.collectionView, attribute: .top)
+        self.setupConstraint(item: self, attribute: .bottom, toItem: self.collectionView, attribute: .bottom)
+        self.setupConstraint(item: self, attribute: .leading, toItem: self.collectionView, attribute: .leading)
+        self.setupConstraint(item: self, attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
         
-        self.boundsVew.setupConstraint(attribute: .width, toItem: self.collectionView, attribute: .width)
-        self.boundsVew.setupConstraint(attribute: .height, toItem: self.collectionView, attribute: .height)
-        self.boundsVew.setupConstraint(attribute: .centerY, toItem: self.collectionView, attribute: .centerY)
-        self.boundsVew.setupConstraint(attribute: .trailing, toItem: self.collectionView, attribute: .leading)
+        self.setupConstraint(item: self.boundsVew, attribute: .width, toItem: self.collectionView, attribute: .width)
+        self.setupConstraint(item: self.boundsVew, attribute: .height, toItem: self.collectionView, attribute: .height)
+        self.setupConstraint(item: self.boundsVew, attribute: .centerY, toItem: self.collectionView, attribute: .centerY)
+        self.setupConstraint(item: self.boundsVew, attribute: .trailing, toItem: self.collectionView, attribute: .leading)
     }
     
     // MARK: - Access methods

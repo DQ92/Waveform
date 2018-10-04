@@ -34,8 +34,7 @@
 		709AB9D1213D260500F63746 /* UIScrollView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */; };
 		709AB9D4213D26A200F63746 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8893876B1B5C13D94D0EE37 /* AppDelegate.swift */; };
 		709E2EC32146547000BC0DE5 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E2EC22146547000BC0DE5 /* Operators.swift */; };
-		70F12029215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */; };
-		70F1202A215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */; };
+		70F1202A215A52EA0046D01A /* IllustrationMarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12026215A52EA0046D01A /* IllustrationMarkView.swift */; };
 		70F1202B215A52EA0046D01A /* TimeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12027215A52EA0046D01A /* TimeIndicatorView.swift */; };
 		70F1202C215A52EA0046D01A /* IllustrationPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F12028215A52EA0046D01A /* IllustrationPlot.swift */; };
 		AEF53435214FDC76003C0539 /* AddIllustrationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */; };
@@ -97,8 +96,7 @@
 		70999AA5215A511700746BFD /* WaveformColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformColor.swift; sourceTree = "<group>"; };
 		709AB9D0213D260500F63746 /* UIScrollView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extension.swift"; sourceTree = "<group>"; };
 		709E2EC22146547000BC0DE5 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
-		70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RecordingAddedIllustrationMarkView.xib; sourceTree = "<group>"; };
-		70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingAddedIllustrationMarkView.swift; sourceTree = "<group>"; };
+		70F12026215A52EA0046D01A /* IllustrationMarkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllustrationMarkView.swift; sourceTree = "<group>"; };
 		70F12027215A52EA0046D01A /* TimeIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeIndicatorView.swift; sourceTree = "<group>"; };
 		70F12028215A52EA0046D01A /* IllustrationPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllustrationPlot.swift; sourceTree = "<group>"; };
 		AEF53434214FDC76003C0539 /* AddIllustrationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddIllustrationsViewController.swift; sourceTree = "<group>"; };
@@ -211,20 +209,19 @@
 		70F12023215A52EA0046D01A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				70F12024215A52EA0046D01A /* RecordingAddedIllustrationMarkView */,
+				70F12024215A52EA0046D01A /* IllustrationMarkView */,
 				70F12028215A52EA0046D01A /* IllustrationPlot.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		70F12024215A52EA0046D01A /* RecordingAddedIllustrationMarkView */ = {
+		70F12024215A52EA0046D01A /* IllustrationMarkView */ = {
 			isa = PBXGroup;
 			children = (
-				70F12025215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib */,
-				70F12026215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift */,
+				70F12026215A52EA0046D01A /* IllustrationMarkView.swift */,
 				70F12027215A52EA0046D01A /* TimeIndicatorView.swift */,
 			);
-			path = RecordingAddedIllustrationMarkView;
+			path = IllustrationMarkView;
 			sourceTree = "<group>";
 		};
 		70F1202D215A530A0046D01A /* Illustrations */ = {
@@ -463,7 +460,6 @@
 			files = (
 				E889389722BC44CA2252C65E /* Assets.xcassets in Resources */,
 				E8893996CE0A8FE1C438D870 /* Main.storyboard in Resources */,
-				70F12029215A52EA0046D01A /* RecordingAddedIllustrationMarkView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,7 +523,7 @@
 				E88934F26F6A317A51355F20 /* ZoomType.swift in Sources */,
 				E88932CB823547E4233EB79D /* Zoom.swift in Sources */,
 				E88938FD6189BE0B2BB487A0 /* ZoomLevel.swift in Sources */,
-				70F1202A215A52EA0046D01A /* RecordingAddedIllustrationMarkView.swift in Sources */,
+				70F1202A215A52EA0046D01A /* IllustrationMarkView.swift in Sources */,
 				660544BF215BA066001425B3 /* WaveformView.swift in Sources */,
 				E8893F1FA5F2D99A97F5865C /* LeadingLineTimeUpdater.swift in Sources */,
 				E8893D30AADE405CEBE93592 /* LeadingLineLayer.swift in Sources */,

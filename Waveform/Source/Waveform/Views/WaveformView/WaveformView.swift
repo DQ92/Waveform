@@ -96,10 +96,10 @@ class WaveformView: UIView {
     }
     
     private func setupConstraints() {
-        self.setupConstraint(attribute: .top, toItem: self.collectionView, attribute: .top, constant: -12.0)
-        self.setupConstraint(attribute: .bottom, toItem: self.collectionView, attribute: .bottom, constant: 12.0)
-        self.setupConstraint(attribute: .leading, toItem: self.collectionView, attribute: .leading)
-        self.setupConstraint(attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
+        self.setupConstraint(item: self, attribute: .top, toItem: self.collectionView, attribute: .top, constant: -12.0)
+        self.setupConstraint(item: self, attribute: .bottom, toItem: self.collectionView, attribute: .bottom, constant: 12.0)
+        self.setupConstraint(item: self, attribute: .leading, toItem: self.collectionView, attribute: .leading)
+        self.setupConstraint(item: self, attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
     }
     
     private func setupObservers() {
