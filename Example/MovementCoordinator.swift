@@ -14,8 +14,6 @@ class MovementCoordinator {
     
     private weak var plot: ScrollablePlot?
     private var offset: CGFloat = 0.0
-    
-    private var index: Int = 0
     private var timer: Timer?
     
     // MARK: - Initialization
@@ -26,11 +24,10 @@ class MovementCoordinator {
     
     // MARK: - Access methods
     
-    func startScrolling(numberOfSteps: Int, stepWidth: CGFloat, timeInterval: TimeInterval = 0.01) {
+    func startScrolling(stepWidth: CGFloat, timeInterval: TimeInterval = 0.01) {
         guard self.timer == nil else {
             return
         }
-        self.index = numberOfSteps
         self.offset = stepWidth
         
         self.timer = Timer.scheduledTimer(timeInterval: timeInterval,
@@ -50,12 +47,6 @@ class MovementCoordinator {
     // MARK: - Selectors
     
     @objc private func updateCounter() {
-        self.index -= 1
-//
-//        if self.index == 0 {
-//            self.stopScrolling()
-//        } else {
-            self.plot?.contentOffset.x += self.offset
-//        }
+        self.plot?.currentPosition += self.offset
     }
 }

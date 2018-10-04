@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum RecorderState {
+enum AudioRecorderState {
     case isRecording
     case stopped
     case paused

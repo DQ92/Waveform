@@ -147,7 +147,11 @@ extension WaveformPlotDataManager {
 extension WaveformPlotDataManager {
     func calculateTimeInterval(for position: CGFloat, duration: TimeInterval) -> TimeInterval {
         let plotWidth = CGFloat(self.data.count) * self.sampleWidth
-        
+
+        print("plotWidth = \(plotWidth)")
+        print("position = \(position)")
+        print("----------------------")
+
         if plotWidth > 0 {
             let multiplier = position / plotWidth
             return Double(multiplier) * duration

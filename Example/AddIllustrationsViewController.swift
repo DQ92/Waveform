@@ -164,10 +164,8 @@ extension AddIllustrationsViewController: AudioPlayerDelegate {
             playOrPauseButton.setTitle("Pause", for: .normal)
             disableZoomAction()
             
-            let numberOfSteps = self.manager.numberOfSamples - self.sampleIndex
             let stepWidth = CGFloat(self.manager.layersPerTimeInterval) / CGFloat((100 * self.manager.zoomLevel.samplesPerLayer))
-            
-            movementCoordinator.startScrolling(numberOfSteps: numberOfSteps, stepWidth: stepWidth)
+            movementCoordinator.startScrolling(stepWidth: stepWidth)
             
         case .paused:
             illustrationPlot.isUserInteractionEnabled = true

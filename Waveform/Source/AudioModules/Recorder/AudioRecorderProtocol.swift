@@ -5,21 +5,21 @@
 
 import AVFoundation
 
-enum RecordingMode {
+enum AudioRecordingMode {
     case normal
     case override(turn: Int)
 }
 
-protocol RecorderProtocol {
+protocol AudioRecorderProtocol {
     var currentTime: TimeInterval { get }
     var duration: TimeInterval { get }
-    var delegate: RecorderDelegate? { get set }
+    var delegate: AudioRecorderDelegate? { get set }
     var currentlyRecordedFileURL: URL? { get }
-    var mode: RecordingMode { get }
-    var recorderState: RecorderState { get }
+    var mode: AudioRecordingMode { get }
+    var recorderState: AudioRecorderState { get }
     var resultsDirectoryURL: URL { get }
 
-    func activateSession(permissionBlock: @escaping (Bool) -> Void) throws
+    func activateSession(permissionBlock: @escaping (Bool)  -> Void) throws
     func start() throws
     func stop()
     func resume(from timeRange: CMTimeRange) throws
