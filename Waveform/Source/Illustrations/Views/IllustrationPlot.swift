@@ -12,7 +12,7 @@ protocol IllustrationPlotDataSource: class {
     func timeInterval(in illustrationPlot: IllustrationPlot) -> TimeInterval
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int
     func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat
-    func getCurrentChapterIllustrationMarks() -> [IllustrationMarkModel]
+    func illustrationMarks(for illustrationPlot: IllustrationPlot) -> [IllustrationMark]
     
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample]
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat
@@ -23,7 +23,7 @@ protocol IllustrationPlotDelegate: class {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat)
     
     func removeIllustrationMark(for timeInterval: TimeInterval)
-    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMarkModel)
+    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMark)
 }
 
 class IllustrationPlot: UIView, ScrollablePlot {
@@ -166,19 +166,19 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     // MARK: - Illustration marks setup
     
-    func addIllustrationMark(with data: IllustrationMarkModel, for samplesPerLayer: CGFloat) {
+    func addIllustrationMark(with data: IllustrationMark, for samplesPerLayer: CGFloat) {
         hideScrollContentViewSubviews()
         delegate?.setAllIllustrationMarksOfCurrentChapterInactive(except: data)
         setupNewIllustrationMarkView(with: data, for: samplesPerLayer)
     }
     
-    func setupIllustrationMarks(with illustrationMarksData: [IllustrationMarkModel], for samplesPerLayer: CGFloat) {
+    func setupIllustrationMarks(with illustrationMarksData: [IllustrationMark], for samplesPerLayer: CGFloat) {
         illustrationMarksData.forEach {
             setupNewIllustrationMarkView(with: $0, for: samplesPerLayer)
         }
     }
     
-    private func setupNewIllustrationMarkView(with data: IllustrationMarkModel, for samplesPerLayer: CGFloat) {
+    private func setupNewIllustrationMarkView(with data: IllustrationMark, for samplesPerLayer: CGFloat) {
         let view = RecordingAddedIllustrationMarkView(frame: .zero)
         contentView.addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -246,7 +246,7 @@ extension IllustrationPlot: UIScrollViewDelegate {
     
     private func redrawIllustrationMarkViews(contentOffset: CGPoint) {
         guard let samplesPerLayer = dataSource?.samplesPerLayer(for: self) else { return }
-        dataSource?.getCurrentChapterIllustrationMarks().forEach { data in
+        dataSource?.illustrationMarks(for: self).forEach { data in
             let leftOffset = (data.centerXConstraintValue / samplesPerLayer) + (contentWidthLayoutConstraint.constant / 2) - (contentOffset.x - scrollView.contentInset.left)
             let subview = contentView.subviews.first(where: { view in
                 (view as? RecordingAddedIllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue

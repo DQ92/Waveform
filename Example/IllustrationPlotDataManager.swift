@@ -12,7 +12,7 @@ class IllustrationPlotDataManager: WaveformPlotDataManager {
     
     // MARK: - Public properties
     
-    var illustrationMarksDatasource: [Int: [IllustrationMarkModel]] = [:]
+    var illustrationMarksDatasource: [Int: [IllustrationMark]] = [:]
     
     // MARK: - Access methods
     
@@ -21,7 +21,7 @@ class IllustrationPlotDataManager: WaveformPlotDataManager {
         return value ?? false
     }
     
-    func appendIllustrationMarkData(for chapterId: Int, with data: IllustrationMarkModel) {
+    func appendIllustrationMarkData(for chapterId: Int, with data: IllustrationMark) {
         if illustrationMarksDatasource[chapterId] != nil {
             illustrationMarksDatasource[chapterId]?.append(data)
         } else {
@@ -29,7 +29,7 @@ class IllustrationPlotDataManager: WaveformPlotDataManager {
         }
     }
     
-    func updateIllustrationMarkDatasource(for chapterId: Int, with data: IllustrationMarkModel) {
+    func updateIllustrationMarkDatasource(for chapterId: Int, with data: IllustrationMark) {
         if var values = illustrationMarksDatasource[chapterId] {
             if let index = values.firstIndex(where: { $0.timeInterval == data.timeInterval }) {
                 values[index] = data

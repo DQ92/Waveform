@@ -85,9 +85,9 @@ class AddIllustrationsViewController: UIViewController {
     
     // MARK: - Other
     
-    private func createIllustrationMarkData(with imageURL: URL?, and currentTimeInterval: TimeInterval) -> IllustrationMarkModel {
+    private func createIllustrationMarkData(with imageURL: URL?, and currentTimeInterval: TimeInterval) -> IllustrationMark {
         let centerXConstraintValue = calculateXConstraintForCurrentWaveformPosition()
-        let data = IllustrationMarkModel(timeInterval: currentTimeInterval,
+        let data = IllustrationMark(timeInterval: currentTimeInterval,
                                          centerXConstraintValue: centerXConstraintValue,
                                          imageURL: imageURL,
                                          isActive: true)
@@ -229,7 +229,7 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
         return CGFloat(manager.zoomLevel.samplesPerLayer)
     }
     
-    func getCurrentChapterIllustrationMarks() -> [IllustrationMarkModel] {
+    func illustrationMarks(for illustrationPlot: IllustrationPlot) -> [IllustrationMark] {
         return manager.illustrationMarksDatasource[0] ?? []
     }
     
@@ -255,14 +255,14 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
         }
     }
     
-    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMarkModel) {
+    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMark) {
         var currentIllustrationMarksData = manager.illustrationMarksDatasource[0] ?? []
         
         currentIllustrationMarksData = currentIllustrationMarksData.map {
             if $0 == illustrationMarkData {
-                return IllustrationMarkModel(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: true)
+                return IllustrationMark(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: true)
             } else {
-                return IllustrationMarkModel(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: false)
+                return IllustrationMark(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: false)
             }
         }
         

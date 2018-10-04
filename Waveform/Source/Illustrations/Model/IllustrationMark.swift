@@ -1,5 +1,5 @@
 //
-//  IllustrationMarkModel.swift
+//  IllustrationMark.swift
 //  Waveform
 //
 //  Created by Piotr Olech on 20/09/2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct IllustrationMarkModel: Hashable {
+struct IllustrationMark: Hashable {
     let timeInterval: TimeInterval
     let centerXConstraintValue: CGFloat
     let imageURL: URL?

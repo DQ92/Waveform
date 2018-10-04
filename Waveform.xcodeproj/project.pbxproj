@@ -26,7 +26,7 @@
 		70999A9C215A503C00746BFD /* WaveformCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A93215A503C00746BFD /* WaveformCollectionViewCell.swift */; };
 		70999A9D215A503C00746BFD /* WaveformPlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A94215A503C00746BFD /* WaveformPlot.swift */; };
 		70999A9E215A503C00746BFD /* EndlessScrollingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999A95215A503C00746BFD /* EndlessScrollingCoordinator.swift */; };
-		70999AA1215A508800746BFD /* IllustrationMarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA0215A508800746BFD /* IllustrationMarkModel.swift */; };
+		70999AA1215A508800746BFD /* IllustrationMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA0215A508800746BFD /* IllustrationMark.swift */; };
 		70999AA6215A511700746BFD /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA2215A511700746BFD /* Time.swift */; };
 		70999AA7215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA3215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift */; };
 		70999AA8215A511700746BFD /* WaveformModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70999AA4215A511700746BFD /* WaveformModel.swift */; };
@@ -90,7 +90,7 @@
 		70999A93215A503C00746BFD /* WaveformCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformCollectionViewCell.swift; sourceTree = "<group>"; };
 		70999A94215A503C00746BFD /* WaveformPlot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformPlot.swift; sourceTree = "<group>"; };
 		70999A95215A503C00746BFD /* EndlessScrollingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndlessScrollingCoordinator.swift; sourceTree = "<group>"; };
-		70999AA0215A508800746BFD /* IllustrationMarkModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllustrationMarkModel.swift; sourceTree = "<group>"; };
+		70999AA0215A508800746BFD /* IllustrationMark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllustrationMark.swift; sourceTree = "<group>"; };
 		70999AA2215A511700746BFD /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		70999AA3215A511700746BFD /* RecorderWaveformCollectionViewCellConfigurator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecorderWaveformCollectionViewCellConfigurator.swift; sourceTree = "<group>"; };
 		70999AA4215A511700746BFD /* WaveformModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformModel.swift; sourceTree = "<group>"; };
@@ -186,7 +186,7 @@
 		70999A9F215A508800746BFD /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				70999AA0215A508800746BFD /* IllustrationMarkModel.swift */,
+				70999AA0215A508800746BFD /* IllustrationMark.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -478,7 +478,7 @@
 				66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */,
 				70999A9C215A503C00746BFD /* WaveformCollectionViewCell.swift in Sources */,
 				E8893F4223E71DE4279D3454 /* ViewController.swift in Sources */,
-				70999AA1215A508800746BFD /* IllustrationMarkModel.swift in Sources */,
+				70999AA1215A508800746BFD /* IllustrationMark.swift in Sources */,
 				65481FF92140012D00BFA378 /* WaveformConfiguration.swift in Sources */,
 				709E2EC32146547000BC0DE5 /* Operators.swift in Sources */,
 				70F1202B215A52EA0046D01A /* TimeIndicatorView.swift in Sources */,

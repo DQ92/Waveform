@@ -34,7 +34,7 @@ class RecordingAddedIllustrationMarkView: UIView {
     
     var removeMarkBlock: (() -> Void)?
     var bringMarkViewToFrontBlock: (() -> Void)?
-    var data: IllustrationMarkModel!
+    var data: IllustrationMark!
     
     // MARK: - Init
     
