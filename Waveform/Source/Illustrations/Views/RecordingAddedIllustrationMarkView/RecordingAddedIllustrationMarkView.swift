@@ -96,6 +96,14 @@ class RecordingAddedIllustrationMarkView: UIView {
         timeLabel.text = dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
     }
     
+    func setupImageView(with imageURL: URL?) {
+        if let imageURL = imageURL {
+            illustrationImageView.image = UIImage(named: "mock_book0")
+        } else {
+            illustrationImageView.image = UIImage(named: "mock_book0")
+        }
+    }
+    
     func setupTimeLabelAndRemoveButtonVisibility(isHidden: Bool) {
         removeIllustrationButton.isHidden = isHidden
         timeLabel.isHidden = isHidden

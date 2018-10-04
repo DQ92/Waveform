@@ -8,8 +8,9 @@
 
 import UIKit
 
-struct IllustrationMarkModel {
+struct IllustrationMarkModel: Hashable {
     let timeInterval: TimeInterval
     let centerXConstraintValue: CGFloat
+    let imageURL: URL?
     let isActive: Bool
 }

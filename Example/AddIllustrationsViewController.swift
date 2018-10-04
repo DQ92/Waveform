@@ -63,8 +63,8 @@ class AddIllustrationsViewController: UIViewController {
     
     @IBAction func addIllustration(_ sender: Any) {
         let data = createIllustrationMarkData(with: nil, and: timeInterval)
-        manager.updateIllustrationMarkDatasource(for: 1, with: data)
-        waveformWithIllustrationsPlot.addIllustrationMark()
+        manager.updateIllustrationMarkDatasource(for: 0, with: data)
+        illustrationPlot.addIllustrationMark(with: data, for: CGFloat(manager.zoomLevel.samplesPerLayer))
     }
     
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
@@ -80,12 +80,18 @@ class AddIllustrationsViewController: UIViewController {
     // MARK: - Other
     
     private func createIllustrationMarkData(with imageURL: URL?, and currentTimeInterval: TimeInterval) -> IllustrationMarkModel {
-        let centerXConstraintValue = coordinator?.calculateXConstraintForCurrentWaveformPosition()
+        let centerXConstraintValue = calculateXConstraintForCurrentWaveformPosition()
         let data = IllustrationMarkModel(timeInterval: currentTimeInterval,
-                                         centerXConstraintValue: centerXConstraintValue!,
+                                         centerXConstraintValue: centerXConstraintValue,
                                          imageURL: imageURL,
                                          isActive: true)
         return data
+    }
+    
+    private func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
+        var centerXConstraintValue = illustrationPlot.calculateXConstraintForCurrentWaveformPosition()
+        centerXConstraintValue *= CGFloat(manager.zoomLevel.samplesPerLayer)
+        return centerXConstraintValue
     }
     
     private func retrieveFileDataAndSet(with url: URL) {
@@ -143,9 +149,12 @@ extension AddIllustrationsViewController {
     
     private func setupIllustrationPlot() {
         let offset = self.view.bounds.width * 0.5
+        let timeIndicatorView = TimeIndicatorView(frame: .zero)
+        timeIndicatorView.indicatorColor = .blue
         
         self.illustrationPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
         self.illustrationPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
+        self.illustrationPlot.timeIndicatorView = timeIndicatorView
         self.illustrationPlot.dataSource = self
         self.illustrationPlot.delegate = self
     }
@@ -204,6 +213,14 @@ extension AddIllustrationsViewController: WaveformPlotDataManagerDelegate {
 // MARK: - WaveformPlotDataSource
 
 extension AddIllustrationsViewController: IllustrationPlotDataSource {
+    func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat {
+        return CGFloat(manager.zoomLevel.samplesPerLayer)
+    }
+    
+    func getCurrentChapterIllustrationMarks() -> [IllustrationMarkModel] {
+        return manager.illustrationMarksDatasource[0] ?? []
+    }
+    
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int {
         return self.manager.numberOfTimeInterval
     }
@@ -220,6 +237,26 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
 // MARK: - WaveformPlotDelegate
 
 extension AddIllustrationsViewController: IllustrationPlotDelegate {
+    func removeIllustrationMark(for timeInterval: TimeInterval) {
+        if let index = manager.illustrationMarksDatasource[0]?.firstIndex(where: { $0.timeInterval == timeInterval }) {
+            manager.illustrationMarksDatasource[0]?.remove(at: index)
+        }
+    }
+    
+    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMarkModel) {
+        var currentIllustrationMarksData = manager.illustrationMarksDatasource[0] ?? []
+        
+        currentIllustrationMarksData = currentIllustrationMarksData.map {
+            if $0 == illustrationMarkData {
+                return IllustrationMarkModel(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: true)
+            } else {
+                return IllustrationMarkModel(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: false)
+            }
+        }
+        
+        manager.illustrationMarksDatasource[0] = currentIllustrationMarksData
+    }
+    
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint) {
         print("contentOffset.x = \(contentOffset.x)")
     }
@@ -231,226 +268,9 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
         
-        print("validPosition = \(validPosition)")
-        print("timeInterval = \(self.timeInterval)")
-        print("sampleIndex = \(self.sampleIndex)")
-        print("numberOfSamples = \(self.manager.numberOfSamples)")
+//        print("validPosition = \(validPosition)")
+//        print("timeInterval = \(self.timeInterval)")
+//        print("sampleIndex = \(self.sampleIndex)")
+//        print("numberOfSamples = \(self.manager.numberOfSamples)")
     }
 }
-
-
-/*
-    
-    // MARK: - Private Properties
-
-    private var recorder: RecorderProtocol = AVFoundationRecorder()
-    private var player: AudioPlayerProtocol = AVFoundationAudioPlayer()
-    private var loader: FileDataLoaderProtocol = AudioToolboxFileDataLoader()
-    private var url: URL!
-
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss:SS"
-
-        return formatter
-    }()
-
-    // MARK: - Life cycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupView()
-        setupWaveform()
-        setupPlayer()
-    }
-
-    private func setupView() {
-        totalTimeLabel.text = "00:00:00"
-        timeLabel.text = "00:00:00"
-        zoomValueLabel.text = "Zoom: \(waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
-        disableZoomAction()
-    }
-    private func setupWaveform() {
-        waveformWithIllustrationsPlot.delegate = self
-    }
-
-    private func setupPlayer() {
-        self.player.delegate = self
-    }
-
-    @IBAction func addIllustration(_ sender: Any) {
-        waveformWithIllustrationsPlot.addIllustrationMark()
-    }
-    
-    @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-        self.waveformWithIllustrationsPlot.waveformPlot.zoomIn()
-        self.zoomValueLabel.text = "Zoom: \(self.waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
-    }
-    
-    @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-        self.waveformWithIllustrationsPlot.waveformPlot.zoomOut()
-        self.zoomValueLabel.text = "Zoom: \(self.waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
-    }
-}
-
-// MARK: - Buttons - start/pause/resume
-
-extension AddIllustrationsViewController {
-    @IBAction func playOrPauseButtonTapped(_ sender: UIButton) {
-        self.playOrPause()
-    }
-}
-
-// MARK: - WaveformViewDelegate
-
-extension AddIllustrationsViewController: WaveformWithIllustrationsPlotDelegate {
-    func currentTimeIntervalDidChange(_ timeInterval: TimeInterval) {
-        timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
-    }
-}
-
-// MARK: - Audio player
-
-extension AddIllustrationsViewController {
-    func playOrPause() {
-        if player.state == .paused {
-            playFileInRecording()
-        } else if player.state == .isPlaying {
-            player.pause()
-        }
-    }
-    
-    private func playFileInRecording() {
-        do {
-            try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
-                guard let URL = url else {
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    do {
-                        var time = 0.0
-                        if let timeInterval = self?.waveformWithIllustrationsPlot.waveformPlot.waveformView.currentTimeInterval {
-                            time = timeInterval
-                        }
-                        try self?.player.playFile(with: URL, at: time)
-                    } catch AudioPlayerError.openFileFailed(let error) {
-                        Log.error(error)
-                    } catch {
-                        Log.error("Unknown error")
-                    }
-                }
-            }
-        } catch {
-            Log.error("Error while exporting temporary file")
-        }
-    }
-}
-
-// MARK: - Audio recorder
-
-extension AddIllustrationsViewController {
-    private func retrieveFileDataAndSet(with url: URL) {
-        do {
-            if recorder.recorderState == .isRecording {
-                recorder.stop()
-            }
-            try loader.loadFile(with: url, completion: { [weak self] (array) in
-                guard let caller = self else {
-                    return
-                }
-                let values = caller.buildWaveformModel(from: array, numberOfSeconds: (self?.loader.fileDuration)!)
-                let samplesPerPoint = CGFloat(values.count) / caller.waveformWithIllustrationsPlot.bounds.width
-                DispatchQueue.main.async {
-                    caller.waveformWithIllustrationsPlot.waveformPlot.waveformView.load(values: values)
-                    caller.changeZoomSamplesPerPointForNewFile(samplesPerPoint)
-                    caller.waveformWithIllustrationsPlot.setupScrollViewWithScrollContentView()
-                }
-            })
-            let time = AudioUtils.time(from: (loader.fileDuration)!)
-            let totalTimeString = String(format: "%02d:%02d:%02d",
-                                         time.minutes,
-                                         time.seconds,
-                                         time.milliSeconds)
-            totalTimeLabel.text = totalTimeString
-        } catch FileDataLoaderError.openUrlFailed {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Błędny url",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
-        } catch {
-            let alertController = UIAlertController(title: "Błąd",
-                                                    message: "Nieznany",
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alertController, animated: true)
-        }
-    }
-    
-    private func changeZoomSamplesPerPointForNewFile(_ samplesPerPoint: CGFloat) {
-        waveformWithIllustrationsPlot.waveformPlot.changeSamplesPerPoint(samplesPerPoint)
-        waveformWithIllustrationsPlot.waveformPlot.resetZoom()
-        zoomValueLabel.text = "Zoom: \(waveformWithIllustrationsPlot.waveformPlot.currentZoomPercent())"
-        enableZoomAction()
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let viewController = segue.destination as? AudioFilesListViewController {
-            viewController.directoryUrl = recorder.resultsDirectoryURL
-            viewController.didSelectFileBlock = { [weak self] url in
-                self?.retrieveFileDataAndSet(with: url)
-                self?.navigationController?
-                    .popViewController(animated: true)
-            }
-        }
-    }
-}
-
-// MARK: - Zoom
-
-extension AddIllustrationsViewController {
-    private func enableZoomAction() {
-        zoomWrapperView.isUserInteractionEnabled = true
-        zoomWrapperView.alpha = 1.0
-    }
-    
-    private func disableZoomAction() {
-        zoomWrapperView.isUserInteractionEnabled = false
-        zoomWrapperView.alpha = 0.3
-    }
-}
-
-extension AddIllustrationsViewController {
-    func createModel(value: CGFloat, with timeStamp: TimeInterval) -> WaveformModel {
-        return WaveformModel(value: value, mode: .normal, timeStamp: timeStamp)
-    }
-
-    func buildWaveformModel(from samples: [Float], numberOfSeconds: Double) -> [WaveformModel] {
-        let sampleRate = WaveformConfiguration.microphoneSamplePerSecond
-        
-        return samples.enumerated().map { sample in
-            WaveformModel(value: CGFloat(sample.element), mode: .normal, timeStamp:
-                TimeInterval(sample.offset / sampleRate))
-        }
-    }
-}
-
-extension AddIllustrationsViewController: AudioPlayerDelegate {
-    func playerStateDidChange(with state: AudioPlayerState) {
-        switch state {
-            case .isPlaying:
-                waveformWithIllustrationsPlot.isUserInteractionEnabled = false
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.scrollToTheEndOfFile()
-                playOrPauseButton.setTitle("Pause", for: .normal)
-                disableZoomAction()
-            case .paused:
-                waveformWithIllustrationsPlot.isUserInteractionEnabled = true
-                waveformWithIllustrationsPlot.waveformPlot.waveformView.stopScrolling()
-                playOrPauseButton.setTitle("Play", for: .normal)
-                enableZoomAction()
-        }
-    }
-}
-*/
