@@ -65,10 +65,10 @@ class AddIllustrationsViewController: UIViewController {
         let mark = IllustrationMark(timeInterval: self.timeInterval, imageURL: nil)
         let position = self.illustrationPlot.currentPosition
         let isMarkExists = self.manager.containsMark(mark)
-        
+
         self.manager.setMark(mark, at: self.illustrationPlot.currentPosition)
         self.illustrationPlot.selectedMark = mark
-        
+
         if isMarkExists {
             self.illustrationPlot.reloadMark(at: position)
         } else {
@@ -90,7 +90,7 @@ class AddIllustrationsViewController: UIViewController {
     
     private func retrieveFileDataAndSet(with url: URL) {
         do {
-            try loader.loadFile(with: url, completion: { [weak self] values in
+            try loader.loadFile(with: url, completion: { [weak self] values, duration in
                 guard let caller = self else {
                     return
                 }
@@ -102,10 +102,10 @@ class AddIllustrationsViewController: UIViewController {
                 caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)
                 caller.illustrationPlot.currentPosition = 0.0
                 caller.illustrationPlot.reloadData()
+                caller.totalTimeLabel.text = caller.dateFormatter.string(from: Date(timeIntervalSince1970: duration))
                 caller.enableZoomAction()
             })
-            totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: loader.fileDuration))
-            
+
         } catch FileDataLoaderError.openUrlFailed {
             let alertController = UIAlertController(title: "Błąd",
                                                     message: "Błędny url",
@@ -146,7 +146,7 @@ extension AddIllustrationsViewController {
         let offset = self.view.bounds.width * 0.5
         let timeIndicatorView = TimeIndicatorView(frame: .zero)
         timeIndicatorView.indicatorColor = .blue
-        
+
         self.illustrationPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
         self.illustrationPlot.standardTimeIntervalWidth = self.manager.standardTimeIntervalWidth
         self.illustrationPlot.timeIndicatorView = timeIndicatorView
@@ -178,11 +178,9 @@ extension AddIllustrationsViewController: AudioPlayerDelegate {
             illustrationPlot.isUserInteractionEnabled = false
             playOrPauseButton.setTitle("Pause", for: .normal)
             disableZoomAction()
-            
-            let numberOfSteps = self.manager.numberOfSamples - self.sampleIndex
+
             let stepWidth = CGFloat(self.manager.layersPerTimeInterval) / CGFloat((100 * self.manager.zoomLevel.samplesPerLayer))
-            
-            movementCoordinator.startScrolling(numberOfSteps: numberOfSteps, stepWidth: stepWidth)
+            movementCoordinator.startScrolling(stepWidth: stepWidth)
             
         case .paused:
             illustrationPlot.isUserInteractionEnabled = true
@@ -212,7 +210,7 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
     func timeInterval(in illustrationPlot: IllustrationPlot) -> TimeInterval {
         return TimeInterval(self.manager.zoomLevel.samplesPerLayer)
     }
-    
+
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int {
         return self.manager.numberOfTimeInterval
     }
@@ -224,11 +222,11 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
         return self.manager.timeIntervalWidth(index: index)
     }
-    
+
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, markAtPosition position: CGFloat) -> IllustrationMark? {
         return self.manager.mark(at: position)
     }
-    
+
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, positionForMark mark: IllustrationMark) -> CGFloat? {
         return self.manager.position(for: mark)
     }
@@ -238,7 +236,7 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
 
 extension AddIllustrationsViewController: IllustrationPlotDelegate {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint) {
-        
+
     }
     
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
@@ -252,11 +250,11 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidSelect mark: IllustrationMark) {
         print("Select illustration mark at time = \(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))")
     }
-    
+
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidDeselect mark: IllustrationMark) {
         print("Deselect illustration mark at time = \(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))")
     }
-    
+
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidRemove mark: IllustrationMark) {
         if let position = self.manager.position(for: mark) {
             self.manager.removeMark(at: position)

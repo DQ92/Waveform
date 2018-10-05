@@ -6,11 +6,8 @@
 import Foundation
 
 protocol FileDataLoaderProtocol {
-
-    var fileDuration: TimeInterval! { get }
-
     func loadFile(with fileName: String,
                   and fileFormat: String,
-                  completion: (_ fileFloatArray: [Float]) -> Void) throws
-    func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float]) -> Void) throws
+                  completion: (_ fileFloatArray: [Float], _ timeInterval: TimeInterval) -> Void) throws
+    func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float], _ timeInterval: TimeInterval) -> Void) throws
 }

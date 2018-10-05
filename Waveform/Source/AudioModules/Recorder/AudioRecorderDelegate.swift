@@ -5,6 +5,6 @@
 
 import Foundation
 
-protocol RecorderDelegate: class {
-    func recorderStateDidChange(with state: RecorderState)
+protocol AudioRecorderDelegate: class {
+    func recorderStateDidChange(with state: AudioRecorderState)
 }

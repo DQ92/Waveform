@@ -6,12 +6,12 @@
 import Foundation
 import AVFoundation
 
-class AVFoundationRecorder: NSObject {
+class AVFoundationAudioRecorder: NSObject {
 
     // MARK: - Public properties
 
-    weak var delegate: RecorderDelegate?
-    var mode: RecordingMode {
+    weak var delegate: AudioRecorderDelegate?
+    var mode: AudioRecordingMode {
         let numberOfComponents = self.components.count
         if numberOfComponents > 1 {
             return .override(turn: numberOfComponents - 1)
@@ -19,7 +19,7 @@ class AVFoundationRecorder: NSObject {
         return .normal
     }
     var resultsDirectoryURL: URL
-    var recorderState: RecorderState = .stopped
+    var recorderState: AudioRecorderState = .stopped
 
     // MARK: - Private properties
 
@@ -87,23 +87,23 @@ class AVFoundationRecorder: NSObject {
 
 // MARK: - Dictionaries
 
-extension AVFoundationRecorder {
+extension AVFoundationAudioRecorder {
     private func removeDirectory(url: URL) throws {
-        try? FileManager.default.removeItem(at: url) ~> RecorderError.directoryDeletionFailed
+        try? FileManager.default.removeItem(at: url) ~> AudioRecorderError.directoryDeletionFailed
     }
 
     private func createDirectoryIfNeeded(url: URL) throws {
         if !FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.createDirectory(atPath: url.path,
                                                     withIntermediateDirectories: true,
-                                                    attributes: nil) ~> RecorderError.directoryCreationFailed
+                                                    attributes: nil) ~> AudioRecorderError.directoryCreationFailed
         }
     }
 }
 
 // MARK: - Files
 
-extension AVFoundationRecorder {
+extension AVFoundationAudioRecorder {
     func generateResultFileName() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM.dd.yyyy-hh:mm:ss"
@@ -139,7 +139,7 @@ extension AVFoundationRecorder {
     }
 }
 
-extension AVFoundationRecorder: AVAudioRecorderDelegate {
+extension AVFoundationAudioRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         Log.debug("audioRecorderDidFinishRecording")
 //        changeRecorderStateWithViewUpdate(with: .stopped)
@@ -148,14 +148,14 @@ extension AVFoundationRecorder: AVAudioRecorderDelegate {
 
 // MARK: - Recorder state
 
-extension AVFoundationRecorder {
-    func changeRecorderStateWithViewUpdate(with state: RecorderState) {
+extension AVFoundationAudioRecorder {
+    func changeRecorderStateWithViewUpdate(with state: AudioRecorderState) {
         recorderState = state
         delegate?.recorderStateDidChange(with: state)
     }
 }
 
-extension AVFoundationRecorder: RecorderProtocol {
+extension AVFoundationAudioRecorder: AudioRecorderProtocol {
     var currentTime: TimeInterval {
         guard let currentTime = audioRecorder?.currentTime else {
             return 0.0
@@ -178,8 +178,8 @@ extension AVFoundationRecorder: RecorderProtocol {
     func activateSession(permissionBlock: @escaping (Bool) -> Void) throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(AVAudioSessionCategoryPlayAndRecord,
-                                with: .defaultToSpeaker) ~> RecorderError.sessionCategoryInvalid
-        try session.setActive(true) ~> RecorderError.sessionActivationFailed
+                                with: .defaultToSpeaker) ~> AudioRecorderError.sessionCategoryInvalid
+        try session.setActive(true) ~> AudioRecorderError.sessionActivationFailed
         session.requestRecordPermission(permissionBlock)
     }
 
@@ -328,7 +328,7 @@ extension AVFoundationRecorder: RecorderProtocol {
 
 // MARK: - Files operations
 
-extension AVFoundationRecorder {
+extension AVFoundationAudioRecorder {
     private func merge(components: [AssetComponent]) throws -> AVAsset {
         let audioComposition = AVMutableComposition()
         for component in components {
@@ -347,7 +347,7 @@ extension AVFoundationRecorder {
             audioComposition.removeTimeRange(removeTimeRange)
             try audioComposition.insertTimeRange(CMTimeRange(start: kCMTimeZero, duration: asset.duration),
                                                  of: asset,
-                                                 at: component.timeRange.start) ~> RecorderError.timeRangeInsertFailed
+                                                 at: component.timeRange.start) ~> AudioRecorderError.timeRangeInsertFailed
         }
         return audioComposition
     }

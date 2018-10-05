@@ -9,5 +9,5 @@
 import UIKit
 
 protocol ScrollablePlot: class {
-    var contentOffset: CGPoint { get set }
+    var currentPosition: CGFloat { get set }
 }

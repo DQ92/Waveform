@@ -3,7 +3,7 @@ import Foundation
 import UIKit
 
 class WaveformColor {
-    static func color(for mode: RecordingMode) -> UIColor {
+    static func color(for mode: AudioRecordingMode) -> UIColor {
         var red: CGFloat = 150/255
         var green: CGFloat = 150/255
         var blue: CGFloat = 150/255
