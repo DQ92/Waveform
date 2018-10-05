@@ -40,7 +40,12 @@ class WaveformPlotDataManager {
     var numberOfSamples: Int {
         return self.data.count
     }
-    
+
+    var newSampleOffset: CGFloat {
+        return CGFloat(currentSampleIndex + 1) * self.sampleWidth
+    }
+
+    var currentSampleIndex: Int = 0
     let layersPerTimeInterval: Int = WaveformConfiguration.microphoneSamplePerSecond
     let layerWidth: CGFloat = 1.0
     
@@ -113,11 +118,11 @@ extension WaveformPlotDataManager {
         self.delegate?.waveformPlotDataManager(self, numberOfSamplesDidChange: self.data.count)
     }
     
-    func setData(data: WaveformModel, atIndex index: Int) {
-        if index == self.data.count {
+    func setData(data: WaveformModel) {
+        if currentSampleIndex == self.data.count {
             self.data.append(data)
         } else {
-            self.data[index] = data
+            self.data[currentSampleIndex] = data
         }
         self.delegate?.waveformPlotDataManager(self, numberOfSamplesDidChange: self.data.count)
     }
@@ -147,11 +152,6 @@ extension WaveformPlotDataManager {
 extension WaveformPlotDataManager {
     func calculateTimeInterval(for position: CGFloat, duration: TimeInterval) -> TimeInterval {
         let plotWidth = CGFloat(self.data.count) * self.sampleWidth
-
-        print("plotWidth = \(plotWidth)")
-        print("position = \(position)")
-        print("----------------------")
-
         if plotWidth > 0 {
             let multiplier = position / plotWidth
             return Double(multiplier) * duration

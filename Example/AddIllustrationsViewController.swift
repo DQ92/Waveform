@@ -79,7 +79,7 @@ class AddIllustrationsViewController: UIViewController {
     
     private func retrieveFileDataAndSet(with url: URL) {
         do {
-            try loader.loadFile(with: url, completion: { [weak self] values in
+            try loader.loadFile(with: url, completion: { [weak self] values, duration in
                 guard let caller = self else {
                     return
                 }
@@ -91,9 +91,9 @@ class AddIllustrationsViewController: UIViewController {
                 caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)
                 caller.illustrationPlot.currentPosition = 0.0
                 caller.illustrationPlot.reloadData()
+                self?.totalTimeLabel.text = self?.dateFormatter.string(from: Date(timeIntervalSince1970: duration))
             })
-            totalTimeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: loader.fileDuration))
-            
+
         } catch FileDataLoaderError.openUrlFailed {
             let alertController = UIAlertController(title: "Błąd",
                                                     message: "Błędny url",
@@ -214,7 +214,7 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
         let validPosition = max(position, 0.0)
         
-        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration)
+//        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration)
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
         
