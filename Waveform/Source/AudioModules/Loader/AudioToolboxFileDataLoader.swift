@@ -9,13 +9,15 @@ import AVFoundation
 
 class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
 
+    // MARK: - Public properties
+    
+    var duration: TimeInterval = 0.0
+    
     // MARK: - Private properties
 
     private var fileReference: ExtAudioFileRef?
     private var audioFormat = AudioUtils.monoFloatNonInterleavedFormat(with: AudioUtils.defaultSampleRate)
     private var fileLengthInFrames: Int?
-    
-    var engine = AVAudioEngine()
 
     // MARK: - Access methods
 
@@ -28,24 +30,6 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
         }
         try loadFile(with: url, completion: completion)
     }
-
-//    func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float]) -> Void) throws {
-//        let settings = [
-//            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-//            AVSampleRateKey: 44100,
-//            AVNumberOfChannelsKey: 1,
-//            ]
-//        let format = AVAudioFormat(settings: settings)
-//        let file = try AVAudioFile(forWriting: URL, settings: settings)
-//
-//        try self.engine.start()
-//
-//
-//
-//        self.engine.mainMixerNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, when in
-//
-//        }
-//    }
     
     func loadFile(with URL: URL, completion: (_ fileFloatArray: [Float], _ duration: TimeInterval) -> Void) throws {
         try openFile(with: URL)
@@ -57,7 +41,7 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
                                    &audioFormat) != noErr {
             throw FileDataLoaderError.setFormatFailed
         }
-        let duration: TimeInterval = Double(fileLengthInFrames) / audioFormat.mSampleRate
+        self.duration = TimeInterval(fileLengthInFrames) / audioFormat.mSampleRate
         let numberOfPoints = Int(Double(WaveformConfiguration.microphoneSamplePerSecond) * duration)
         let framesPerBuffer = UInt32(fileLengthInFrames / numberOfPoints)
         let dataSize = UInt32(fileLengthInFrames) * audioFormat.mBytesPerFrame
@@ -84,7 +68,7 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
                                        bufferSize: Int(bufferSize))
             rmss.append(rms * AudioUtils.defaultWaveformFloatModifier)
         }
-        completion(rmss, duration)
+        completion(rmss, self.duration)
     }
 
     
@@ -97,7 +81,6 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
         if ExtAudioFileOpenURL(sourceUrl, &fileReference) != noErr {
             throw FileDataLoaderError.openUrlFailed
         }
-
     }
 
     private func getFileLengthInFrames(for fileReference: ExtAudioFileRef) throws -> Int {

@@ -15,6 +15,7 @@ protocol WaveformPlotDataMangerProtocol: class {
     var newSampleOffset: CGFloat { get }
     var currentSampleIndex: Int { get set }
     var standardTimeIntervalWidth: CGFloat { get }
+    var zoomLevel: ZoomLevel { get }
 
     func zoomIn()
     func zoomOut()

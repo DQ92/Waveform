@@ -102,7 +102,11 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 // MARK: - WaveformPlot data source
 
 extension AudioWaveformFacade {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+    func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval {
+        return TimeInterval(self.plotDataManager.zoomLevel.samplesPerLayer)
+    }
+    
+    func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int {
         return self.plotDataManager.numberOfTimeInterval
     }
 

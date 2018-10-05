@@ -242,7 +242,7 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
         let validPosition = max(position, 0.0)
         
-        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration ?? 0)
+        self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.duration)
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
     }
