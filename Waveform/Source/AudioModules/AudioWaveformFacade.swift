@@ -13,16 +13,32 @@ protocol AudioWaveformFacadeDelegate: class {
     func zoomLevelDidChange(to level: ZoomLevel)
 }
 
-protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelegate  {
-    var timeInterval: TimeInterval  { get }
-    var plotDataManager: WaveformPlotDataMangerProtocol { get }
-    var audioModulesManager: AudioModulesManagerProtocol { get }
+protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelegate {
+    var timeInterval: TimeInterval { get }
     var delegate: AudioWaveformFacadeDelegate? { get set }
+    var resultsDirectoryURL: URL { get }
+    var autoscrollStepWidth: CGFloat { get }
+
+    func loadFile(with url: URL) throws
+    func recordOrPause(at timeInterval: TimeInterval) throws
+    func finishRecording() throws
+    func playOrPause(at timeInterval: TimeInterval) throws
+    func clearRecordings() throws
+    func zoomIn()
+    func zoomOut()
+    func reset()
+    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat)
 }
 
-class AudioWaveformFacade: AudioWaveformFacadeProtocol {
-    let plotDataManager: WaveformPlotDataMangerProtocol
-    var audioModulesManager: AudioModulesManagerProtocol
+class AudioWaveformFacade {
+
+    // MARK: - Private properties
+
+    private let plotDataManager: WaveformPlotDataMangerProtocol
+    private var audioModulesManager: AudioModulesManagerProtocol
+
+    // MARK: - Public properties
+
     weak var delegate: AudioWaveformFacadeDelegate?
     var timeInterval: TimeInterval = 0.0
 
@@ -32,6 +48,53 @@ class AudioWaveformFacade: AudioWaveformFacadeProtocol {
         self.plotDataManager = plotDataManager
         self.audioModulesManager = audioModulesManager
         self.audioModulesManager.fileLoaderDelegate = self
+    }
+}
+
+// MARK: - Access methods
+
+extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
+    var resultsDirectoryURL: URL {
+        return audioModulesManager.resultsDirectoryURL
+    }
+    var autoscrollStepWidth: CGFloat {
+        return plotDataManager.autoscrollStepWidth
+    }
+
+    func loadFile(with url: URL) throws {
+        try audioModulesManager.loadFile(with: url)
+    }
+
+    func recordOrPause(at timeInterval: TimeInterval) throws {
+        try audioModulesManager.recordOrPause(at: timeInterval)
+    }
+
+    func finishRecording() throws {
+        try audioModulesManager.finishRecording()
+    }
+
+    func playOrPause(at timeInterval: TimeInterval) throws {
+        try audioModulesManager.playOrPause(at: timeInterval)
+    }
+
+    func clearRecordings() throws {
+        try audioModulesManager.clearRecordings()
+    }
+
+    func zoomIn() {
+        plotDataManager.zoomIn()
+    }
+
+    func zoomOut() {
+        plotDataManager.zoomOut()
+    }
+
+    func reset() {
+        plotDataManager.reset()
+    }
+
+    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat) {
+        plotDataManager.fileLoaded(with: values, and: samplesPerPoint)
     }
 }
 
@@ -55,7 +118,6 @@ extension AudioWaveformFacade {
 
 extension AudioWaveformFacade {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
-
     }
 
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {

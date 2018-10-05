@@ -19,7 +19,7 @@ class ViewController: UIViewController {
 
     // MARK: - Private properties
 
-    var facade: AudioWaveformFacadeProtocol!
+    var audioWaveformFacade: AudioWaveformFacadeProtocol!
 
     private lazy var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -50,12 +50,12 @@ class ViewController: UIViewController {
     }
 
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-        facade.plotDataManager.zoomIn()
+        audioWaveformFacade.zoomIn()
         waveformPlot.reloadData()
     }
 
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-        facade.plotDataManager.zoomOut()
+        audioWaveformFacade.zoomOut()
         waveformPlot.reloadData()
     }
 
@@ -69,7 +69,7 @@ class ViewController: UIViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
-            viewController.directoryUrl = facade.audioModulesManager.resultsDirectoryURL
+            viewController.directoryUrl = audioWaveformFacade.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
                 self?.loadFile(with: url)
                 self?.navigationController?.popViewController(animated: true)
@@ -86,11 +86,11 @@ extension ViewController {
             let audioModulesManager = try AudioModulesManager()
             let plotDataManger = WaveformPlotDataManager()
             audioModulesManager.delegate = self
-            facade = AudioWaveformFacade(plotDataManager: plotDataManger, audioModulesManager: audioModulesManager)
-            facade.delegate = self
+            audioWaveformFacade = AudioWaveformFacade(plotDataManager: plotDataManger, audioModulesManager: audioModulesManager)
+            audioWaveformFacade.delegate = self
 
-            waveformPlot.dataSource = facade
-            waveformPlot.delegate = facade
+            waveformPlot.dataSource = audioWaveformFacade
+            waveformPlot.delegate = audioWaveformFacade
         } catch {
             showAlert(with: "Błąd", and: "Nagrywanie jest wyłączone", and: "Ok")
         }
@@ -131,7 +131,7 @@ extension ViewController {
 extension ViewController {
     private func loadFile(with url: URL) {
         do {
-            try facade.audioModulesManager.loadFile(with: url)
+            try audioWaveformFacade.loadFile(with: url)
         } catch FileDataLoaderError.openUrlFailed {
             showAlert(with: "Błąd", and: "Błędny url", and: "Ok")
         } catch {
@@ -141,7 +141,7 @@ extension ViewController {
 
     private func recordOrPause() {
         do {
-            try facade.audioModulesManager.recordOrPause(at: facade.timeInterval)
+            try audioWaveformFacade.recordOrPause(at: audioWaveformFacade.timeInterval)
         } catch let error {
             Log.error(error)
         }
@@ -149,7 +149,7 @@ extension ViewController {
 
     private func finishRecording() {
         do {
-            try facade.audioModulesManager.finishRecording()
+            try audioWaveformFacade.finishRecording()
         } catch AudioRecorderError.directoryContentListingFailed(let error) {
             Log.error(error)
         } catch AudioRecorderError.fileExportFailed {
@@ -161,7 +161,7 @@ extension ViewController {
 
     private func playOrPause() {
         do {
-            try facade.audioModulesManager.playOrPause(at: facade.timeInterval)
+            try audioWaveformFacade.playOrPause(at: audioWaveformFacade.timeInterval)
         } catch {
             Log.error("Error while exporting temporary file")
         }
@@ -169,7 +169,7 @@ extension ViewController {
 
     private func clearRecordings() {
         do {
-            try facade.audioModulesManager.clearRecordings()
+            try audioWaveformFacade.clearRecordings()
         } catch {
             showAlert(with: "Błąd", and: "Nie można usunąć nagrań", and: "OK")
         }
@@ -182,7 +182,7 @@ extension ViewController: AudioModulesManagerStateDelegate {
     func recorderStateDidChange(with state: AudioRecorderState) {
         switch state {
             case .isRecording:
-                self.facade.plotDataManager.reset()
+                self.audioWaveformFacade.reset()
                 recordButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
                 waveformPlot.isUserInteractionEnabled = true
@@ -207,7 +207,7 @@ extension ViewController: AudioModulesManagerStateDelegate {
                 waveformPlot.isUserInteractionEnabled = false
                 playOrPauseButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
-                movementCoordinator.startScrolling(stepWidth: facade.plotDataManager.stepWidth)
+                movementCoordinator.startScrolling(stepWidth: audioWaveformFacade.autoscrollStepWidth)
             case .paused:
                 waveformPlot.isUserInteractionEnabled = true
                 playOrPauseButton.setTitle("Play", for: .normal)
@@ -222,7 +222,7 @@ extension ViewController: AudioModulesManagerStateDelegate {
                 break
             case .loaded(let values, let duration):
                 let samplesPerPoint = CGFloat(values.count) / waveformPlot.bounds.width
-                facade.plotDataManager.fileLoaded(with: values, and: samplesPerPoint)
+                audioWaveformFacade.fileLoaded(with: values, and: samplesPerPoint)
                 waveformPlot.currentPosition = 0.0
                 waveformPlot.reloadData()
                 totalTimeLabel.text = formattedDateString(with: duration, and: timeFormatter)

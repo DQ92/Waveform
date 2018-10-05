@@ -10,7 +10,7 @@ import UIKit
 
 protocol WaveformPlotDataMangerProtocol: class {
     var delegate: WaveformPlotDataManagerDelegate? { get set }
-    var stepWidth: CGFloat { get }
+    var autoscrollStepWidth: CGFloat { get }
     var numberOfTimeInterval: Int { get }
     var newSampleOffset: CGFloat { get }
     var currentSampleIndex: Int { get set }
