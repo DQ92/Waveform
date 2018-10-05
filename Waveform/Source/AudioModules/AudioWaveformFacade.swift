@@ -34,7 +34,7 @@ class AudioWaveformFacade {
 
     // MARK: - Private properties
 
-    private let plotDataManager: WaveformPlotDataMangerProtocol
+    private var plotDataManager: WaveformPlotDataMangerProtocol
     private var audioModulesManager: AudioModulesManagerProtocol
 
     // MARK: - Public properties
@@ -48,6 +48,7 @@ class AudioWaveformFacade {
         self.plotDataManager = plotDataManager
         self.audioModulesManager = audioModulesManager
         self.audioModulesManager.fileLoaderDelegate = self
+        self.plotDataManager.delegate = self
     }
 }
 
@@ -130,6 +131,8 @@ extension AudioWaveformFacade {
     }
 }
 
+// MARK: - AudioModulesManager loader delegate
+
 extension AudioWaveformFacade: AudioModulesManagerLoaderDelegate {
     func processSampleData(_ data: Float,
                            with mode: AudioRecordingMode,
@@ -141,11 +144,14 @@ extension AudioWaveformFacade: AudioModulesManagerLoaderDelegate {
     }
 }
 
-extension AudioWaveformFacade {
-    func waveformPlot(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+// MARK: - WaveformPlotDataManager delegate
+
+extension AudioWaveformFacade: WaveformPlotDataManagerDelegate {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+
     }
 
-    func waveformPlot(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
         delegate?.zoomLevelDidChange(to: level)
     }
 }

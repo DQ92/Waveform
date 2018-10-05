@@ -64,7 +64,7 @@ class WaveformPlotDataManager {
         return CGFloat(currentSampleIndex + 1) * self.sampleWidth
     }
 
-    var stepWidth: CGFloat {
+    var autoscrollStepWidth: CGFloat {
         return CGFloat(layersPerTimeInterval) / CGFloat((100 * zoomLevel.samplesPerLayer))
     }
 
@@ -170,7 +170,7 @@ extension WaveformPlotDataManager {
     }
 }
 
-// MARK: - Access
+// MARK: - Access methods
 
 extension WaveformPlotDataManager: WaveformPlotDataMangerProtocol {
     func currentPositionChanged(to position: CGFloat) {
