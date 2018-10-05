@@ -11,19 +11,19 @@ import UIKit
 protocol IllustrationPlotDataSource: class {
     func timeInterval(in illustrationPlot: IllustrationPlot) -> TimeInterval
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int
-    func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat
-    func illustrationMarks(for illustrationPlot: IllustrationPlot) -> [IllustrationMark]
     
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample]
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markAtPosition position: CGFloat) -> IllustrationMark?
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, positionForMark mark: IllustrationMark) -> CGFloat?
 }
 
 protocol IllustrationPlotDelegate: class {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint)
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat)
-    
-    func removeIllustrationMark(for timeInterval: TimeInterval)
-    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMark)
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidSelect mark: IllustrationMark)
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidDeselect mark: IllustrationMark)
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidRemove mark: IllustrationMark)
 }
 
 class IllustrationPlot: UIView, ScrollablePlot {
@@ -69,11 +69,26 @@ class IllustrationPlot: UIView, ScrollablePlot {
         }
     }
     
+    var selectedMark: IllustrationMark? {
+        willSet {
+            if let mark = selectedMark, let markView = self.dictionary[mark] {
+                markView?.setSelected(false)
+            }
+        }
+        didSet {
+            if let mark = selectedMark, let markView = self.dictionary[mark], let view = markView {
+                self.contentView.bringSubview(toFront: view)
+                view.setSelected(true)
+            }
+        }
+    }
+    
     // MARK: - Views
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView(frame: .zero)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsHorizontalScrollIndicator = false
         scrollView.delegate = self
         self.addSubview(scrollView)
         
@@ -121,12 +136,16 @@ class IllustrationPlot: UIView, ScrollablePlot {
         return NSLayoutConstraint.build(item: self.contentView, attribute: .width, constant: illustrationMarkViewWidth)
     }()
     
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss:SS"
+        
+        return formatter
+    }()
+    
+    private var dictionary: [IllustrationMark: IllustrationMarkView?] = [:]
+    
     var illustrationMarkViewWidth: CGFloat = UIScreen.main.bounds.width * 0.1
-    
-    // MARK: - Private constants
-    
-    private let leftMarkViewVisibilityMargin = UIScreen.main.bounds.width * 0.5
-    private let rightMarkViewVisibilityMargin = 2 * UIScreen.main.bounds.width
     
     // MARK: - Initialization
     
@@ -146,21 +165,18 @@ class IllustrationPlot: UIView, ScrollablePlot {
     
     private func commonInit() {
         waveformPlot.isUserInteractionEnabled = false
-        waveformPlot.backgroundColor = .clear
-        
-        scrollView.showsHorizontalScrollIndicator = false
     }
     
     private func setupConstraints() {
         self.setupConstraint(item: self.waveformPlot, attribute: .leading, toItem: self, attribute: .leading)
         self.setupConstraint(item: self.waveformPlot, attribute: .trailing, toItem: self, attribute: .trailing)
         self.setupConstraint(item: self.waveformPlot, attribute: .bottom, toItem: self, attribute: .bottom, constant: -50)
-        self.setupConstraint(item: self.waveformPlot, attribute: .height, toItem: self, attribute: .height, multiplier: 0.6, constant: 0)
+        self.setupConstraint(item: self.waveformPlot, attribute: .height, toItem: self, attribute: .height, multiplier: 0.6)
         
         self.setupConstraint(item: self.scrollView, attribute: .leading, toItem: self, attribute: .leading)
         self.setupConstraint(item: self.scrollView, attribute: .trailing, toItem: self, attribute: .trailing)
         self.setupConstraint(item: self.scrollView, attribute: .top, toItem: self, attribute: .top)
-        self.setupConstraint(item: self.scrollView, attribute: .height, toItem: self, attribute: .height, multiplier: 0.9, constant: 0)
+        self.setupConstraint(item: self.scrollView, attribute: .height, toItem: self, attribute: .height, multiplier: 0.9)
         
         self.setupConstraint(item: self.contentView, attribute: .leading, toItem: self.scrollView, attribute: .leading, constant: -(illustrationMarkViewWidth * 0.5))
         self.setupConstraint(item: self.contentView, attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
@@ -170,104 +186,89 @@ class IllustrationPlot: UIView, ScrollablePlot {
         
         self.contentWidthLayoutConstraint.isActive = true
     }
-    
-    // MARK: - Illustration marks setup
-    
-    func addIllustrationMark(with data: IllustrationMark, for samplesPerLayer: CGFloat) {
-        hideScrollContentViewSubviews()
-        delegate?.setAllIllustrationMarksOfCurrentChapterInactive(except: data)
-        setupNewIllustrationMarkView(with: data, for: samplesPerLayer)
-    }
-    
-    func setupIllustrationMarks(with illustrationMarksData: [IllustrationMark], for samplesPerLayer: CGFloat) {
-        illustrationMarksData.forEach {
-            setupNewIllustrationMarkView(with: $0, for: samplesPerLayer)
-        }
-    }
-    
-    private func setupNewIllustrationMarkView(with data: IllustrationMark, for samplesPerLayer: CGFloat) {
-        let view = IllustrationMarkView(frame: .zero)
-        contentView.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        let currentCenterXConstraintValue = data.centerXConstraintValue / samplesPerLayer
-        setupIllustrationMarkConstraints(with: currentCenterXConstraintValue, view: view)
-        
-        view.data = data
-        view.setupTimeLabel(with: data.timeInterval)
-        view.setupImageView(with: data.imageURL)
-        view.setupTimeLabelAndRemoveButtonVisibility(isHidden: !data.isActive)
-        view.removeMarkBlock = { [weak self, weak view] in
-            self?.delegate?.removeIllustrationMark(for: data.timeInterval)
-            view?.removeFromSuperview()
-        }
-        view.bringMarkViewToFrontBlock = { [weak self, weak view] in
-            guard let strongSelf = self, let strongView = view else { return }
-            strongSelf.hideScrollContentViewSubviews()
-            strongSelf.delegate?.setAllIllustrationMarksOfCurrentChapterInactive(except: data)
-            strongSelf.contentView.bringSubview(toFront: strongView)
-            strongView.setupTimeLabelAndRemoveButtonVisibility(isHidden: false)
-        }
-    }
-    
-    private func setupIllustrationMarkConstraints(with centerXConstraintValue: CGFloat, view: UIView) {
-        self.setupConstraint(item: view, attribute: .top, toItem: contentView, attribute: .top)
-        self.setupConstraint(item: view, attribute: .bottom, toItem: contentView, attribute: .bottom)
-        self.setupConstraint(item: view, attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
-        self.setupConstraint(item: view, attribute: .centerX, toItem: contentView, attribute: .centerX, constant: centerXConstraintValue)
-    }
-    
-    private func hideScrollContentViewSubviews() {
-        contentView.subviews.forEach {
-            if let subview = $0 as? IllustrationMarkView {
-                subview.setupTimeLabelAndRemoveButtonVisibility(isHidden: true)
-            }
-        }
-    }
-    
-    private func reloadIllustrationMarkViews() {
-        contentView.subviews.forEach { $0.removeFromSuperview() }
-        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
-    }
-    
+
     // MARK: - Access methods
+    
+    func addMark(_ mark: IllustrationMark) {
+        self.addMark(mark, at: self.currentPosition)
+    }
+    
+    func reloadMark(at position: CGFloat) {
+        guard let mark = self.dataSource?.illustrationPlot(self, markAtPosition: position), let markView = self.dictionary[mark] else {
+            return
+        }
+        self.setupMark(mark, inView: markView)
+    }
+    
+    func reloadMarks() {
+        self.redrawMarks(relativeBy: self.currentPosition)
+    }
     
     func reloadData() {
         self.waveformPlot.reloadData()
-        reloadIllustrationMarkViews()
+        self.reloadMarks()
     }
     
-    func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
-        let halfOfScrollContentViewWidth = -(contentView.bounds.width / 2)
-        let centerXConstraintValue = halfOfScrollContentViewWidth + scrollView.contentInset.left + scrollView.contentOffset.x + illustrationMarkViewWidth * 0.5
-        return centerXConstraintValue
+    // MARK: - Others
+    
+    private func addMark(_ mark: IllustrationMark, at position: CGFloat) {
+        self.dictionary[mark] = self.createMark(mark, at: position)
     }
+    
+    private func createMark(_ mark: IllustrationMark, at position: CGFloat) -> IllustrationMarkView {
+        let markView = IllustrationMarkView(frame: .zero)
+        markView.translatesAutoresizingMaskIntoConstraints = false
+        self.setupMark(mark, inView: markView)
+        self.contentView.addSubview(markView)
+        
+        self.setupConstraint(item: markView, attribute: .top, toItem: self.contentView, attribute: .top)
+        self.setupConstraint(item: markView, attribute: .bottom, toItem: self.contentView, attribute: .bottom)
+        self.setupConstraint(item: markView, attribute: .width, attribute: .notAnAttribute,  constant: illustrationMarkViewWidth)
+        self.setupConstraint(item: markView, attribute: .leading, toItem: self.contentView, attribute: .leading, constant: position)
+        
+        return markView
+    }
+    
+    private func setupMark(_ mark: IllustrationMark, inView markView: IllustrationMarkView?) {
+        markView?.setTime(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))
+        markView?.setImageUrl(mark.imageURL)
+        markView?.setSelected(mark == self.selectedMark)
+        markView?.delegate = self
+    }
+    
+    private func redrawMarks(relativeBy currentPosition: CGFloat) {
+        let leftBoundary = max(currentPosition - self.bounds.width, 0.0)
+        let rightBoundary = min(currentPosition + self.bounds.width, self.waveformPlot.contentSize.width)
+        let visibleRange = leftBoundary...rightBoundary
+        let currentDictionary = self.dictionary
+
+        for (mark, markView) in currentDictionary {
+            guard let position = self.dataSource?.illustrationPlot(self, positionForMark: mark) else {
+                continue
+            }
+            
+            if visibleRange.contains(position) {
+                if let view = markView {
+                    self.setupMark(mark, inView: view)
+                } else {
+                    self.addMark(mark, at: position)
+                }
+            } else if let view = markView {
+                view.removeFromSuperview()
+                self.dictionary.updateValue(nil, forKey: mark)
+            }
+        }
+    }
+        
 }
 
 extension IllustrationPlot: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        currentPosition = scrollView.contentOffset.x + scrollView.contentInset.left
-        waveformPlot.contentOffset = scrollView.contentOffset
+        self.currentPosition = scrollView.contentOffset.x + scrollView.contentInset.left
+        self.redrawMarks(relativeBy: self.currentPosition)
         
-        redrawIllustrationMarkViews(contentOffset: scrollView.contentOffset)
-    }
-    
-    private func redrawIllustrationMarkViews(contentOffset: CGPoint) {
-        guard let samplesPerLayer = dataSource?.samplesPerLayer(for: self) else { return }
-        dataSource?.illustrationMarks(for: self).forEach { data in
-            let leftOffset = (data.centerXConstraintValue / samplesPerLayer) + (contentWidthLayoutConstraint.constant / 2) - (contentOffset.x - scrollView.contentInset.left)
-            let subview = contentView.subviews.first(where: { view in
-                (view as? IllustrationMarkView)?.data.centerXConstraintValue == data.centerXConstraintValue
-            })
-            
-            if (leftOffset < leftMarkViewVisibilityMargin || leftOffset > rightMarkViewVisibilityMargin) && subview != nil {
-                contentView.willRemoveSubview(subview!)
-                subview!.removeFromSuperview()
-            }
-            
-            if leftOffset > leftMarkViewVisibilityMargin && leftOffset < rightMarkViewVisibilityMargin && subview == nil {
-                setupNewIllustrationMarkView(with: data, for: samplesPerLayer)
-            }
-        }
+        self.waveformPlot.contentOffset = scrollView.contentOffset
+        self.delegate?.illustrationPlot(self, contentOffsetDidChange: scrollView.contentOffset)
     }
 }
 
@@ -304,7 +305,7 @@ extension IllustrationPlot: WaveformPlotDataSource {
 extension IllustrationPlot: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
         self.contentWidthLayoutConstraint.constant = contentSize.width + illustrationMarkViewWidth
-        reloadIllustrationMarkViews()
+        self.reloadMarks()
     }
     
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
@@ -313,5 +314,29 @@ extension IllustrationPlot: WaveformPlotDelegate {
     
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
         self.delegate?.illustrationPlot(self, currentPositionDidChange: position)
+    }
+}
+
+extension IllustrationPlot: IllustrationMarkViewDelegate {
+    func removeMark(in illustrationMarkView: IllustrationMarkView) {
+        guard let mark = self.dictionary.first(where: { $1 === illustrationMarkView })?.key else {
+            return
+        }
+        illustrationMarkView.removeFromSuperview()
+        self.dictionary.removeValue(forKey: mark)
+        
+        self.delegate?.illustrationPlot(self, markDidRemove: mark)
+    }
+    
+    func bringMarkToFront(in illustrationMarkView: IllustrationMarkView) {
+        guard let currentMark = self.dictionary.first(where: { $1 === illustrationMarkView })?.key else {
+            return
+        }
+        if let previousMark = self.selectedMark {
+            self.delegate?.illustrationPlot(self, markDidDeselect: previousMark)
+        }
+        self.selectedMark = currentMark
+        
+        self.delegate?.illustrationPlot(self, markDidSelect: currentMark)
     }
 }

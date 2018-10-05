@@ -46,6 +46,10 @@ class WaveformView: UIView {
         }
     }
     
+    var contentSize: CGSize {
+        return self.collectionView.contentSize
+    }
+    
     // MARK: - Private properties
     
     private lazy var coordinator: WaveformViewCoordinator = {

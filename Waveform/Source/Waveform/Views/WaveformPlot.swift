@@ -67,6 +67,10 @@ class WaveformPlot: UIView, ScrollablePlot {
         }
     }
     
+    var contentSize: CGSize {
+        return self.waveformView.contentSize
+    }
+    
     // MARK: - Views
     
     private lazy var timelineView: TimelineView = {

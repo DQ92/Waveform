@@ -8,22 +8,16 @@
 
 import UIKit
 
+protocol IllustrationMarkViewDelegate: class {
+    func removeMark(in illustrationMarkView: IllustrationMarkView)
+    func bringMarkToFront(in illustrationMarkView: IllustrationMarkView)
+}
+
 class IllustrationMarkView: UIView {
     
     // MARK: - Public properties
     
-    var removeMarkBlock: (() -> Void)?
-    var bringMarkViewToFrontBlock: (() -> Void)?
-    var data: IllustrationMark!
-    
-    // MARK: - Private constants
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "mm:ss:SS"
-        
-        return formatter
-    }()
+    weak var delegate: IllustrationMarkViewDelegate?
     
     // MARK: - Views
     
@@ -116,30 +110,30 @@ class IllustrationMarkView: UIView {
     
     // MARK: - Access methods
     
-    func setupTimeLabel(with timeInterval: TimeInterval) {
-        self.timeLabel.text = dateFormatter.string(from: Date(timeIntervalSince1970: timeInterval))
+    func setTime(_ text: String?) {
+        self.timeLabel.text = text
     }
     
-    func setupImageView(with imageURL: URL?) {
-        if let imageURL = imageURL {
+    func setImageUrl(_ url: URL?) {
+        if let imageURL = url {
             imageView.image = UIImage(named: "mock_book0")
         } else {
             imageView.image = UIImage(named: "mock_book0")
         }
     }
     
-    func setupTimeLabelAndRemoveButtonVisibility(isHidden: Bool) {
-        removeButton.isHidden = isHidden
-        timeLabel.isHidden = isHidden
+    func setSelected(_ selected: Bool) {
+        removeButton.isHidden = !selected
+        timeLabel.isHidden = !selected
     }
-    
+
     // MARK: - Actions
     
     @objc private func removeView(sender: UIButton) {
-        removeMarkBlock?()
+        self.delegate?.removeMark(in: self)
     }
     
     @objc private func bringViewToFront(sender: UIControl) {
-        bringMarkViewToFrontBlock?()
+        self.delegate?.bringMarkToFront(in: self)
     }
 }

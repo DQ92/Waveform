@@ -10,35 +10,32 @@ import UIKit
 
 class IllustrationPlotDataManager: WaveformPlotDataManager {
     
-    // MARK: - Public properties
+    // MARK: - Private properties
     
-    var illustrationMarksDatasource: [Int: [IllustrationMark]] = [:]
+    private var markDictionary: [CGFloat: IllustrationMark] = [:]
     
     // MARK: - Access methods
     
-    func checkIfIllustrationMarkExistsAtCurrentTime(for chapterId: Int, and timeInterval: TimeInterval) -> Bool {
-        let value = illustrationMarksDatasource[chapterId]?.contains(where: { $0.timeInterval == timeInterval })
-        return value ?? false
+    func containsMark(_ mark: IllustrationMark) -> Bool {
+        return markDictionary.contains { $0.value == mark }
     }
     
-    func appendIllustrationMarkData(for chapterId: Int, with data: IllustrationMark) {
-        if illustrationMarksDatasource[chapterId] != nil {
-            illustrationMarksDatasource[chapterId]?.append(data)
-        } else {
-            illustrationMarksDatasource[chapterId] = [data]
-        }
+    func setMark(_ mark: IllustrationMark, at position: CGFloat) {
+        self.markDictionary[position] = mark
     }
     
-    func updateIllustrationMarkDatasource(for chapterId: Int, with data: IllustrationMark) {
-        if var values = illustrationMarksDatasource[chapterId] {
-            if let index = values.firstIndex(where: { $0.timeInterval == data.timeInterval }) {
-                values[index] = data
-            } else {
-                values.append(data)
-            }
-            illustrationMarksDatasource[chapterId] = values
-        } else {
-            illustrationMarksDatasource[chapterId] = [data]
+    func position(for mark: IllustrationMark) -> CGFloat? {
+        guard let position = self.markDictionary.first(where: { $1 == mark })?.key else {
+            return nil
         }
+        return position / CGFloat(self.zoomLevel.samplesPerLayer)
+    }
+    
+    func mark(at position: CGFloat) -> IllustrationMark? {
+        return self.markDictionary[position]
+    }
+
+    func removeMark(at position: CGFloat) {
+        self.markDictionary.removeValue(forKey: position)
     }
 }

@@ -8,9 +8,29 @@
 
 import UIKit
 
-struct IllustrationMark: Hashable {
+struct IllustrationMark {
+    
+    // MARK: - Public properties
+    
     let timeInterval: TimeInterval
-    let centerXConstraintValue: CGFloat
     let imageURL: URL?
-    let isActive: Bool
+    
+    // MARK: - Initialization
+    
+    init(timeInterval: TimeInterval, imageURL: URL? = nil) {
+        self.timeInterval = timeInterval
+        self.imageURL = imageURL
+    }
+}
+
+extension IllustrationMark: Hashable {
+    var hashValue: Int {
+        return timeInterval.hashValue
+    }
+}
+
+extension IllustrationMark: Equatable {
+    static func == (lhs: IllustrationMark, rhs: IllustrationMark) -> Bool {
+        return lhs.timeInterval == rhs.timeInterval
+    }
 }

@@ -62,14 +62,17 @@ class AddIllustrationsViewController: UIViewController {
     }
     
     @IBAction func addIllustration(_ sender: Any) {
-        let data = createIllustrationMarkData(with: nil, and: timeInterval)
-        let isMarkExistsAtCurrentTime = manager.checkIfIllustrationMarkExistsAtCurrentTime(for: 0, and: timeInterval)
+        let mark = IllustrationMark(timeInterval: self.timeInterval, imageURL: nil)
+        let position = self.illustrationPlot.currentPosition
+        let isMarkExists = self.manager.containsMark(mark)
         
-        if isMarkExistsAtCurrentTime {
-            manager.updateIllustrationMarkDatasource(for: 0, with: data)
+        self.manager.setMark(mark, at: self.illustrationPlot.currentPosition)
+        self.illustrationPlot.selectedMark = mark
+        
+        if isMarkExists {
+            self.illustrationPlot.reloadMark(at: position)
         } else {
-            manager.appendIllustrationMarkData(for: 0, with: data)
-            illustrationPlot.addIllustrationMark(with: data, for: CGFloat(manager.zoomLevel.samplesPerLayer))
+            self.illustrationPlot.addMark(mark)
         }
     }
     
@@ -84,21 +87,6 @@ class AddIllustrationsViewController: UIViewController {
     }
     
     // MARK: - Other
-    
-    private func createIllustrationMarkData(with imageURL: URL?, and currentTimeInterval: TimeInterval) -> IllustrationMark {
-        let centerXConstraintValue = calculateXConstraintForCurrentWaveformPosition()
-        let data = IllustrationMark(timeInterval: currentTimeInterval,
-                                         centerXConstraintValue: centerXConstraintValue,
-                                         imageURL: imageURL,
-                                         isActive: true)
-        return data
-    }
-    
-    private func calculateXConstraintForCurrentWaveformPosition() -> CGFloat {
-        var centerXConstraintValue = illustrationPlot.calculateXConstraintForCurrentWaveformPosition()
-        centerXConstraintValue *= CGFloat(manager.zoomLevel.samplesPerLayer)
-        return centerXConstraintValue
-    }
     
     private func retrieveFileDataAndSet(with url: URL) {
         do {
@@ -225,14 +213,6 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
         return TimeInterval(self.manager.zoomLevel.samplesPerLayer)
     }
     
-    func samplesPerLayer(for illustrationPlot: IllustrationPlot) -> CGFloat {
-        return CGFloat(manager.zoomLevel.samplesPerLayer)
-    }
-    
-    func illustrationMarks(for illustrationPlot: IllustrationPlot) -> [IllustrationMark] {
-        return manager.illustrationMarksDatasource[0] ?? []
-    }
-    
     func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int {
         return self.manager.numberOfTimeInterval
     }
@@ -244,33 +224,21 @@ extension AddIllustrationsViewController: IllustrationPlotDataSource {
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
         return self.manager.timeIntervalWidth(index: index)
     }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markAtPosition position: CGFloat) -> IllustrationMark? {
+        return self.manager.mark(at: position)
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, positionForMark mark: IllustrationMark) -> CGFloat? {
+        return self.manager.position(for: mark)
+    }
 }
 
 // MARK: - WaveformPlotDelegate
 
 extension AddIllustrationsViewController: IllustrationPlotDelegate {
-    func removeIllustrationMark(for timeInterval: TimeInterval) {
-        if let index = manager.illustrationMarksDatasource[0]?.firstIndex(where: { $0.timeInterval == timeInterval }) {
-            manager.illustrationMarksDatasource[0]?.remove(at: index)
-        }
-    }
-    
-    func setAllIllustrationMarksOfCurrentChapterInactive(except illustrationMarkData: IllustrationMark) {
-        var currentIllustrationMarksData = manager.illustrationMarksDatasource[0] ?? []
-        
-        currentIllustrationMarksData = currentIllustrationMarksData.map {
-            if $0 == illustrationMarkData {
-                return IllustrationMark(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: true)
-            } else {
-                return IllustrationMark(timeInterval: $0.timeInterval, centerXConstraintValue: $0.centerXConstraintValue, imageURL: $0.imageURL, isActive: false)
-            }
-        }
-        
-        manager.illustrationMarksDatasource[0] = currentIllustrationMarksData
-    }
-    
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint) {
-        print("contentOffset.x = \(contentOffset.x)")
+        
     }
     
     func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat) {
@@ -279,10 +247,20 @@ extension AddIllustrationsViewController: IllustrationPlotDelegate {
         self.timeInterval = self.manager.calculateTimeInterval(for: validPosition, duration: self.loader.fileDuration ?? 0)
         self.sampleIndex = min(Int(validPosition / self.manager.sampleWidth), self.manager.numberOfSamples)
         self.timeLabel.text = self.dateFormatter.string(from: Date(timeIntervalSince1970: self.timeInterval))
-        
-//        print("validPosition = \(validPosition)")
-//        print("timeInterval = \(self.timeInterval)")
-//        print("sampleIndex = \(self.sampleIndex)")
-//        print("numberOfSamples = \(self.manager.numberOfSamples)")
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidSelect mark: IllustrationMark) {
+        print("Select illustration mark at time = \(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))")
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidDeselect mark: IllustrationMark) {
+        print("Deselect illustration mark at time = \(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))")
+    }
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, markDidRemove mark: IllustrationMark) {
+        if let position = self.manager.position(for: mark) {
+            self.manager.removeMark(at: position)
+        }
+        print("Remove illustration mark at time = \(self.dateFormatter.string(from: Date(timeIntervalSince1970: mark.timeInterval)))")
     }
 }
