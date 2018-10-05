@@ -86,6 +86,7 @@ class AudioToolboxFileDataLoader: FileDataLoaderProtocol {
         }
         completion(rmss, duration)
     }
+
     
     // MARK: - Private methods
 

@@ -7,11 +7,10 @@ import Foundation
 import AVFoundation
 
 protocol AudioModulesManagerProtocol {
-    var delegate: AudioModulesManagerDelegate? { get set }
+    var delegate: AudioModulesManagerStateDelegate? { get set }
+    var fileLoaderDelegate: AudioModulesManagerLoaderDelegate? { get set }
     var resultsDirectoryURL: URL { get }
     var recordingDuration: TimeInterval { get }
-    var currentRecordingTime: TimeInterval { get }
-    var recordingMode: AudioRecordingMode { get }
 
     func loadFile(with url: URL) throws
     func recordOrPause(at timeInterval: TimeInterval) throws
@@ -20,11 +19,16 @@ protocol AudioModulesManagerProtocol {
     func clearRecordings() throws
 }
 
-protocol AudioModulesManagerDelegate: class {
+protocol AudioModulesManagerStateDelegate: class {
     func loaderStateDidChange(with state: FileDataLoaderState)
     func playerStateDidChange(with state: AudioPlayerState)
     func recorderStateDidChange(with state: AudioRecorderState)
-    func processSampleData(_ data: Float)
+}
+
+protocol AudioModulesManagerLoaderDelegate: class {
+    func processSampleData(_ data: Float,
+                           with mode: AudioRecordingMode,
+                           at timeStamp: TimeInterval)
 }
 
 class AudioModulesManager {
@@ -38,18 +42,13 @@ class AudioModulesManager {
 
     // MARK: - Public properties
 
-    weak var delegate: AudioModulesManagerDelegate?
+    weak var delegate: AudioModulesManagerStateDelegate?
+    weak var fileLoaderDelegate: AudioModulesManagerLoaderDelegate?
     var resultsDirectoryURL: URL {
         return recorder.resultsDirectoryURL
     }
     var recordingDuration: TimeInterval {
         return recorder.duration
-    }
-    var currentRecordingTime: TimeInterval {
-        return recorder.currentTime
-    }
-    var recordingMode: AudioRecordingMode {
-        return recorder.mode
     }
 
     // MARK: - Initialization
@@ -173,7 +172,7 @@ extension AudioModulesManager: AudioRecorderDelegate {
         delegate?.recorderStateDidChange(with: state)
         switch state {
             case .isRecording:
-                AudioToolboxMicrophoneController.shared.start()
+                AudioToolboxMicrophoneController.shared.start() // TODO: Do refactora?
             case .paused, .stopped, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
         }
@@ -182,6 +181,8 @@ extension AudioModulesManager: AudioRecorderDelegate {
 
 extension AudioModulesManager: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
-        delegate?.processSampleData(data)
+        fileLoaderDelegate?.processSampleData(data,
+                                              with: recorder.mode,
+                                              at: recorder.currentTime)
     }
 }

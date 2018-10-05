@@ -19,9 +19,8 @@ class ViewController: UIViewController {
 
     // MARK: - Private properties
 
-    private var plotDataManager: WaveformPlotDataManager = WaveformPlotDataManager()
-    private var audioModulesManager: AudioModulesManagerProtocol!
-    private var timeInterval: TimeInterval = 0.0
+    var facade: AudioWaveformFacadeProtocol!
+
     private lazy var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "mm:ss:SS"
@@ -51,12 +50,12 @@ class ViewController: UIViewController {
     }
 
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
-        plotDataManager.zoomIn()
+        facade.plotDataManager.zoomIn()
         waveformPlot.reloadData()
     }
 
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
-        plotDataManager.zoomOut()
+        facade.plotDataManager.zoomOut()
         waveformPlot.reloadData()
     }
 
@@ -64,14 +63,13 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupAudioFacade()
         setupView()
-        setupAudioModules()
-        setupWaveformPlotDataManager()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? AudioFilesListViewController {
-            viewController.directoryUrl = audioModulesManager.resultsDirectoryURL
+            viewController.directoryUrl = facade.audioModulesManager.resultsDirectoryURL
             viewController.didSelectFileBlock = { [weak self] url in
                 self?.loadFile(with: url)
                 self?.navigationController?.popViewController(animated: true)
@@ -80,22 +78,22 @@ class ViewController: UIViewController {
     }
 }
 
-// MARK: - After refactor
-
 // MARK: - Setup
 
 extension ViewController {
-    private func setupAudioModules() {
+    private func setupAudioFacade() {
         do {
-            audioModulesManager = try AudioModulesManager()
+            let audioModulesManager = try AudioModulesManager()
+            let plotDataManger = WaveformPlotDataManager()
             audioModulesManager.delegate = self
+            facade = AudioWaveformFacade(plotDataManager: plotDataManger, audioModulesManager: audioModulesManager)
+            facade.delegate = self
+
+            waveformPlot.dataSource = facade
+            waveformPlot.delegate = facade
         } catch {
             showAlert(with: "Błąd", and: "Nagrywanie jest wyłączone", and: "Ok")
         }
-    }
-
-    private func setupWaveformPlotDataManager() {
-        self.plotDataManager.delegate = self
     }
 
     private func setupView() {
@@ -110,8 +108,6 @@ extension ViewController {
 
         waveformPlot.contentInset = UIEdgeInsets(top: 0.0, left: offset, bottom: 0.0, right: offset)
         waveformPlot.timeIndicatorView = timeIndicatorView
-        waveformPlot.dataSource = self
-        waveformPlot.delegate = self
     }
 
     private func enableZoomAction() {
@@ -135,7 +131,7 @@ extension ViewController {
 extension ViewController {
     private func loadFile(with url: URL) {
         do {
-            try audioModulesManager.loadFile(with: url)
+            try facade.audioModulesManager.loadFile(with: url)
         } catch FileDataLoaderError.openUrlFailed {
             showAlert(with: "Błąd", and: "Błędny url", and: "Ok")
         } catch {
@@ -145,7 +141,7 @@ extension ViewController {
 
     private func recordOrPause() {
         do {
-            try audioModulesManager.recordOrPause(at: timeInterval)
+            try facade.audioModulesManager.recordOrPause(at: facade.timeInterval)
         } catch let error {
             Log.error(error)
         }
@@ -153,7 +149,7 @@ extension ViewController {
 
     private func finishRecording() {
         do {
-            try audioModulesManager.finishRecording()
+            try facade.audioModulesManager.finishRecording()
         } catch AudioRecorderError.directoryContentListingFailed(let error) {
             Log.error(error)
         } catch AudioRecorderError.fileExportFailed {
@@ -165,7 +161,7 @@ extension ViewController {
 
     private func playOrPause() {
         do {
-            try audioModulesManager.playOrPause(at: timeInterval)
+            try facade.audioModulesManager.playOrPause(at: facade.timeInterval)
         } catch {
             Log.error("Error while exporting temporary file")
         }
@@ -173,7 +169,7 @@ extension ViewController {
 
     private func clearRecordings() {
         do {
-            try audioModulesManager.clearRecordings()
+            try facade.audioModulesManager.clearRecordings()
         } catch {
             showAlert(with: "Błąd", and: "Nie można usunąć nagrań", and: "OK")
         }
@@ -182,14 +178,11 @@ extension ViewController {
 
 // MARK: - Recorder state renderer
 
-extension ViewController: AudioModulesManagerDelegate {
+extension ViewController: AudioModulesManagerStateDelegate {
     func recorderStateDidChange(with state: AudioRecorderState) {
         switch state {
             case .isRecording:
-
-                self.resetCurrentSampleData()
-                self.plotDataManager.reset()
-
+                self.facade.plotDataManager.reset()
                 recordButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
                 waveformPlot.isUserInteractionEnabled = true
@@ -214,8 +207,7 @@ extension ViewController: AudioModulesManagerDelegate {
                 waveformPlot.isUserInteractionEnabled = false
                 playOrPauseButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
-                let stepWidth = CGFloat(plotDataManager.layersPerTimeInterval) / CGFloat((100 * plotDataManager.zoomLevel.samplesPerLayer))
-                movementCoordinator.startScrolling(stepWidth: stepWidth)
+                movementCoordinator.startScrolling(stepWidth: facade.plotDataManager.stepWidth)
             case .paused:
                 waveformPlot.isUserInteractionEnabled = true
                 playOrPauseButton.setTitle("Play", for: .normal)
@@ -230,80 +222,31 @@ extension ViewController: AudioModulesManagerDelegate {
                 break
             case .loaded(let values, let duration):
                 let samplesPerPoint = CGFloat(values.count) / waveformPlot.bounds.width
-                plotDataManager.loadData(from: values)
-                plotDataManager.loadZoom(from: samplesPerPoint)
+                facade.plotDataManager.fileLoaded(with: values, and: samplesPerPoint)
                 waveformPlot.currentPosition = 0.0
                 waveformPlot.reloadData()
-                totalTimeLabel.text = self.timeFormatter.string(from: Date(timeIntervalSince1970: duration))
+                totalTimeLabel.text = formattedDateString(with: duration, and: timeFormatter)
         }
     }
 }
 
-// MARK: - Before refactor
-
-// MARK: - WaveformPlotDataManagerDelegate
-
-extension ViewController: WaveformPlotDataManagerDelegate {
-    private func resetCurrentSampleData() {
-        timeInterval = 0.0
-        plotDataManager.currentSampleIndex = 0
+extension ViewController: AudioWaveformFacadeDelegate {
+    func leadingLineTimeIntervalDidChange(to timeInterval: TimeInterval) {
+        let formattedTimeInterval = formattedDateString(with: timeInterval, and: timeFormatter)
+        timeLabel.text = formattedTimeInterval
     }
 
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+    func audioDurationDidChange(to timeInterval: TimeInterval) {
+        let formattedTimeInterval = formattedDateString(with: timeInterval, and: timeFormatter)
+        totalTimeLabel.text = formattedTimeInterval
     }
 
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+    func shiftOffset(to offset: CGFloat) {
+        waveformPlot.currentPosition = offset
+        waveformPlot.reloadData()
+    }
+
+    func zoomLevelDidChange(to level: ZoomLevel) {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
     }
 }
-
-// MARK: - WaveformPlotDataSource
-
-extension ViewController: WaveformPlotDataSource {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
-        return self.plotDataManager.numberOfTimeInterval
-    }
-
-    func waveformPlot(_ waveformPlot: WaveformPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample] {
-        return self.plotDataManager.samples(timeIntervalIndex: index)
-    }
-
-    func waveformPlot(_ waveformPlot: WaveformPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
-        return self.plotDataManager.timeIntervalWidth(index: index)
-    }
-}
-
-// MARK: - WaveformPlotDelegate
-
-extension ViewController: WaveformPlotDelegate {
-    func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
-    }
-
-    func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
-        let validPosition = max(position, 0.0)
-        timeInterval = plotDataManager.calculateTimeInterval(for: validPosition,
-                                                             duration: audioModulesManager.recordingDuration)
-        plotDataManager.currentSampleIndex = min(Int(validPosition / plotDataManager.sampleWidth), plotDataManager.numberOfSamples)
-        timeLabel.text = formattedDateString(with: timeInterval, and: timeFormatter)
-
-//        print("validPosition = \(validPosition)")
-//        print("timeInterval = \(self.timeInterval)")
-//        print("sampleIndex = \(self.sampleIndex)")
-//        print("numberOfSamples = \(self.manager.numberOfSamples)")
-    }
-}
-
-extension ViewController {
-    func processSampleData(_ data: Float) {
-        let data = WaveformModel(value: CGFloat(data * AudioUtils.defaultWaveformFloatModifier),
-                                 mode: audioModulesManager.recordingMode,
-                                 timeStamp: audioModulesManager.currentRecordingTime)
-        waveformPlot.currentPosition = plotDataManager.newSampleOffset
-        plotDataManager.setData(data: data)
-        waveformPlot.reloadData()
-        totalTimeLabel.text = formattedDateString(with: audioModulesManager.recordingDuration,
-                                                  and: timeFormatter)
-    }
-}
-
-
