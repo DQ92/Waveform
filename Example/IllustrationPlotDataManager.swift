@@ -38,4 +38,8 @@ class IllustrationPlotDataManager: WaveformPlotDataManager {
     func removeMark(at position: CGFloat) {
         self.markDictionary.removeValue(forKey: position)
     }
+    
+    func removeMarks() {
+        self.markDictionary = [:]
+    }
 }

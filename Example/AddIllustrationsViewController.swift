@@ -78,11 +78,13 @@ class AddIllustrationsViewController: UIViewController {
     
     @IBAction func zoomInButtonTapped(_ sender: UIButton) {
         self.manager.zoomIn()
+        self.illustrationPlot.currentPosition = self.manager.calculatePosition(for: self.timeInterval, duration: self.loader.duration)
         self.illustrationPlot.reloadData()
     }
     
     @IBAction func zoomOutButtonTapped(_ sender: UIButton) {
         self.manager.zoomOut()
+        self.illustrationPlot.currentPosition = self.manager.calculatePosition(for: self.timeInterval, duration: self.loader.duration)
         self.illustrationPlot.reloadData()
     }
     
@@ -98,6 +100,7 @@ class AddIllustrationsViewController: UIViewController {
                 
                 caller.manager.loadData(from: values)
                 caller.manager.loadZoom(from: samplesPerPoint)
+                caller.manager.removeMarks()
                 
                 caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)
                 caller.illustrationPlot.currentPosition = 0.0
@@ -200,7 +203,6 @@ extension AddIllustrationsViewController: WaveformPlotDataManagerDelegate {
     
     func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
-        self.illustrationPlot.reloadData()
     }
 }
 

@@ -11,6 +11,7 @@ protocol AudioWaveformFacadeDelegate: class {
     func audioDurationDidChange(to timeInterval: TimeInterval)
     func shiftOffset(to offset: CGFloat)
     func zoomLevelDidChange(to level: ZoomLevel)
+    func currentPositionDidChange(_ position: CGFloat)
 }
 
 protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelegate {
@@ -84,10 +85,16 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 
     func zoomIn() {
         plotDataManager.zoomIn()
+        
+        let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
+        delegate?.currentPositionDidChange(currentPosition)
     }
 
     func zoomOut() {
         plotDataManager.zoomOut()
+        
+        let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
+        delegate?.currentPositionDidChange(currentPosition)
     }
 
     func reset() {
