@@ -9,6 +9,6 @@
 import Foundation
 
 enum AudioPlayerState {
-    case isPlaying
+    case playing
     case paused
 }

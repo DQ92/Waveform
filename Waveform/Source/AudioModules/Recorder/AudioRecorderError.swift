@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum RecorderError: Error {
+enum AudioRecorderError: Error {
     case sessionCategoryInvalid(Error)
     case sessionActivationFailed(Error)
     case directoryDeletionFailed(Error)
@@ -13,4 +13,5 @@ enum RecorderError: Error {
     case directoryContentListingFailed(Error)
     case timeRangeInsertFailed(Error)
     case fileExportFailed
+    case recordingPermissionsNotGranted
 }

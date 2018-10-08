@@ -1,5 +1,5 @@
 //
-//  WaveformWithIllustrationsPlot.swift
+//  IllustrationPlot.swift
 //  Waveform
 //
 //  Created by Piotr Olech on 17/09/2018.
@@ -8,6 +8,190 @@
 
 import UIKit
 
+protocol IllustrationPlotDataSource: class {
+    func numberOfTimeInterval(in illustrationPlot: IllustrationPlot) -> Int
+    
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample]
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat
+}
+
+protocol IllustrationPlotDelegate: class {
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, contentOffsetDidChange contentOffset: CGPoint)
+    func illustrationPlot(_ illustrationPlot: IllustrationPlot, currentPositionDidChange position: CGFloat)
+}
+
+class IllustrationPlot: UIView, ScrollablePlot {
+
+    // MARK: - Public properties
+    
+    weak var dataSource: IllustrationPlotDataSource?
+    weak var delegate: IllustrationPlotDataSource?
+    
+    var contentOffset: CGPoint {
+        set {
+            self.scrollView.contentOffset = newValue
+            self.waveformPlot.contentOffset = newValue
+        }
+        get {
+            return self.scrollView.contentOffset
+        }
+    }
+    
+    var contentInset: UIEdgeInsets {
+        set {
+            self.scrollView.contentInset = newValue
+            self.waveformPlot.contentInset = newValue
+        }
+        get {
+            return self.scrollView.contentInset
+        }
+    }
+    
+    var currentPosition: CGFloat {
+        set {
+            self.waveformPlot.currentPosition = newValue
+        }
+        get {
+            return self.waveformPlot.currentPosition
+        }
+    }
+    
+    var standardTimeIntervalWidth: CGFloat {
+        set {
+            self.waveformPlot.standardTimeIntervalWidth = newValue
+        }
+        get {
+            return self.waveformPlot.standardTimeIntervalWidth
+        }
+    }
+    
+    // MARK: - Views
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView(frame: .zero)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.delegate = self
+        self.addSubview(scrollView)
+        
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let view = UIView(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        self.scrollView.addSubview(view)
+        
+        return view
+    }()
+    
+    private lazy var waveformPlot: WaveformPlot = {
+        let waveformPlot = WaveformPlot(frame: .zero)
+        waveformPlot.translatesAutoresizingMaskIntoConstraints = false
+        waveformPlot.backgroundColor = UIColor.clear
+        waveformPlot.dataSource = self
+        waveformPlot.delegate = self
+        self.addSubview(waveformPlot)
+        
+        return waveformPlot
+    }()
+    
+    // MARK: - Private attributes
+    
+    private lazy var contentWidthLayoutConstraint: NSLayoutConstraint = {
+        return NSLayoutConstraint.build(item: self.contentView, attribute: .width)
+    }()
+    
+    // MARK: - Initialization
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.commonInit()
+        self.setupConstraints()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        self.commonInit()
+        self.setupConstraints()
+    }
+    
+    private func commonInit() {
+        
+    }
+    
+    private func setupConstraints() {
+        self.waveformPlot.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
+        self.waveformPlot.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
+        self.waveformPlot.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+        self.waveformPlot.setupConstraint(attribute: .height, toItem: self, attribute: .height, multiplier: 0.7, constant: 0)
+        
+        self.scrollView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
+        self.scrollView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
+        self.scrollView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
+        self.scrollView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+        
+        self.contentView.setupConstraint(attribute: .leading, toItem: self.scrollView, attribute: .leading)
+        self.contentView.setupConstraint(attribute: .trailing, toItem: self.scrollView, attribute: .trailing)
+        self.contentView.setupConstraint(attribute: .top, toItem: self.scrollView, attribute: .top)
+        self.contentView.setupConstraint(attribute: .bottom, toItem: self.scrollView, attribute: .bottom)
+        self.contentView.setupConstraint(attribute: .centerY, toItem: self.scrollView, attribute: .centerY)
+        
+        self.contentWidthLayoutConstraint.isActive = true
+    }
+    
+    // MARK: - Access methods
+    
+    func reloadData() {
+        self.waveformPlot.reloadData()
+    }
+}
+
+extension IllustrationPlot: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.waveformPlot.contentOffset = scrollView.contentOffset
+    }
+}
+
+extension IllustrationPlot: WaveformPlotDataSource {
+    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+        guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
+            return 0
+        }
+        return result
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample] {
+        guard let result = self.dataSource?.illustrationPlot(self, samplesAtTimeIntervalIndex: index) else {
+            return []
+        }
+        return result
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat {
+        guard let result = self.dataSource?.illustrationPlot(self, timeIntervalWidthAtIndex: index) else {
+            return 0.0
+        }
+        return result
+    }
+}
+
+extension IllustrationPlot: WaveformPlotDelegate {
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
+        self.contentWidthLayoutConstraint.constant = contentSize.width
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
+        
+    }
+    
+    func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
+        
+    }
+}
+
+/*
 protocol WaveformWithIllustrationsPlotDelegate: class {
     func currentTimeIntervalDidChange(_ timeInterval: TimeInterval)
 }
@@ -257,3 +441,4 @@ extension WaveformWithIllustrationsPlot: WaveformPlotDelegate {
         scrollView.contentOffset = contentOffset
     }
 }
+*/

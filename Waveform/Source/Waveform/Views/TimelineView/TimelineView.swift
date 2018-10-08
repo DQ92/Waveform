@@ -13,64 +13,87 @@ class TimelineView: UIView {
     
     var timeInterval: TimeInterval = 1.0 {
         didSet {
-            self.coordinator.timeInterval = timeInterval
-            self.setNeedsReloadData()
+            if timeInterval != oldValue {
+                self.coordinator.timeInterval = timeInterval
+                self.setNeedsReloadData()
+            }
         }
     }
     
-    var intervalWidth: CGFloat = 100 {
+    var intervalWidth: CGFloat = 100.0 {
         didSet {
-            self.boundsVew.intervalWidth = intervalWidth
-            self.coordinator.intervalWidth = intervalWidth
-            self.setNeedsReloadData()
+            if intervalWidth != oldValue {
+                self.boundsVew.intervalWidth = intervalWidth
+                self.coordinator.intervalWidth = intervalWidth
+                self.setNeedsReloadData()
+            }
         }
     }
     
     var lineWidth: CGFloat = 1.0 {
         didSet {
-            self.boundsVew.lineWidth = lineWidth
-            self.coordinator.lineWidth = lineWidth
-            self.setNeedsReloadData()
+            if lineWidth != oldValue {
+                self.boundsVew.lineWidth = lineWidth
+                self.coordinator.lineWidth = lineWidth
+                self.setNeedsReloadData()
+            }
         }
     }
     
     var lineColor: UIColor = UIColor.gray {
         didSet {
-            self.boundsVew.lineColor = lineColor
-            self.coordinator.lineColor = lineColor
-            self.setNeedsReloadData()
+            if lineColor != oldValue {
+                self.boundsVew.lineColor = lineColor
+                self.coordinator.lineColor = lineColor
+                self.setNeedsReloadData()
+            }
         }
     }
     
     var sublineHeight: CGFloat = 7.0 {
         didSet {
-            self.boundsVew.sublineHeight = sublineHeight
-            self.coordinator.sublineHeight = sublineHeight
-            self.setNeedsReloadData()
+            if sublineHeight != oldValue {
+                self.boundsVew.sublineHeight = sublineHeight
+                self.coordinator.sublineHeight = sublineHeight
+                self.setNeedsReloadData()
+            }
         }
     }
     
     var numberOfSublines: Int = 3 {
         didSet {
-            self.boundsVew.numberOfSublines = numberOfSublines
-            self.coordinator.numberOfSublines = numberOfSublines
-            self.setNeedsReloadData()
+            if numberOfSublines != oldValue {
+                self.boundsVew.numberOfSublines = numberOfSublines
+                self.coordinator.numberOfSublines = numberOfSublines
+                self.setNeedsReloadData()
+            }
         }
     }
     
-    var contentOffset: CGPoint = .zero {
-        didSet {
-            self.collectionView.contentOffset = contentOffset
+    var contentOffset: CGPoint {
+        set {
+            self.collectionView.contentOffset = newValue
+        }
+        get {
+            return self.collectionView.contentOffset
+        }
+    }
+    
+    var contentInset: UIEdgeInsets {
+        set {
+            self.collectionView.contentInset = newValue
+        }
+        get {
+            return self.collectionView.contentInset
         }
     }
     
     // MARK: - Private attributes
     
-    private static let collectionViewCellIdentifier = "CollectionViewCellIdentifier"
     private var reloadTimer: Timer?
     
-    private lazy var coordinator: TimelineCoordinator = {
-        return TimelineCoordinator(cellIdentifier: TimelineView.collectionViewCellIdentifier)
+    private lazy var coordinator: TimelineViewCoordinator = {
+        return TimelineViewCoordinator(cellIdentifier: "CollectionViewCellIdentifier")
     }()
     
     // MARK: - Views
@@ -83,9 +106,10 @@ class TimelineView: UIView {
         collectionViewLayout.sectionInset = .zero
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+        collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: self.coordinator.cellIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.register(IntervalCollectionViewCell.self, forCellWithReuseIdentifier: TimelineView.collectionViewCellIdentifier)
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.isScrollEnabled = false
         collectionView.dataSource = self.coordinator
         collectionView.delegate = self.coordinator

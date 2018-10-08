@@ -5,9 +5,14 @@
 
 import Foundation
 
-enum RecorderState {
-    case isRecording
+enum AudioRecorderState {
+    case started
+    case resumed
     case stopped
     case paused
     case fileLoaded
+
+    var recording: Bool {
+        return self == .started || self == .resumed
+    }
 }
