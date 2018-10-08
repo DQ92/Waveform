@@ -43,7 +43,6 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
     }
 
     func recordOrPause(at timeInterval: TimeInterval) throws {
-        print(timeInterval)
         try audioModulesManager.recordOrPause(at: timeInterval)
     }
 
@@ -51,8 +50,8 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
         try audioModulesManager.finishRecording()
     }
 
-    func playOrPause(at timeInterval: TimeInterval) throws {
-        try audioModulesManager.playOrPause(at: timeInterval)
+    func playOrPause(at timeInterval: TimeInterval, completion: @escaping RethrowBlockCompletion) throws {
+        try audioModulesManager.playOrPause(at: timeInterval, completion: completion)
     }
 
     func clearRecordings() throws {
@@ -73,8 +72,8 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
         delegate?.shiftOffset(to: currentPosition)
     }
 
-    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat) {
-        plotDataManager.fileLoaded(with: values, and: samplesPerPoint)
+    func fileLoaded(with values: [Float], and width: CGFloat) {
+        plotDataManager.fileLoaded(with: values, and: width)
     }
 }
 
@@ -144,6 +143,7 @@ extension AudioWaveformFacade: AudioModulesManagerDelegate {
         if state == .started {
             reset()
         }
+
         self.delegate?.recorderStateDidChange(with: state)
     }
 
@@ -157,6 +157,10 @@ extension AudioWaveformFacade: AudioModulesManagerDelegate {
 
     func reset() {
         plotDataManager.reset()
+    }
+
+    func recalculateZoom(with width: CGFloat) {
+        plotDataManager.recalculateZoom(for: width)
     }
 }
 

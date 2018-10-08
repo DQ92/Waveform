@@ -96,10 +96,10 @@ class AddIllustrationsViewController: UIViewController {
                 guard let caller = self else {
                     return
                 }
-                let samplesPerPoint = CGFloat(values.count) / caller.illustrationPlot.bounds.width
+                let density = CGFloat(values.count) / caller.illustrationPlot.bounds.width
                 
                 caller.manager.loadData(from: values)
-                caller.manager.loadZoom(from: samplesPerPoint)
+                caller.manager.loadZoom(from: density)
                 caller.manager.removeMarks()
                 
                 caller.illustrationPlot.contentOffset = CGPoint(x: -caller.illustrationPlot.contentInset.left, y: 0.0)

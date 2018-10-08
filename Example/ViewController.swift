@@ -160,7 +160,13 @@ extension ViewController {
 
     private func playOrPause() {
         do {
-            try audioWaveformFacade.playOrPause(at: audioWaveformFacade.timeInterval)
+            try audioWaveformFacade.playOrPause(at: audioWaveformFacade.timeInterval) { inner in
+                do {
+                    try inner()
+                } catch {
+                    Log.error("Error while exporting temporary file")
+                }
+            }
         } catch {
             Log.error("Error while exporting temporary file")
         }
@@ -179,6 +185,10 @@ extension ViewController {
 
 extension ViewController {
     func recorderStateDidChange(with state: AudioRecorderState) {
+        if state == .paused || state == .stopped {
+            audioWaveformFacade.recalculateZoom(with: waveformPlot.bounds.width)
+        }
+
         switch state {
             case .started, .resumed:
                 recordButton.setTitle("Pause", for: .normal)
@@ -215,8 +225,7 @@ extension ViewController {
             case .loading:
                 break
             case .loaded(let values, let duration):
-                let samplesPerPoint = CGFloat(values.count) / waveformPlot.bounds.width
-                audioWaveformFacade.fileLoaded(with: values, and: samplesPerPoint)
+                audioWaveformFacade.fileLoaded(with: values, and: waveformPlot.bounds.width)
                 waveformPlot.currentPosition = 0.0
                 waveformPlot.reloadData()
                 totalTimeLabel.text = formattedDateString(with: duration, and: timeFormatter)
@@ -242,9 +251,5 @@ extension ViewController: AudioWaveformFacadeDelegate {
 
     func zoomLevelDidChange(to level: ZoomLevel) {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
-    }
-    
-    func currentPositionDidChange(_ position: CGFloat) {
-        self.waveformPlot.currentPosition = position
     }
 }
