@@ -14,7 +14,7 @@
 		66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */; };
 		66427A1821428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */; };
 		665A685E21613C47009970DC /* ScrollablePlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665A685D21613C47009970DC /* ScrollablePlot.swift */; };
-		665A686021613F90009970DC /* MovementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665A685F21613F90009970DC /* MovementCoordinator.swift */; };
+		665A686021613F90009970DC /* AutoScrollCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665A685F21613F90009970DC /* AutoScrollCoordinator.swift */; };
 		66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */; };
 		66FA6E6C216255B20008C703 /* IllustrationPlotDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FA6E6B216255B20008C703 /* IllustrationPlotDataManager.swift */; };
 		705F9BD42141039F00C98859 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705F9BD32141039F00C98859 /* String+Extension.swift */; };
@@ -83,7 +83,7 @@
 		66427A1521428B9A00C6BCE9 /* UIVIew+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIVIew+Extension.swift"; sourceTree = "<group>"; };
 		66427A1621428B9A00C6BCE9 /* NSLayoutConstraint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extension.swift"; sourceTree = "<group>"; };
 		665A685D21613C47009970DC /* ScrollablePlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollablePlot.swift; sourceTree = "<group>"; };
-		665A685F21613F90009970DC /* MovementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementCoordinator.swift; sourceTree = "<group>"; };
+		665A685F21613F90009970DC /* AutoScrollCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoScrollCoordinator.swift; sourceTree = "<group>"; };
 		66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioFilesListViewController.swift; sourceTree = "<group>"; };
 		66FA6E6B216255B20008C703 /* IllustrationPlotDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllustrationPlotDataManager.swift; sourceTree = "<group>"; };
 		705F9BD32141039F00C98859 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -340,7 +340,7 @@
 				66B83A4E213D5291004EFB6B /* AudioFilesListViewController.swift */,
 				660544C2215BB620001425B3 /* WaveformPlotDataManager.swift */,
 				66FA6E6B216255B20008C703 /* IllustrationPlotDataManager.swift */,
-				665A685F21613F90009970DC /* MovementCoordinator.swift */,
+				665A685F21613F90009970DC /* AutoScrollCoordinator.swift */,
 				E889367CB6423F4B57B69FE1 /* ViewController.swift */,
 				E889321E20374C0C8FD33AD5 /* Main.storyboard */,
 				E88933926ADE0C0C34828FF1 /* LaunchScreen.storyboard */,
@@ -502,7 +502,7 @@
 				66B83A50213D5291004EFB6B /* AudioFilesListViewController.swift in Sources */,
 				70999AA8215A511700746BFD /* WaveformModel.swift in Sources */,
 				66427A1721428B9A00C6BCE9 /* UIVIew+Extension.swift in Sources */,
-				665A686021613F90009970DC /* MovementCoordinator.swift in Sources */,
+				665A686021613F90009970DC /* AutoScrollCoordinator.swift in Sources */,
 				705F9BD42141039F00C98859 /* String+Extension.swift in Sources */,
 				E8893F06E59312CFF57824BA /* AudioUtils.swift in Sources */,
 				70999A98215A503C00746BFD /* TimelineView.swift in Sources */,

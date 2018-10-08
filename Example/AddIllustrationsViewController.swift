@@ -29,8 +29,8 @@ class AddIllustrationsViewController: UIViewController {
         return formatter
     }()
     
-    private lazy var movementCoordinator: MovementCoordinator = {
-        return MovementCoordinator(plot: self.illustrationPlot)
+    private lazy var movementCoordinator: AutoScrollCoordinator = {
+        return AutoScrollCoordinator(plot: self.illustrationPlot)
     }()
     
     // MARK: - Life cycle
@@ -159,7 +159,7 @@ extension AddIllustrationsViewController {
 extension AddIllustrationsViewController: AudioPlayerDelegate {
     func playerStateDidChange(with state: AudioPlayerState) {
         switch state {
-        case .isPlaying:
+        case .playing:
             illustrationPlot.isUserInteractionEnabled = false
             playOrPauseButton.setTitle("Pause", for: .normal)
             disableZoomAction()

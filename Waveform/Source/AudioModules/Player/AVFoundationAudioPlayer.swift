@@ -50,7 +50,7 @@ extension AVFoundationAudioPlayer: AudioPlayerProtocol {
         player.play()
 
         Log.info("Playing file - url: \(URL), duration: \(player.duration), from: \(timeInterval)")
-        changePlayerState(with: .isPlaying)
+        changePlayerState(with: .playing)
     }
     
     func pause() {

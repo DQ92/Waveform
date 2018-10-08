@@ -193,7 +193,7 @@ extension AVFoundationAudioRecorder: AudioRecorderProtocol {
         audioRecorder?.prepareToRecord()
         audioRecorder?.record()
         Log.debug("startRecording")
-        changeRecorderStateWithViewUpdate(with: .isRecording)
+        changeRecorderStateWithViewUpdate(with: .started)
     }
 
     func stop() {
@@ -218,7 +218,7 @@ extension AVFoundationAudioRecorder: AudioRecorderProtocol {
             audioRecorder?.record()
             Log.debug("Overwrite")
         }
-        changeRecorderStateWithViewUpdate(with: .isRecording)
+        changeRecorderStateWithViewUpdate(with: .resumed)
     }
 
     func pause() {
