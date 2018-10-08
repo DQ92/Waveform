@@ -52,14 +52,12 @@ class WaveformPlotDataManager {
 
     // MARK: - Private properties
 
-    private var updateIndicatorTimer: Timer?
     private var data: [WaveformModel] = []
     private var zoom: Zoom = Zoom()
 
     // MARK: - Initialization
 
-    init() {
-    }
+    init() {}
 
     // MARK: - Access methods
 
@@ -174,7 +172,8 @@ extension WaveformPlotDataManager: WaveformPlotDataMangerProtocol {
         return 0.0
     }
 
-    func calculatePosition(for timeInterval: TimeInterval) -> CGFloat {
-        return CGFloat(timeInterval * TimeInterval(self.layersPerTimeInterval) / TimeInterval(self.zoom.level.samplesPerLayer))
+    func calculatePosition(for timeInterval: TimeInterval, duration: TimeInterval) -> CGFloat {
+        let plotWidth = CGFloat(self.data.count) * self.sampleWidth
+        return (CGFloat(timeInterval) * plotWidth) / CGFloat(duration)
     }
 }

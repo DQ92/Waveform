@@ -101,9 +101,9 @@ class IntervalCollectionViewCell: UICollectionViewCell {
         self.timeLabelTopConstraint.isActive = true
         self.timeLabelBottomConstraint.isActive = true
         
-        self.intervalView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.intervalView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.intervalView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
-        self.intervalView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+        self.setupConstraint(item: self.intervalView, attribute: .leading, toItem: self, attribute: .leading)
+        self.setupConstraint(item: self.intervalView, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self.intervalView, attribute: .top, toItem: self, attribute: .top)
+        self.setupConstraint(item: self.intervalView, attribute: .bottom, toItem: self, attribute: .bottom)
     }
 }

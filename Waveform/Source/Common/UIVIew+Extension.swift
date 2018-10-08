@@ -9,7 +9,8 @@
 import UIKit
 
 extension UIView {
-    public func setupConstraint(attribute attr1: NSLayoutAttribute,
+    public func setupConstraint(item view1: Any,
+                                attribute attr1: NSLayoutAttribute,
                                 relatedBy relation: NSLayoutRelation = .equal,
                                 toItem view2: Any? = nil,
                                 attribute attr2: NSLayoutAttribute = .notAnAttribute,
@@ -17,7 +18,7 @@ extension UIView {
                                 constant: CGFloat = 0.0,
                                 priority: UILayoutPriority = .required) {
         
-        NSLayoutConstraint.build(item: self,
+        NSLayoutConstraint.build(item: view1,
                                  attribute: attr1,
                                  relatedBy: relation,
                                  toItem: view2,

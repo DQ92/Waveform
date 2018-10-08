@@ -9,7 +9,7 @@
 import UIKit
 
 protocol WaveformViewDataSource: class {
-    func numberOfTimeInterval(in waveformView: WaveformView) -> Int
+    func numberOfTimeIntervals(in waveformView: WaveformView) -> Int
     func standardTimeIntervalWidth(in waveformView: WaveformView) -> CGFloat
     
     func waveformView(_ waveformView: WaveformView, samplesAtTimeIntervalIndex index: Int) -> [Sample]
@@ -44,6 +44,10 @@ class WaveformView: UIView {
         get {
             return self.collectionView.contentInset
         }
+    }
+    
+    var contentSize: CGSize {
+        return self.collectionView.contentSize
     }
     
     // MARK: - Private properties
@@ -96,10 +100,10 @@ class WaveformView: UIView {
     }
     
     private func setupConstraints() {
-        self.setupConstraint(attribute: .top, toItem: self.collectionView, attribute: .top, constant: -12.0)
-        self.setupConstraint(attribute: .bottom, toItem: self.collectionView, attribute: .bottom, constant: 12.0)
-        self.setupConstraint(attribute: .leading, toItem: self.collectionView, attribute: .leading)
-        self.setupConstraint(attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
+        self.setupConstraint(item: self, attribute: .top, toItem: self.collectionView, attribute: .top, constant: -12.0)
+        self.setupConstraint(item: self, attribute: .bottom, toItem: self.collectionView, attribute: .bottom, constant: 12.0)
+        self.setupConstraint(item: self, attribute: .leading, toItem: self.collectionView, attribute: .leading)
+        self.setupConstraint(item: self, attribute: .trailing, toItem: self.collectionView, attribute: .trailing)
     }
     
     private func setupObservers() {
@@ -125,8 +129,8 @@ class WaveformView: UIView {
 }
 
 extension WaveformView: WaveformViewCoordinatorDataSource {
-    func numberOfTimeInterval(in coordinator: WaveformViewCoordinator) -> Int {
-        guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
+    func numberOfTimeIntervals(in coordinator: WaveformViewCoordinator) -> Int {
+        guard let result = self.dataSource?.numberOfTimeIntervals(in: self) else {
             return 0
         }
         return result

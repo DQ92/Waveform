@@ -9,7 +9,7 @@
 import UIKit
 
 protocol WaveformViewCoordinatorDataSource: class {
-    func numberOfTimeInterval(in coordinator: WaveformViewCoordinator) -> Int
+    func numberOfTimeIntervals(in coordinator: WaveformViewCoordinator) -> Int
     func standardTimeIntervalWidth(in coordinator: WaveformViewCoordinator) -> CGFloat
 
     func waveformViewCoordinator(_ coordinator: WaveformViewCoordinator, samplesAtTimeIntervalIndex index: Int) -> [Sample]
@@ -40,7 +40,7 @@ extension WaveformViewCoordinator: UICollectionViewDataSource {
         if self.endlessScrollingEnabled {
             return self.numberOfItems
         } else if let dataSource = self.dataSource {
-            return dataSource.numberOfTimeInterval(in: self)
+            return dataSource.numberOfTimeIntervals(in: self)
         }
         return 0
     }
@@ -52,7 +52,7 @@ extension WaveformViewCoordinator: UICollectionViewDataSource {
         var samples: [Sample] = []
         
         if let dataSource = self.dataSource {
-            let numberOfRows = dataSource.numberOfTimeInterval(in: self)
+            let numberOfRows = dataSource.numberOfTimeIntervals(in: self)
             
             if indexPath.row < numberOfRows {
                 samples = dataSource.waveformViewCoordinator(self, samplesAtTimeIntervalIndex: indexPath.row)

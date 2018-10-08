@@ -243,4 +243,8 @@ extension ViewController: AudioWaveformFacadeDelegate {
     func zoomLevelDidChange(to level: ZoomLevel) {
         self.zoomValueLabel.text = "Zoom: \(level.percent)"
     }
+    
+    func currentPositionDidChange(_ position: CGFloat) {
+        self.waveformPlot.currentPosition = position
+    }
 }

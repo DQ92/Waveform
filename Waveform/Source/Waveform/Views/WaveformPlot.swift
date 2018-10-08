@@ -49,6 +49,10 @@ class WaveformPlot: UIView, ScrollablePlot {
         }
     }
     
+    var contentSize: CGSize {
+        return self.waveformView.contentSize
+    }
+
     // MARK: - Views
     
     private lazy var timelineView: TimelineView = {
@@ -80,9 +84,9 @@ class WaveformPlot: UIView, ScrollablePlot {
                 view.translatesAutoresizingMaskIntoConstraints = false
                 self.waveformView.addSubview(view)
                 
-                view.setupConstraint(attribute: .top, toItem: self.waveformView, attribute: .top)
-                view.setupConstraint(attribute: .bottom, toItem: self.waveformView, attribute: .bottom)
-                view.setupConstraint(attribute: .centerX, toItem: self.waveformView, attribute: .centerX)
+                self.setupConstraint(item: view, attribute: .top, toItem: self.waveformView, attribute: .top)
+                self.setupConstraint(item: view, attribute: .bottom, toItem: self.waveformView, attribute: .bottom)
+                self.setupConstraint(item: view, attribute: .centerX, toItem: self.waveformView, attribute: .centerX)
             }
         }
     }
@@ -108,27 +112,28 @@ class WaveformPlot: UIView, ScrollablePlot {
     }
     
     private func setupConstraints() {
-        self.timelineView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.timelineView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.timelineView.setupConstraint(attribute: .top, toItem: self, attribute: .top)
-        self.timelineView.setupConstraint(attribute: .height, constant: 20.0)
+        self.setupConstraint(item: self.timelineView, attribute: .leading, toItem: self, attribute: .leading)
+        self.setupConstraint(item: self.timelineView, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self.timelineView, attribute: .top, toItem: self, attribute: .top)
+        self.setupConstraint(item: self.timelineView, attribute: .height, constant: 20.0)
         
-        self.waveformView.setupConstraint(attribute: .leading, toItem: self, attribute: .leading)
-        self.waveformView.setupConstraint(attribute: .trailing, toItem: self, attribute: .trailing)
-        self.waveformView.setupConstraint(attribute: .top, toItem: self.timelineView, attribute: .bottom)
-        self.waveformView.setupConstraint(attribute: .bottom, toItem: self, attribute: .bottom)
+        self.setupConstraint(item: self.waveformView, attribute: .leading, toItem: self, attribute: .leading)
+        self.setupConstraint(item: self.waveformView, attribute: .trailing, toItem: self, attribute: .trailing)
+        self.setupConstraint(item: self.waveformView, attribute: .top, toItem: self.timelineView, attribute: .bottom)
+        self.setupConstraint(item: self.waveformView, attribute: .bottom, toItem: self, attribute: .bottom)
     }
     
     // MARK: - Access methods
     
     func reloadData() {
+        self.timelineView.timeInterval = dataSource?.timeInterval(in: self) ?? 1.0
         self.waveformView.reloadData()
     }
 }
 
 extension WaveformPlot: WaveformViewDataSource {
-    func numberOfTimeInterval(in waveformView: WaveformView) -> Int {
-        guard let result = self.dataSource?.numberOfTimeInterval(in: self) else {
+    func numberOfTimeIntervals(in waveformView: WaveformView) -> Int {
+        guard let result = self.dataSource?.numberOfTimeIntervals(in: self) else {
             return 0
         }
         return result
@@ -155,7 +160,7 @@ extension WaveformPlot: WaveformViewDataSource {
 
 extension WaveformPlot: WaveformViewDelegate {
     func waveformView(_ waveformView: WaveformView, contentOffsetDidChange contentOffset: CGPoint) {
-        self.currentPosition = self.contentOffset.x + self.timelineView.center.x
+        self.currentPosition = contentOffset.x + waveformView.contentInset.left
         self.timelineView.contentOffset = contentOffset
         
         self.delegate?.waveformPlot(self, contentOffsetDidChange: contentOffset)

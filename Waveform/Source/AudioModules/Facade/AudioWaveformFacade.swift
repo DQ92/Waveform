@@ -61,10 +61,16 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 
     func zoomIn() {
         plotDataManager.zoomIn()
+
+        let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
+        delegate?.shiftOffset(to: currentPosition)
     }
 
     func zoomOut() {
         plotDataManager.zoomOut()
+
+        let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
+        delegate?.shiftOffset(to: currentPosition)
     }
 
     func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat) {
@@ -75,7 +81,11 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 // MARK: - WaveformPlot data source
 
 extension AudioWaveformFacade: WaveformPlotDataSource {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
+    func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval {
+        return TimeInterval(self.plotDataManager.zoomLevel.samplesPerLayer)
+    }
+
+    func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int {
         return self.plotDataManager.numberOfTimeInterval
     }
 
