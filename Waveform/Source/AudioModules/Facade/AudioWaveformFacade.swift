@@ -63,14 +63,14 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
         plotDataManager.zoomIn()
 
         let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
-        delegate?.currentPositionDidChange(currentPosition)
+        delegate?.shiftOffset(to: currentPosition)
     }
 
     func zoomOut() {
         plotDataManager.zoomOut()
 
         let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
-        delegate?.currentPositionDidChange(currentPosition)
+        delegate?.shiftOffset(to: currentPosition)
     }
 
     func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat) {
