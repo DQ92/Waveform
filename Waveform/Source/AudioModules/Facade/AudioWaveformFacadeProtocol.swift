@@ -15,9 +15,10 @@ protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelega
     func loadFile(with url: URL) throws
     func recordOrPause(at timeInterval: TimeInterval) throws
     func finishRecording() throws
-    func playOrPause(at timeInterval: TimeInterval) throws
+    func playOrPause(at timeInterval: TimeInterval, completion: @escaping RethrowBlockCompletion) throws
     func clearRecordings() throws
     func zoomIn()
     func zoomOut()
-    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat)
+    func fileLoaded(with values: [Float], and width: CGFloat)
+    func recalculateZoom(with width: CGFloat)
 }

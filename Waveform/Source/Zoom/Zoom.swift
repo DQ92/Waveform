@@ -35,8 +35,8 @@ class Zoom {
 
     // MARK: - Initialization
 
-    init(samplesPerPoint: CGFloat = 1.0, multipliers: [Double] = AudioUtils.defaultZoomMultipliers) {
-        self.levels = generateZoomLevels(for: samplesPerPoint, and: multipliers)
+    init(density: CGFloat = 1.0, multipliers: [Double] = AudioUtils.defaultZoomMultipliers) {
+        self.levels = generateZoomLevels(for: density, and: multipliers)
     }
 
     // Access methods
@@ -57,9 +57,9 @@ class Zoom {
         self.currentLevel = 0
     }
 
-    func changeSamplesPerPoint(_ samplesPerPoint: CGFloat, multipliers: [Double] = AudioUtils
+    func changeSamplesPerPoint(_ density: CGFloat, multipliers: [Double] = AudioUtils
             .defaultZoomMultipliers) {
-        self.levels = generateZoomLevels(for: samplesPerPoint, and: multipliers)
+        self.levels = generateZoomLevels(for: density, and: multipliers)
     }
 
     // MARK: - Helper methods

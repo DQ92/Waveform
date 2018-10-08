@@ -14,7 +14,7 @@ protocol AudioModulesManagerProtocol {
     func loadFile(with url: URL) throws
     func recordOrPause(at timeInterval: TimeInterval) throws
     func finishRecording() throws
-    func playOrPause(at timeInterval: TimeInterval) throws
+    func playOrPause(at timeInterval: TimeInterval, completion: @escaping RethrowBlockCompletion) throws
     func clearRecordings() throws
 }
 
@@ -26,6 +26,9 @@ protocol AudioModulesManagerDelegate: class {
                            with mode: AudioRecordingMode,
                            at timeStamp: TimeInterval)
 }
+
+typealias RethrowBlockCompletion = (_ inner: () throws -> Void) -> Void
+
 
 class AudioModulesManager {
 
@@ -124,31 +127,30 @@ extension AudioModulesManager: AudioModulesManagerProtocol {
         try recorder.clearRecordings()
     }
 
-    func playOrPause(at timeInterval: TimeInterval) throws {
+    func playOrPause(at timeInterval: TimeInterval, completion: @escaping RethrowBlockCompletion) throws {
         if player.state == .paused && !recorder.recorderState.recording {
-            try playFileInRecording(at: timeInterval)
+            try playFileInRecording(at: timeInterval, completion: completion)
         } else if player.state == .playing {
             player.pause()
         }
     }
 
-    func playFileInRecording(at timeInterval: TimeInterval) throws {
+    func playFileInRecording(at timeInterval: TimeInterval, completion: @escaping RethrowBlockCompletion) throws {
         try recorder.temporallyExportRecordedFileAndGetUrl { [weak self] url in
             guard let URL = url else {
                 return
             }
-            DispatchQueue.main.async {
-                do {
-                    try self?.player.playFile(with: URL, at: timeInterval)
-                } catch AudioPlayerError.openFileFailed(let error) {
-                    Log.error(error)
-                } catch {
-                    Log.error("Unknown error")
-                }
+            do {
+                try self?.player.playFile(with: URL, at: timeInterval)
+                completion({ })
+            } catch {
+                completion({ throw error })
             }
         }
     }
 }
+
+
 
 extension AudioModulesManager: AudioPlayerDelegate {
     func playerStateDidChange(with state: AudioPlayerState) {
