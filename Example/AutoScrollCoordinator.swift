@@ -1,5 +1,5 @@
 //
-//  MovementCoordinator.swift
+//  AutoScrollCoordinator.swift
 //  Waveform
 //
 //  Created by Robert Mietelski on 30.09.2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MovementCoordinator {
+class AutoScrollCoordinator {
     
     // MARK: - Private attributes
     

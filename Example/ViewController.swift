@@ -27,8 +27,8 @@ class ViewController: UIViewController {
         return formatter
     }()
 
-    private lazy var movementCoordinator: MovementCoordinator = {
-        return MovementCoordinator(plot: self.waveformPlot)
+    private lazy var movementCoordinator: AutoScrollCoordinator = {
+        return AutoScrollCoordinator(plot: self.waveformPlot)
     }()
 
     // MARK: - IBActions
@@ -85,7 +85,6 @@ extension ViewController {
         do {
             let audioModulesManager = try AudioModulesManager()
             let plotDataManger = WaveformPlotDataManager()
-            audioModulesManager.delegate = self
             audioWaveformFacade = AudioWaveformFacade(plotDataManager: plotDataManger, audioModulesManager: audioModulesManager)
             audioWaveformFacade.delegate = self
 
@@ -178,11 +177,10 @@ extension ViewController {
 
 // MARK: - Recorder state renderer
 
-extension ViewController: AudioModulesManagerStateDelegate {
+extension ViewController {
     func recorderStateDidChange(with state: AudioRecorderState) {
         switch state {
-            case .isRecording:
-                self.audioWaveformFacade.reset()
+            case .started, .resumed:
                 recordButton.setTitle("Pause", for: .normal)
                 disableZoomAction()
                 waveformPlot.isUserInteractionEnabled = true
@@ -190,11 +188,7 @@ extension ViewController: AudioModulesManagerStateDelegate {
                 recordButton.setTitle("Start", for: .normal)
                 enableZoomAction()
                 waveformPlot.isUserInteractionEnabled = true
-            case .paused:
-                recordButton.setTitle("Resume", for: .normal)
-                enableZoomAction()
-                waveformPlot.isUserInteractionEnabled = true
-            case .fileLoaded:
+            case .paused, .fileLoaded:
                 recordButton.setTitle("Resume", for: .normal)
                 enableZoomAction()
                 waveformPlot.isUserInteractionEnabled = true
@@ -203,7 +197,7 @@ extension ViewController: AudioModulesManagerStateDelegate {
 
     func playerStateDidChange(with state: AudioPlayerState) {
         switch state {
-            case .isPlaying:
+            case .playing:
                 waveformPlot.isUserInteractionEnabled = false
                 playOrPauseButton.setTitle("Pause", for: .normal)
                 disableZoomAction()

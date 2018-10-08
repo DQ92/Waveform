@@ -6,8 +6,13 @@
 import Foundation
 
 enum AudioRecorderState {
-    case isRecording
+    case started
+    case resumed
     case stopped
     case paused
     case fileLoaded
+
+    var recording: Bool {
+        return self == .started || self == .resumed
+    }
 }

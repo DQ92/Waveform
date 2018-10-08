@@ -6,31 +6,6 @@
 import Foundation
 import UIKit
 
-protocol AudioWaveformFacadeDelegate: class {
-    func leadingLineTimeIntervalDidChange(to timeInterval: TimeInterval)
-    func audioDurationDidChange(to timeInterval: TimeInterval)
-    func shiftOffset(to offset: CGFloat)
-    func zoomLevelDidChange(to level: ZoomLevel)
-    func currentPositionDidChange(_ position: CGFloat)
-}
-
-protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelegate {
-    var timeInterval: TimeInterval { get }
-    var delegate: AudioWaveformFacadeDelegate? { get set }
-    var resultsDirectoryURL: URL { get }
-    var autoscrollStepWidth: CGFloat { get }
-
-    func loadFile(with url: URL) throws
-    func recordOrPause(at timeInterval: TimeInterval) throws
-    func finishRecording() throws
-    func playOrPause(at timeInterval: TimeInterval) throws
-    func clearRecordings() throws
-    func zoomIn()
-    func zoomOut()
-    func reset()
-    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat)
-}
-
 class AudioWaveformFacade {
 
     // MARK: - Private properties
@@ -48,7 +23,7 @@ class AudioWaveformFacade {
     init(plotDataManager: WaveformPlotDataManager, audioModulesManager: AudioModulesManagerProtocol) {
         self.plotDataManager = plotDataManager
         self.audioModulesManager = audioModulesManager
-        self.audioModulesManager.fileLoaderDelegate = self
+        self.audioModulesManager.delegate = self
         self.plotDataManager.delegate = self
     }
 }
@@ -68,6 +43,7 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
     }
 
     func recordOrPause(at timeInterval: TimeInterval) throws {
+        print(timeInterval)
         try audioModulesManager.recordOrPause(at: timeInterval)
     }
 
@@ -85,20 +61,16 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 
     func zoomIn() {
         plotDataManager.zoomIn()
-        
+
         let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
         delegate?.currentPositionDidChange(currentPosition)
     }
 
     func zoomOut() {
         plotDataManager.zoomOut()
-        
+
         let currentPosition = plotDataManager.calculatePosition(for: timeInterval, duration: audioModulesManager.recordingDuration)
         delegate?.currentPositionDidChange(currentPosition)
-    }
-
-    func reset() {
-        plotDataManager.reset()
     }
 
     func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat) {
@@ -108,11 +80,11 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 
 // MARK: - WaveformPlot data source
 
-extension AudioWaveformFacade {
+extension AudioWaveformFacade: WaveformPlotDataSource {
     func timeInterval(in waveformPlot: WaveformPlot) -> TimeInterval {
         return TimeInterval(self.plotDataManager.zoomLevel.samplesPerLayer)
     }
-    
+
     func numberOfTimeIntervals(in waveformPlot: WaveformPlot) -> Int {
         return self.plotDataManager.numberOfTimeInterval
     }
@@ -126,10 +98,24 @@ extension AudioWaveformFacade {
     }
 }
 
+// MARK: - WaveformPlotDataManager delegate
+
+extension AudioWaveformFacade: WaveformPlotDataManagerDelegate {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+    }
+
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+        delegate?.zoomLevelDidChange(to: level)
+    }
+}
+
 // MARK: - WaveformPlot delegate
 
-extension AudioWaveformFacade {
+extension AudioWaveformFacade: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
+    }
+
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
     }
 
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
@@ -144,7 +130,7 @@ extension AudioWaveformFacade {
 
 // MARK: - AudioModulesManager loader delegate
 
-extension AudioWaveformFacade: AudioModulesManagerLoaderDelegate {
+extension AudioWaveformFacade: AudioModulesManagerDelegate {
     func processSampleData(_ data: Float,
                            with mode: AudioRecordingMode,
                            at timeStamp: TimeInterval) {
@@ -153,16 +139,25 @@ extension AudioWaveformFacade: AudioModulesManagerLoaderDelegate {
         delegate?.audioDurationDidChange(to: timeInterval)
         delegate?.leadingLineTimeIntervalDidChange(to: timeInterval)
     }
-}
 
-// MARK: - WaveformPlotDataManager delegate
-
-extension AudioWaveformFacade: WaveformPlotDataManagerDelegate {
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
-
+    func recorderStateDidChange(with state: AudioRecorderState) {
+        if state == .started {
+            reset()
+        }
+        self.delegate?.recorderStateDidChange(with: state)
     }
 
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
-        delegate?.zoomLevelDidChange(to: level)
+    func playerStateDidChange(with state: AudioPlayerState) {
+        self.delegate?.playerStateDidChange(with: state)
+    }
+
+    func loaderStateDidChange(with state: FileDataLoaderState) {
+        self.delegate?.loaderStateDidChange(with: state)
+    }
+
+    func reset() {
+        plotDataManager.reset()
     }
 }
+
+

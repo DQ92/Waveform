@@ -7,8 +7,7 @@ import Foundation
 import AVFoundation
 
 protocol AudioModulesManagerProtocol {
-    var delegate: AudioModulesManagerStateDelegate? { get set }
-    var fileLoaderDelegate: AudioModulesManagerLoaderDelegate? { get set }
+    var delegate: AudioModulesManagerDelegate? { get set }
     var resultsDirectoryURL: URL { get }
     var recordingDuration: TimeInterval { get }
 
@@ -19,13 +18,10 @@ protocol AudioModulesManagerProtocol {
     func clearRecordings() throws
 }
 
-protocol AudioModulesManagerStateDelegate: class {
+protocol AudioModulesManagerDelegate: class {
     func loaderStateDidChange(with state: FileDataLoaderState)
     func playerStateDidChange(with state: AudioPlayerState)
     func recorderStateDidChange(with state: AudioRecorderState)
-}
-
-protocol AudioModulesManagerLoaderDelegate: class {
     func processSampleData(_ data: Float,
                            with mode: AudioRecordingMode,
                            at timeStamp: TimeInterval)
@@ -42,8 +38,7 @@ class AudioModulesManager {
 
     // MARK: - Public properties
 
-    weak var delegate: AudioModulesManagerStateDelegate?
-    weak var fileLoaderDelegate: AudioModulesManagerLoaderDelegate?
+    weak var delegate: AudioModulesManagerDelegate?
     var resultsDirectoryURL: URL {
         return recorder.resultsDirectoryURL
     }
@@ -83,10 +78,10 @@ extension AudioModulesManager {
 
 extension AudioModulesManager: AudioModulesManagerProtocol {
     func recordOrPause(at timeInterval: TimeInterval) throws {
-        if player.state == .isPlaying {
+        if player.state == .playing {
             player.pause()
         }
-        if recorder.recorderState == .isRecording {
+        if recorder.recorderState.recording {
             recorder.pause()
         } else {
             try startRecording(at: timeInterval)
@@ -113,7 +108,7 @@ extension AudioModulesManager: AudioModulesManagerProtocol {
     }
 
     func loadFile(with url: URL) throws {
-        if recorder.recorderState == .isRecording {
+        if recorder.recorderState.recording {
             recorder.stop()
         }
         try recorder.openFile(with: url)
@@ -130,9 +125,9 @@ extension AudioModulesManager: AudioModulesManagerProtocol {
     }
 
     func playOrPause(at timeInterval: TimeInterval) throws {
-        if player.state == .paused && recorder.recorderState != .isRecording {
+        if player.state == .paused && !recorder.recorderState.recording {
             try playFileInRecording(at: timeInterval)
-        } else if player.state == .isPlaying {
+        } else if player.state == .playing {
             player.pause()
         }
     }
@@ -171,7 +166,7 @@ extension AudioModulesManager: AudioRecorderDelegate {
     func recorderStateDidChange(with state: AudioRecorderState) {
         delegate?.recorderStateDidChange(with: state)
         switch state {
-            case .isRecording:
+            case .started, .resumed:
                 AudioToolboxMicrophoneController.shared.start() // TODO: Do refactora?
             case .paused, .stopped, .fileLoaded:
                 AudioToolboxMicrophoneController.shared.stop()
@@ -181,8 +176,8 @@ extension AudioModulesManager: AudioRecorderDelegate {
 
 extension AudioModulesManager: MicrophoneControllerDelegate {
     func processSampleData(_ data: Float) {
-        fileLoaderDelegate?.processSampleData(data,
-                                              with: recorder.mode,
-                                              at: recorder.currentTime)
+        delegate?.processSampleData(data,
+                                    with: recorder.mode,
+                                    at: recorder.currentTime)
     }
 }
