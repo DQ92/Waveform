@@ -6,32 +6,6 @@
 import Foundation
 import UIKit
 
-protocol AudioWaveformFacadeDelegate: class {
-    func loaderStateDidChange(with state: FileDataLoaderState)
-    func playerStateDidChange(with state: AudioPlayerState)
-    func recorderStateDidChange(with state: AudioRecorderState)
-    func leadingLineTimeIntervalDidChange(to timeInterval: TimeInterval)
-    func audioDurationDidChange(to timeInterval: TimeInterval)
-    func shiftOffset(to offset: CGFloat)
-    func zoomLevelDidChange(to level: ZoomLevel)
-}
-
-protocol AudioWaveformFacadeProtocol: WaveformPlotDataSource, WaveformPlotDelegate {
-    var timeInterval: TimeInterval { get }
-    var delegate: AudioWaveformFacadeDelegate? { get set }
-    var resultsDirectoryURL: URL { get }
-    var autoscrollStepWidth: CGFloat { get }
-
-    func loadFile(with url: URL) throws
-    func recordOrPause(at timeInterval: TimeInterval) throws
-    func finishRecording() throws
-    func playOrPause(at timeInterval: TimeInterval) throws
-    func clearRecordings() throws
-    func zoomIn()
-    func zoomOut()
-    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat)
-}
-
 class AudioWaveformFacade {
 
     // MARK: - Private properties
@@ -100,7 +74,7 @@ extension AudioWaveformFacade: AudioWaveformFacadeProtocol {
 
 // MARK: - WaveformPlot data source
 
-extension AudioWaveformFacade {
+extension AudioWaveformFacade: WaveformPlotDataSource {
     func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int {
         return self.plotDataManager.numberOfTimeInterval
     }
@@ -114,10 +88,24 @@ extension AudioWaveformFacade {
     }
 }
 
+// MARK: - WaveformPlotDataManager delegate
+
+extension AudioWaveformFacade: WaveformPlotDataManagerDelegate {
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
+    }
+
+    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
+        delegate?.zoomLevelDidChange(to: level)
+    }
+}
+
 // MARK: - WaveformPlot delegate
 
-extension AudioWaveformFacade {
+extension AudioWaveformFacade: WaveformPlotDelegate {
     func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint) {
+    }
+
+    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {
     }
 
     func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat) {
@@ -162,14 +150,4 @@ extension AudioWaveformFacade: AudioModulesManagerDelegate {
     }
 }
 
-// MARK: - WaveformPlotDataManager delegate
-
-extension AudioWaveformFacade: WaveformPlotDataManagerDelegate {
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int) {
-    }
-
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel) {
-        delegate?.zoomLevelDidChange(to: level)
-    }
-}
 

@@ -8,30 +8,6 @@
 
 import UIKit
 
-protocol WaveformPlotDataMangerProtocol: class {
-    var delegate: WaveformPlotDataManagerDelegate? { get set }
-    var autoscrollStepWidth: CGFloat { get }
-    var numberOfTimeInterval: Int { get }
-    var newSampleOffset: CGFloat { get }
-    var currentSampleIndex: Int { get set }
-    var standardTimeIntervalWidth: CGFloat { get }
-
-    func zoomIn()
-    func zoomOut()
-    func reset()
-    func fileLoaded(with values: [Float], and samplesPerPoint: CGFloat)
-    func samples(timeIntervalIndex: Int) -> [Sample]
-    func timeIntervalWidth(index: Int) -> CGFloat
-    func currentPositionChanged(to position: CGFloat)
-    func calculateTimeInterval(for position: CGFloat, duration: TimeInterval) -> TimeInterval
-    func processNewSample(sampleData: Float, with mode: AudioRecordingMode, at timeStamp: TimeInterval)
-}
-
-protocol WaveformPlotDataManagerDelegate: class {
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, numberOfSamplesDidChange count: Int)
-    func waveformPlotDataManager(_ manager: WaveformPlotDataManager, zoomLevelDidChange level: ZoomLevel)
-}
-
 class WaveformPlotDataManager {
 
     // MARK: - Public properties

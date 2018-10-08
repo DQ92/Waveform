@@ -8,23 +8,6 @@
 
 import UIKit
 
-protocol WaveformPlotDataSource: class {
-    func numberOfTimeInterval(in waveformPlot: WaveformPlot) -> Int
-    
-    func waveformPlot(_ waveformPlot: WaveformPlot, samplesAtTimeIntervalIndex index: Int) -> [Sample]
-    func waveformPlot(_ waveformPlot: WaveformPlot, timeIntervalWidthAtIndex index: Int) -> CGFloat
-}
-
-protocol WaveformPlotDelegate: class {
-    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize)
-    func waveformPlot(_ waveformPlot: WaveformPlot, contentOffsetDidChange contentOffset: CGPoint)
-    func waveformPlot(_ waveformPlot: WaveformPlot, currentPositionDidChange position: CGFloat)
-}
-
-extension WaveformPlotDelegate {
-    func waveformPlot(_ waveformPlot: WaveformPlot, contentSizeDidChange contentSize: CGSize) {}
-}
-
 class WaveformPlot: UIView, ScrollablePlot {
 
     // MARK: - Public properties
